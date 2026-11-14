@@ -28,11 +28,11 @@ func Run() {
 	http.HandleFunc("POST /exams", createAttempt)
 	http.HandleFunc("GET /exams/{id}", showAttempt)
 	http.HandleFunc("POST /exams/{id}/finish", finishAttempt)
-	addr := os.Getenv("PORT")
-	if addr == "" {
-		addr = ":8080"
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = ":8080"
 	}
-	log.Fatal(http.ListenAndServe(addr, nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func wantsFragment(r *http.Request) bool {
