@@ -26,9 +26,22 @@ paths:
       summary: Открыть вкладку «Все вопросы»
       parameters:
         - $ref: "#/components/parameters/HxRequest"
+        - name: page
+          in: query
+          description: Номер страницы каталога. На каждой странице до 10 вопросов в порядке банка.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
       responses:
         "200":
-          description: Карточки всего банка с формулировками, блоками и сложностью. Ответы изначально свёрнуты, каждый можно открывать и скрывать отдельно.
+          description: Карточки выбранной страницы с формулировками, блоками и сложностью. Ответы изначально свёрнуты. Если страниц несколько, доступны переходы по каталогу.
+          content:
+            text/html:
+              schema:
+                type: string
+        "404":
+          description: Номер страницы некорректен или выходит за пределы каталога.
           content:
             text/html:
               schema:

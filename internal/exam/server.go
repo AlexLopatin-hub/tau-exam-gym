@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -40,7 +41,7 @@ func wantsFragment(r *http.Request) bool {
 
 func render(w http.ResponseWriter, r *http.Request, view PageView, status int) {
 	component := templ.Component(Page(view))
-	if wantsFragment(r) {
+	if wantsFragment(r) && !strings.EqualFold(r.Header.Get("HX-History-Restore-Request"), "true") {
 		component = Main(view)
 	}
 	renderComponent(w, r, component, status)
@@ -63,7 +64,41 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func questions(w http.ResponseWriter, r *http.Request) {
-	render(w, r, PageView{Title: "Все вопросы", Tab: "questions", Questions: bank, Demo: demoBank}, http.StatusOK)
+	page := 1
+	if values, ok := r.URL.Query()["page"]; ok {
+		if len(values) != 1 {
+			invalidCatalogPage(w, r)
+			return
+		}
+		parsed, err := strconv.Atoi(values[0])
+		if err != nil || parsed < 1 {
+			invalidCatalogPage(w, r)
+			return
+		}
+		page = parsed
+	}
+	totalPages := (len(bank) + 9) / 10
+	if totalPages == 0 {
+		totalPages = 1
+	}
+	if page > totalPages {
+		invalidCatalogPage(w, r)
+		return
+	}
+	start := (page - 1) * 10
+	end := min(start+10, len(bank))
+	render(w, r, PageView{Title: "Все вопросы", Tab: "questions", Questions: bank[start:end], Demo: demoBank, CurrentPage: page, TotalPages: totalPages}, http.StatusOK)
+}
+
+func invalidCatalogPage(w http.ResponseWriter, r *http.Request) {
+	render(w, r, PageView{Title: "Не найдено", Tab: "questions", Error: "Страница каталога не найдена."}, http.StatusNotFound)
+}
+
+func pageLinkClass(page, currentPage, totalPages int) string {
+	if page != 1 && page != totalPages && (page < currentPage-1 || page > currentPage+1) {
+		return "page-number compact-hidden"
+	}
+	return "page-number"
 }
 
 func createAttempt(w http.ResponseWriter, r *http.Request) {
