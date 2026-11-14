@@ -28,7 +28,7 @@ func Run() {
 	http.HandleFunc("POST /exams", createAttempt)
 	http.HandleFunc("GET /exams/{id}", showAttempt)
 	http.HandleFunc("POST /exams/{id}/finish", finishAttempt)
-	addr := os.Getenv("ADDR")
+	addr := os.Getenv("PORT")
 	if addr == "" {
 		addr = ":8080"
 	}
