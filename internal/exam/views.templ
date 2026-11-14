@@ -1,0 +1,151 @@
+package exam
+
+import "fmt"
+
+type PageView struct {
+	Title string
+	Tab string
+	Questions []Question
+	Attempt *Attempt
+	Blocks []AttemptBlock
+	Error string
+	Demo bool
+}
+
+type AttemptBlock struct {
+	Topic string
+	Questions []QuestionCardData
+}
+
+type QuestionCardData struct {
+	AnchorID string
+	Number int
+	Question Question
+	AttemptID string
+	Finished bool
+}
+
+templ Page(view PageView) {
+	<!DOCTYPE html>
+	<html lang="ru">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>Вопросы по ТАУ</title>
+			<script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js" crossorigin="anonymous"></script>
+			<style>
+				:root { color-scheme: light; font-family: system-ui, sans-serif; color: #172033; background: #f4f6fa; }
+				body { margin: 0; padding-bottom: 6rem; }
+				nav { display: flex; gap: .5rem; } a { color: #234c9b; } .tabs { margin: 0 0 1.5rem; border-bottom: 1px solid #dfe4ee; padding-bottom: .5rem; }
+				.tabs a { text-decoration: none; padding: .65rem 1rem; border-radius: 8px; color: #526078; font-weight: 600; } .tabs a[aria-current="page"] { background: #234c9b; color: #fff; box-shadow: 0 2px 8px #234c9b33; }
+				main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; } h1 { margin-bottom: .35rem; } .eyebrow { color: #526078; margin: 0; }
+				.block { margin: 2rem 0; } .block > h2 { font-size: 1.35rem; border-bottom: 2px solid #dfe4ee; padding-bottom: .5rem; }
+				.card { background: white; border: 1px solid #dfe4ee; border-radius: 10px; padding: 1.25rem; margin: 1rem 0; scroll-margin-top: 1rem; }
+				button, .answer-toggle { font: inherit; padding: .65rem 1rem; border: 0; border-radius: 6px; color: white; background: #234c9b; cursor: pointer; font-weight: 650; text-decoration: none; } button:focus-visible, a:focus-visible, .answer-toggle:focus-visible { outline: 3px solid #91b7ff; outline-offset: 3px; }
+				.error { color: #9c2222; } .meta { color: #526078; font-size: .9rem; } .answer { border-radius: 8px; padding: 1rem; margin-top: 1rem; } .revealed { background: #e7f6eb; border: 1px solid #9bd3aa; color: #174b25; }
+				details.catalog-answer { margin-top: 1rem; } details.catalog-answer[open] summary { margin-bottom: 1rem; } details.catalog-answer summary { display: inline-block; list-style: none; } details.catalog-answer summary::-webkit-details-marker { display: none; } details[open] .catalog-show, details:not([open]) .catalog-hide { display: none; }
+				.finish-bar { position: fixed; z-index: 5; right: max(1rem, calc((100vw - 900px)/2)); bottom: calc(.75rem + env(safe-area-inset-bottom)); width: max-content; max-width: calc(100vw - 2rem); box-sizing: border-box; display: flex; padding: .4rem; background: #ffffffed; border: 1px solid #dfe4ee; border-radius: 10px; box-shadow: 0 4px 18px #17203324; }
+				@media (max-width: 600px) { main { margin-top: 1rem; } .tabs a { flex: 1; text-align: center; padding: .7rem .4rem; } .finish-bar { right: 1rem; bottom: calc(.5rem + env(safe-area-inset-bottom)); } }
+			</style>
+		</head>
+		<body>
+			@Main(view)
+			<script>
+				(() => {
+					const stateKey = node => `tau-exam:active:${node.dataset.attemptId}:${node.dataset.questionNumber}`;
+					const getState = key => { try { return sessionStorage.getItem(key); } catch { return null; } };
+					const setState = (key, value) => { try { sessionStorage.setItem(key, value); } catch {} };
+					const init = (root) => {
+						const nodes = [];
+						if (root.matches && root.matches("details[data-attempt-id]")) nodes.push(root);
+						nodes.push(...root.querySelectorAll("details[data-attempt-id]"));
+						for (const node of nodes) {
+							if (!node.dataset.attemptId) continue;
+							const saved = getState(stateKey(node));
+							if (saved !== null) node.open = saved === "1";
+						}
+					};
+					document.addEventListener("toggle", event => {
+						const node = event.target;
+						if (node instanceof HTMLDetailsElement && node.dataset.attemptId) setState(stateKey(node), node.open ? "1" : "0");
+					}, true);
+					init(document);
+					document.body.addEventListener("htmx:afterSwap", event => init(event.detail.target));
+				})();
+			</script>
+		</body>
+	</html>
+}
+
+templ Main(view PageView) {
+	<main id="content">
+		<nav class="tabs" aria-label="Основная навигация">
+			if view.Tab == "exam" {
+				<a href="/" hx-get="/" hx-target="#content" hx-swap="outerHTML" hx-push-url="true" aria-current="page">Экзамен</a>
+			} else {
+				<a href="/" hx-get="/" hx-target="#content" hx-swap="outerHTML" hx-push-url="true">Экзамен</a>
+			}
+			if view.Tab == "questions" {
+				<a href="/questions" hx-get="/questions" hx-target="#content" hx-swap="outerHTML" hx-push-url="true" aria-current="page">Все вопросы</a>
+			} else {
+				<a href="/questions" hx-get="/questions" hx-target="#content" hx-swap="outerHTML" hx-push-url="true">Все вопросы</a>
+			}
+		</nav>
+		<h1>Вопросы по ТАУ</h1>
+		if view.Error != "" {
+			<p class="error" role="alert">{ view.Error }</p>
+		}
+		if view.Attempt != nil {
+			if view.Attempt.Finished {
+				<p>Экзамен завершён. Ответы открыты для сверки.</p>
+			} else {
+				<p>В билете 30 вопросов из трёх тематических блоков. Открывайте ответы по одному или завершите экзамен, чтобы увидеть остальные.</p>
+			}
+			if !view.Attempt.Finished {
+				<div class="finish-bar"><form method="post" action={ templ.URL("/exams/" + view.Attempt.ID + "/finish") }><button type="submit">Завершить экзамен</button></form></div>
+			}
+			for _, block := range view.Blocks {
+				<section class="block">
+					<h2>{ block.Topic }</h2>
+					for _, q := range block.Questions {
+						@QuestionCard(q)
+					}
+				</section>
+			}
+		} else if view.Tab == "questions" {
+			if view.Demo {
+				<p>Демонстрационный банк учебных вопросов.</p>
+			} else {
+				<p>В каталоге можно раскрывать и скрывать ответы.</p>
+			}
+			for _, q := range view.Questions {
+				@QuestionCard(catalogCard(q))
+			}
+		} else {
+			<section class="card"><p>Создайте билет из 30 случайных вопросов: по 10 из каждого тематического блока.</p><form method="post" action="/exams"><button type="submit">Начать экзамен</button></form></section>
+		}
+	</main>
+}
+
+templ QuestionCard(q QuestionCardData) {
+	<article class="card" id={ q.AnchorID }>
+		if q.Number > 0 {
+			<h3>{ fmt.Sprintf("%d. %s", q.Number, q.Question.Text) }</h3>
+		} else {
+			<h3>{ q.Question.Text }</h3>
+		}
+		<p class="meta">{ q.Question.Topic } · { q.Question.Difficulty }</p>
+		if q.Finished {
+			@AnswerBlock(q.Question.Answer)
+		} else {
+			<details class="catalog-answer" data-attempt-id={ q.AttemptID } data-question-number={ fmt.Sprint(q.Number) }>
+				<summary class="answer-toggle"><span class="catalog-show">Показать ответ</span><span class="catalog-hide">Скрыть ответ</span></summary>
+				@AnswerBlock(q.Question.Answer)
+			</details>
+		}
+	</article>
+}
+
+templ AnswerBlock(answer string) {
+	<div class="answer revealed"><strong>Правильный ответ</strong><p>{ answer }</p></div>
+}

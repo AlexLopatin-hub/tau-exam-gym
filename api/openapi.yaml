@@ -1,0 +1,117 @@
+openapi: 3.0.3
+info:
+  title: Вопросы по ТАУ
+  version: 1.0.0
+  description: >
+    HTTP-контракт браузерного интерфейса. Создание и завершение попытки
+    не требуют тела запроса. После редиректа браузер запрашивает страницу методом GET.
+security: []
+paths:
+  /:
+    get:
+      operationId: examHome
+      summary: Открыть вкладку «Экзамен»
+      parameters:
+        - $ref: "#/components/parameters/HxRequest"
+      responses:
+        "200":
+          description: Страница с действием для создания попытки.
+          content:
+            text/html:
+              schema:
+                type: string
+  /questions:
+    get:
+      operationId: listQuestions
+      summary: Открыть вкладку «Все вопросы»
+      parameters:
+        - $ref: "#/components/parameters/HxRequest"
+      responses:
+        "200":
+          description: Карточки всего банка с формулировками, блоками и сложностью. Ответы изначально свёрнуты, каждый можно открывать и скрывать отдельно.
+          content:
+            text/html:
+              schema:
+                type: string
+  /exams:
+    post:
+      operationId: startExam
+      summary: Создать тренировочную попытку
+      description: Случайная выборка без повторений, по десять вопросов из каждого из трёх блоков.
+      responses:
+        "303":
+          $ref: "#/components/responses/SeeExam"
+        "503":
+          description: В одном или нескольких блоках недостаточно вопросов. Попытка не создана.
+          content:
+            text/html:
+              schema:
+                type: string
+  /exams/{id}:
+    parameters:
+      - $ref: "#/components/parameters/ExamId"
+    get:
+      operationId: showExam
+      summary: Открыть билет или посмотреть правильные ответы
+      parameters:
+        - $ref: "#/components/parameters/HxRequest"
+      responses:
+        "200":
+          description: >
+            Вопросы разделены на три тематических блока и отсортированы
+            по возрастанию сложности внутри каждого блока. В активной попытке
+            ответы включены в HTML и изначально свёрнуты. Браузер переключает их локально.
+            Завершённая попытка показывает все ответы постоянно, без элементов
+            сворачивания. Состав и порядок билета сохраняются.
+          content:
+            text/html:
+              schema:
+                type: string
+        "404":
+          $ref: "#/components/responses/ExamNotFound"
+  /exams/{id}/finish:
+    parameters:
+      - $ref: "#/components/parameters/ExamId"
+    post:
+      operationId: finishExam
+      summary: Завершить попытку и перейти к ответам
+      description: Открывает полный ключ ответов. Повторный запрос возвращает тот же редирект на завершённый билет.
+      responses:
+        "303":
+          $ref: "#/components/responses/SeeExam"
+        "404":
+          $ref: "#/components/responses/ExamNotFound"
+components:
+  parameters:
+    HxRequest:
+      name: HX-Request
+      in: header
+      required: false
+      description: Значение true запрашивает HTML-фрагмент для обновляемой части страницы.
+      schema:
+        type: boolean
+        default: false
+    ExamId:
+      name: id
+      in: path
+      required: true
+      description: Непрозрачный идентификатор из адреса созданной попытки.
+      schema:
+        type: string
+        minLength: 1
+  responses:
+    SeeExam:
+      description: Перейти методом GET к созданной или завершённой попытке.
+      headers:
+        Location:
+          required: true
+          description: Адрес страницы попытки.
+          schema:
+            type: string
+            example: /exams/a1b2c3
+    ExamNotFound:
+      description: Попытка с таким идентификатором не найдена.
+      content:
+        text/html:
+          schema:
+            type: string
