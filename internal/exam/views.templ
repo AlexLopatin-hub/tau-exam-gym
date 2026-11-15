@@ -7,6 +7,7 @@ type PageView struct {
 	Tab string
 	Questions []Question
 	Attempt *Attempt
+	ArchivedID string
 	Blocks []AttemptBlock
 	CurrentPage int
 	TotalPages int
@@ -25,6 +26,7 @@ type QuestionCardData struct {
 	Question Question
 	AttemptID string
 	Finished bool
+	UserAnswer string
 }
 
 type PageLink struct {
@@ -66,6 +68,9 @@ templ Page(view PageView) {
 				.block > h2 { margin-bottom: .9rem; border-bottom: 1px solid #dfd8cc; padding-bottom: .55rem; font-size: 1.2rem; font-weight: 650; letter-spacing: -.015em; }
 				.card { margin: .85rem 0; border: 1px solid #e5dfd4; border-radius: 11px; padding: 1.1rem 1.2rem; background: #fffdf8; box-shadow: 0 1px 2px #332b1b0a; scroll-margin-top: 1rem; }
 				.start-card { margin-top: 1.4rem; }
+				.exam-history { margin-top: 2.5rem; border-top: 1px solid #dfd8cc; }
+				.exam-history ul { padding-left: 1.4rem; }
+				.exam-history li { margin: .65rem 0; }
 				.start-card p { margin: 0 0 1rem; color: #5f5b52; line-height: 1.55; }
 				button { padding: .63rem .95rem; border: 0; border-radius: 7px; background: #92502f; color: #fffdf8; cursor: pointer; font: inherit; font-size: .94rem; font-weight: 650; transition: background-color .15s, box-shadow .15s; }
 				button:hover { background: #783e24; }
@@ -74,6 +79,9 @@ templ Page(view PageView) {
 				.meta { margin: 0; color: #78746a; font-size: .84rem; }
 				.answer { margin-top: 1rem; border-radius: 8px; padding: 1rem 1.1rem; line-height: 1.6; }
 				.answer p { margin: .35rem 0 0; }
+				.user-answer { margin-top: 1rem; display: block; }
+				.user-answer textarea { display: block; margin-top: .4rem; width: 100%; box-sizing: border-box; resize: vertical; padding: .6rem; border: 1px solid #bcb4a6; border-radius: 6px; font: inherit; }
+				.user-answer p { margin: .35rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 				.revealed { border: 1px solid #DEC2A9; background: #FAEBDD; color: #503523; }
 				details.catalog-answer { margin-top: 1rem; }
 				details.catalog-answer[open] summary { margin-bottom: 1rem; }
@@ -121,6 +129,94 @@ templ Page(view PageView) {
 			@Main(view)
 			<script>
 				(() => {
+					const prefix = "tau-exam:completed:v1:";
+					const dateLabel = new Intl.DateTimeFormat("ru-RU", {dateStyle: "long", timeStyle: "medium"});
+					function readAttempt(id) {
+						try {
+							const a = JSON.parse(localStorage.getItem(prefix + id));
+							if (a?.ID === id && Number.isFinite(Date.parse(a.FinishedAt)) && Array.isArray(a.Questions) &&
+								a.Questions.every(q => ["id", "topic", "difficulty", "text", "answer"].every(key => typeof q[key] === "string"))) return a;
+						} catch {}
+						return null;
+					}
+					function showHistory(list) {
+						const status = document.getElementById("history-status");
+						list.replaceChildren();
+						try {
+							const attempts = Object.keys(localStorage).filter(key => key.startsWith(prefix))
+								.map(key => readAttempt(key.slice(prefix.length))).filter(Boolean)
+								.sort((a, b) => Date.parse(b.FinishedAt) - Date.parse(a.FinishedAt));
+							status.hidden = attempts.length > 0;
+							for (const a of attempts) {
+								const link = document.createElement("a");
+								link.href = "/?attempt=" + encodeURIComponent(a.ID);
+								link.textContent = "Экзамен · " + dateLabel.format(new Date(a.FinishedAt));
+								const item = document.createElement("li");
+								item.append(link);
+								list.append(item);
+							}
+						} catch {
+							status.hidden = false;
+							status.textContent = "История экзаменов недоступна в этом браузере.";
+						}
+					}
+					function showArchived(root) {
+						const a = readAttempt(root.dataset.id);
+						if (!a) {
+							root.textContent = "Эта попытка не найдена в истории браузера.";
+							return;
+						}
+						const date = document.createElement("p");
+						date.textContent = dateLabel.format(new Date(a.FinishedAt));
+						root.replaceChildren(date);
+						const template = document.getElementById("archived-card");
+						let section, topic;
+						a.Questions.forEach((q, index) => {
+							if (topic !== q.topic) {
+								topic = q.topic;
+								section = document.createElement("section");
+								section.className = "block";
+								const heading = document.createElement("h2");
+								heading.textContent = topic;
+								section.append(heading);
+								root.append(section);
+							}
+							const card = template.content.firstElementChild.cloneNode(true);
+							card.id = "question-" + (index + 1);
+							card.querySelector("h3").textContent = (index + 1) + ". " + q.text;
+							card.querySelector(".meta").textContent = q.topic + " · " + q.difficulty;
+							card.querySelector(".revealed p").textContent = q.answer;
+							if (a.UserAnswers && Object.hasOwn(a.UserAnswers, q.id)) card.querySelector(".user-answer p").textContent = a.UserAnswers[q.id];
+							section.append(card);
+						});
+					}
+					function loadArchive() {
+						const completed = document.getElementById("completed-attempt");
+						if (completed) {
+							try {
+								const a = JSON.parse(completed.textContent);
+								localStorage.setItem(prefix + a.ID, completed.textContent);
+							} catch {
+								document.getElementById("archive-status").textContent = "Не удалось сохранить экзамен в истории этого браузера.";
+							}
+						}
+						const list = document.getElementById("exam-history");
+						if (list) showHistory(list);
+						const archived = document.getElementById("archived-exam");
+						if (archived) showArchived(archived);
+					}
+					loadArchive();
+					document.body.addEventListener("htmx:afterSwap", loadArchive);
+					document.body.addEventListener("htmx:historyRestore", loadArchive);
+					window.addEventListener("pageshow", event => { if (event.persisted) loadArchive(); });
+					window.addEventListener("storage", () => {
+						const list = document.getElementById("exam-history");
+						if (list) showHistory(list);
+					});
+				})();
+			</script>
+			<script>
+				(() => {
 					const stateKey = node => `tau-exam:active:${node.dataset.attemptId}:${node.dataset.questionNumber}`;
 					const getState = key => { try { return sessionStorage.getItem(key); } catch { return null; } };
 					const setState = (key, value) => { try { sessionStorage.setItem(key, value); } catch {} };
@@ -149,6 +245,19 @@ templ Page(view PageView) {
 						if (root.matches && root.matches("details[data-attempt-id]")) restoreAnswer(root);
 						root.querySelectorAll("details[data-attempt-id]").forEach(restoreAnswer);
 					};
+					const restoreDrafts = () => {
+						document.querySelectorAll("textarea[data-attempt-id]").forEach(field => {
+							const saved = getState(stateKey(field) + ":draft");
+							if (saved !== null) field.value = saved;
+						});
+					};
+					document.addEventListener("input", event => {
+						const field = event.target;
+						if (field.matches("textarea[data-attempt-id]")) setState(stateKey(field) + ":draft", field.value);
+					});
+					restoreDrafts();
+					document.body.addEventListener("htmx:afterSwap", restoreDrafts);
+					document.body.addEventListener("htmx:historyRestore", restoreDrafts);
 					document.addEventListener("toggle", event => {
 						const node = event.target;
 						if (node instanceof HTMLDetailsElement && node.dataset.attemptId) setState(stateKey(node), node.open ? "1" : "0");
@@ -190,11 +299,13 @@ templ Main(view PageView) {
 		if view.Attempt != nil {
 			if view.Attempt.Finished {
 				<p>Экзамен завершён. Ответы открыты для сверки.</p>
+				@templ.JSONScript("completed-attempt", view.Attempt)
+				<p id="archive-status" class="error" role="status"></p>
 			} else {
-				<p>В билете 30 вопросов из трёх тематических блоков. Открывайте ответы по одному или завершите экзамен, чтобы увидеть остальные.</p>
+				<p>В билете 30 вопросов из трёх тематических блоков. Свой ответ можно изменить до завершения экзамена. Для сверки откройте правильный ответ под вопросом или весь ключ в конце.</p>
 			}
 			if !view.Attempt.Finished {
-				<div class="finish-bar"><form method="post" action={ templ.URL("/exams/" + view.Attempt.ID + "/finish") }><button type="submit">Завершить экзамен</button></form></div>
+				<div class="finish-bar"><form id="finish-exam" method="post" action={ templ.URL("/exams/" + view.Attempt.ID + "/finish") }><button type="submit">Завершить экзамен</button></form></div>
 			}
 			for _, block := range view.Blocks {
 				<section class="block">
@@ -204,6 +315,11 @@ templ Main(view PageView) {
 					}
 				</section>
 			}
+		} else if view.ArchivedID != "" {
+			<h2>Пройденный экзамен</h2>
+			<div id="archived-exam" data-id={ view.ArchivedID }></div>
+			<template id="archived-card">@QuestionCard(QuestionCardData{Finished: true})</template>
+			<a href="/">К списку экзаменов</a>
 		} else if view.Tab == "questions" {
 			if view.Demo {
 				<p>Демонстрационный банк учебных вопросов.</p>
@@ -244,6 +360,13 @@ templ Main(view PageView) {
 			}
 		} else {
 			<section class="card start-card"><p>Тренировочный билет: 30 вопросов, по 10 из каждого тематического блока.</p><form method="post" action="/exams"><button type="submit">Начать экзамен</button></form></section>
+			if view.Tab == "exam" {
+				<section class="exam-history">
+					<h2>Пройденные экзамены</h2>
+					<p id="history-status" class="empty-state">В этом браузере пока нет пройденных экзаменов.</p>
+					<ul id="exam-history"></ul>
+				</section>
+			}
 		}
 	</main>
 }
@@ -257,8 +380,21 @@ templ QuestionCard(q QuestionCardData) {
 		}
 		<p class="meta">{ q.Question.Topic } · { q.Question.Difficulty }</p>
 		if q.Finished {
+			<div class="user-answer">
+				<strong>Ваш ответ</strong>
+				if q.UserAnswer == "" {
+					<p>Ответ не указан.</p>
+				} else {
+					<p>{ q.UserAnswer }</p>
+				}
+			</div>
 			@AnswerBlock(q.Question.Answer)
 		} else {
+			if q.AttemptID != "" {
+				<label class="user-answer">Ваш ответ<span class="visually-hidden">{ fmt.Sprintf(" на вопрос %d", q.Number) }</span>
+					<textarea rows="3" name={ q.Question.ID } form="finish-exam" data-attempt-id={ q.AttemptID } data-question-number={ fmt.Sprint(q.Number) }></textarea>
+				</label>
+			}
 			<details class="catalog-answer" data-attempt-id={ q.AttemptID } data-question-number={ fmt.Sprint(q.Number) }>
 				<summary class="answer-toggle"><span class="catalog-show">Показать ответ</span><span class="catalog-hide">Скрыть ответ</span></summary>
 				@AnswerBlock(q.Question.Answer)

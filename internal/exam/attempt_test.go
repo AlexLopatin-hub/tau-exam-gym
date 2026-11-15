@@ -36,10 +36,10 @@ func TestDemoBankAndStableAttempt(t *testing.T) {
 	if !ok || stored.ID != a.ID || stored.Questions[0].ID != a.Questions[0].ID {
 		t.Fatal("attempt was not stable")
 	}
-	if _, ok := store.Finish(a.ID); !ok {
+	if _, ok := store.Finish(a.ID, nil); !ok {
 		t.Fatal("finish failed")
 	}
-	finished, ok := store.Finish(a.ID)
+	finished, ok := store.Finish(a.ID, nil)
 	if !ok || !finished.Finished {
 		t.Fatal("finish not idempotent")
 	}

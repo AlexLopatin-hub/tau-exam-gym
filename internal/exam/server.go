@@ -60,7 +60,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	render(w, r, PageView{Title: "Экзамен", Tab: "exam"}, http.StatusOK)
+	render(w, r, PageView{Title: "Экзамен", Tab: "exam", ArchivedID: r.URL.Query().Get("attempt")}, http.StatusOK)
 }
 
 func questions(w http.ResponseWriter, r *http.Request) {
@@ -128,7 +128,11 @@ func showAttempt(w http.ResponseWriter, r *http.Request) {
 }
 
 func finishAttempt(w http.ResponseWriter, r *http.Request) {
-	_, ok := attempts.Finish(r.PathValue("id"))
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Не удалось прочитать ответы. Экзамен не завершён.", http.StatusBadRequest)
+		return
+	}
+	_, ok := attempts.Finish(r.PathValue("id"), r.PostForm)
 	if !ok {
 		render(w, r, PageView{Title: "Не найдено", Error: "Попытка не найдена."}, http.StatusNotFound)
 		return
@@ -144,6 +148,7 @@ func groupQuestions(a *Attempt) []AttemptBlock {
 		}
 		blocks[len(blocks)-1].Questions = append(blocks[len(blocks)-1].Questions, QuestionCardData{
 			AnchorID: fmt.Sprintf("question-%d", i+1), Number: i + 1, Question: question, AttemptID: a.ID, Finished: a.Finished,
+			UserAnswer: a.UserAnswers[question.ID],
 		})
 	}
 	return blocks

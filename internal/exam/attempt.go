@@ -4,7 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"maps"
 	"math/big"
+	"net/url"
 	"sort"
 	"sync"
 	"time"
@@ -13,10 +15,12 @@ import (
 var ErrInsufficientQuestions = errors.New("each topic needs at least 10 questions")
 
 type Attempt struct {
-	ID        string
-	Questions []Question
-	Finished  bool
-	Created   time.Time
+	ID          string
+	Questions   []Question
+	UserAnswers map[string]string
+	Finished    bool
+	FinishedAt  time.Time
+	Created     time.Time
 }
 
 type AttemptStore struct {
@@ -84,20 +88,30 @@ func (s *AttemptStore) Get(id string) (*Attempt, bool) {
 	return copyAttempt(a), true
 }
 
-func (s *AttemptStore) Finish(id string) (*Attempt, bool) {
+func (s *AttemptStore) Finish(id string, answers url.Values) (*Attempt, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	a, ok := s.attempts[id]
-	if ok {
-		a.Finished = true
-		return copyAttempt(a), true
+	if !ok {
+		return nil, false
 	}
-	return nil, false
+	if !a.Finished {
+		a.UserAnswers = make(map[string]string)
+		for _, question := range a.Questions {
+			if answer := answers.Get(question.ID); answer != "" {
+				a.UserAnswers[question.ID] = answer
+			}
+		}
+		a.Finished = true
+		a.FinishedAt = time.Now()
+	}
+	return copyAttempt(a), true
 }
 
 func copyAttempt(a *Attempt) *Attempt {
 	copy := *a
 	copy.Questions = append([]Question(nil), a.Questions...)
+	copy.UserAnswers = maps.Clone(a.UserAnswers)
 	return &copy
 }
 
