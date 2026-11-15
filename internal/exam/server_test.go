@@ -142,6 +142,9 @@ func TestQuestionCatalogPagesTenInSourceOrder(t *testing.T) {
 			t.Fatalf("page 2 is missing %q", expected)
 		}
 	}
+	if !strings.Contains(second.Body.String(), `class="edge-link" aria-label="Назад" href="/questions?page=1"`) || !strings.Contains(second.Body.String(), `class="edge-link" aria-label="Далее" href="/questions?page=3"`) {
+		t.Fatal("intermediate page should render both edge links")
+	}
 	if strings.Index(second.Body.String(), `id="question-results"`) > strings.Index(second.Body.String(), `class="pagination"`) {
 		t.Fatal("paginator should follow the questions list")
 	}
@@ -181,11 +184,11 @@ func TestQuestionCatalogCanJumpFromFirstToFourthAndBack(t *testing.T) {
 	if !strings.Contains(first.Body.String(), `class="page-ellipsis" data-needed="true"`) {
 		t.Fatal("compact pagination must show an ellipsis when pages are skipped")
 	}
-	if !strings.Contains(first.Body.String(), `aria-label="Назад"><span class="edge-label">Назад</span>`) || !strings.Contains(first.Body.String(), `aria-label="Далее" href="/questions?page=2"`) {
-		t.Fatal("both edge controls must remain visible in compact mode")
+	if strings.Contains(first.Body.String(), `aria-label="Назад"`) || !strings.Contains(first.Body.String(), `aria-label="Далее" href="/questions?page=2"`) {
+		t.Fatal("first page should omit Назад and retain Далее")
 	}
-	if !strings.Contains(first.Body.String(), `class="page-edge" aria-disabled="true" aria-label="Назад"`) || strings.Contains(first.Body.String(), `href="/questions?page=1"`) {
-		t.Fatal("first-page previous control must be disabled without a dead link")
+	if strings.Contains(first.Body.String(), `href="/questions?page=1"`) {
+		t.Fatal("first page should not include a dead link to itself")
 	}
 	if !strings.Contains(first.Body.String(), `class="edge-link" aria-label="Далее" href="/questions?page=2"`) {
 		t.Fatal("next edge link is missing")
@@ -202,8 +205,8 @@ func TestQuestionCatalogCanJumpFromFirstToFourthAndBack(t *testing.T) {
 	if strings.Contains(fourth.Body.String(), `href="/questions?page=4"`) {
 		t.Fatal("current page should not link to itself")
 	}
-	if !strings.Contains(fourth.Body.String(), `class="page-edge" aria-disabled="true" aria-label="Далее"`) {
-		t.Fatal("last-page next control must be disabled without a dead link")
+	if strings.Contains(fourth.Body.String(), `aria-label="Далее"`) {
+		t.Fatal("last page should omit Далее")
 	}
 }
 

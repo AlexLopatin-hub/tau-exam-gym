@@ -83,14 +83,13 @@ templ Page(view PageView) {
 				.answer-toggle:hover { border-color: #d2c6b5; background: #e9e3d8; color: #3c382f; }
 				details[open] .catalog-show, details:not([open]) .catalog-hide { display: none; }
 				.pagination { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: .35rem; width: 100%; max-width: 100%; overflow: hidden; white-space: nowrap; }
-				.pagination a, .pagination .page-number, .pagination .page-edge { display: inline-flex; flex: 0 0 auto; min-width: 2.15rem; height: 2.15rem; box-sizing: border-box; align-items: center; justify-content: center; padding: .25rem .45rem; border: 1px solid #e3dbce; border-radius: 6px; color: #665f54; background: #fffdf8; font-size: .9rem; font-weight: 600; text-decoration: none; }
+				.pagination a, .pagination .page-number { display: inline-flex; flex: 0 0 auto; min-width: 2.15rem; height: 2.15rem; box-sizing: border-box; align-items: center; justify-content: center; padding: .25rem .45rem; border: 1px solid #e3dbce; border-radius: 6px; color: #665f54; background: #fffdf8; font-size: .9rem; font-weight: 600; text-decoration: none; }
 				.pagination a:hover { background: #eae5da; color: #292923; }
 				.pagination .compact-hidden { display: none; }
 				.pagination.expanded .compact-hidden { display: inline-flex; }
 				.pagination .page-ellipsis { display: none; }
 				.pagination:not(.expanded) .page-ellipsis[data-needed="true"] { display: inline-flex; align-items: center; justify-content: center; min-width: 1.25rem; color: #78746a; }
 				.pagination .page-number[aria-current="page"] { border-color: #92502f; background: #92502f; color: #fffdf8; }
-				.pagination .page-edge[aria-disabled="true"] { border-color: transparent; background: transparent; color: #aaa49a; }
 				.pagination .edge-icon { display: none; }
 				.pagination.compact-icons .edge-label { display: none; }
 				.pagination.compact-icons .edge-icon { display: inline; }
@@ -107,13 +106,13 @@ templ Page(view PageView) {
 				}
 				@media (max-width: 480px) {
 					.pagination { gap: .12rem; }
-					.pagination a, .pagination .page-number, .pagination .page-edge { min-width: 1.8rem; height: 2rem; padding: .2rem .25rem; font-size: .86rem; }
+					.pagination a, .pagination .page-number { min-width: 1.8rem; height: 2rem; padding: .2rem .25rem; font-size: .86rem; }
 					.pagination:not(.show-edge-labels) .edge-label { display: none; }
 					.pagination:not(.show-edge-labels) .edge-icon { display: inline; }
 				}
 				@media (max-width: 350px) {
 					.pagination { gap: .08rem; }
-					.pagination a, .pagination .page-number, .pagination .page-edge { min-width: 1.45rem; height: 1.75rem; padding: .15rem .16rem; font-size: .8rem; }
+					.pagination a, .pagination .page-number { min-width: 1.45rem; height: 1.75rem; padding: .15rem .16rem; font-size: .8rem; }
 					.pagination:not(.expanded) .page-ellipsis[data-needed="true"] { min-width: .55rem; }
 				}
 			</style>
@@ -223,8 +222,6 @@ templ Main(view PageView) {
 				<nav class="pagination" aria-label="Страницы каталога">
 					if view.CurrentPage > 1 {
 						@PageNavLink(PageLink{Page: view.CurrentPage-1, Label: "Назад", AriaLabel: "Назад", Class: "edge-link", Icon: "‹"})
-					} else {
-						<span class="page-edge" aria-disabled="true" aria-label="Назад"><span class="edge-label">Назад</span><span class="edge-icon" aria-hidden="true">‹</span></span>
 					}
 					for page := 1; page <= view.TotalPages; page++ {
 						if page == view.CurrentPage-1 && page > 2 {
@@ -241,8 +238,6 @@ templ Main(view PageView) {
 					}
 					if view.CurrentPage < view.TotalPages {
 						@PageNavLink(PageLink{Page: view.CurrentPage+1, Label: "Далее", AriaLabel: "Далее", Class: "edge-link", Icon: "›"})
-					} else {
-						<span class="page-edge" aria-disabled="true" aria-label="Далее"><span class="edge-label">Далее</span><span class="edge-icon" aria-hidden="true">›</span></span>
 					}
 					<span class="visually-hidden">Страница { fmt.Sprint(view.CurrentPage) } из { fmt.Sprint(view.TotalPages) }</span>
 				</nav>
