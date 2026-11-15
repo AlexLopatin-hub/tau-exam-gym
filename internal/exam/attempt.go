@@ -15,7 +15,7 @@ import (
 var ErrInsufficientQuestions = errors.New("each topic needs at least 10 questions")
 var ErrStoreFull = errors.New("attempt store is full")
 
-const maxAttempts = 256
+const maxAttempts = 2_000
 const attemptLifetime = 24 * time.Hour
 
 type Attempt struct {
