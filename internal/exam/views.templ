@@ -279,7 +279,7 @@ templ Page(view PageView) {
 }
 
 templ Main(view PageView) {
-	<main id="content">
+	<main id="content" hx-history-elt>
 		<nav class="tabs" aria-label="Основная навигация">
 			if view.Tab == "exam" {
 				<a href="/" hx-get="/" hx-target="#content" hx-swap="outerHTML" hx-push-url="true" aria-current="page">Экзамен</a>
