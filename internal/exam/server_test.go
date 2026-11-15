@@ -29,6 +29,7 @@ func TestPageUsesSingleExactProductHeading(t *testing.T) {
 }
 
 func TestCatalogUsesCommonLocalDisclosureCard(t *testing.T) {
+	t.Setenv("QUESTION_BANK", "")
 	bank, err := loadQuestions()
 	if err != nil {
 		t.Fatal(err)
@@ -52,6 +53,7 @@ func TestCatalogUsesCommonLocalDisclosureCard(t *testing.T) {
 }
 
 func TestActiveAttemptAnswersArePreloadedAndStoredLocally(t *testing.T) {
+	t.Setenv("QUESTION_BANK", "")
 	bank, err := loadQuestions()
 	if err != nil {
 		t.Fatal(err)
@@ -79,6 +81,7 @@ func TestActiveAttemptAnswersArePreloadedAndStoredLocally(t *testing.T) {
 }
 
 func TestFinishSubmitsAndFreezesAnswers(t *testing.T) {
+	t.Setenv("QUESTION_BANK", "")
 	questions, err := loadQuestions()
 	if err != nil {
 		t.Fatal(err)
@@ -96,6 +99,14 @@ func TestFinishSubmitsAndFreezesAnswers(t *testing.T) {
 		return w.Body.String()
 	}
 	active := show()
+	oversized := httptest.NewRequest(http.MethodPost, "/exams/"+a.ID+"/finish", strings.NewReader("q="+strings.Repeat("x", maxAnswerFormBytes)))
+	oversized.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	oversized.SetPathValue("id", a.ID)
+	rejected := httptest.NewRecorder()
+	finishAttempt(rejected, oversized)
+	if stored, ok := attempts.Get(a.ID); rejected.Code != http.StatusRequestEntityTooLarge || !ok || stored.Finished {
+		t.Fatal("oversized submission must leave the attempt open for retry")
+	}
 	for _, q := range a.Questions {
 		if !strings.Contains(active, `name="`+q.ID+`" form="finish-exam"`) {
 			t.Fatalf("missing answer field for %s", q.ID)
@@ -337,6 +348,11 @@ func TestQuestionCatalogHistoryRestoreReturnsFullPage(t *testing.T) {
 		t.Fatal("HTMX history restore should return a full document")
 	}
 	assertQuestionIDs(t, recorder.Body.String(), 11, 15)
+	_, content, marked := strings.Cut(recorder.Body.String(), `<main id="content" hx-history-elt>`)
+	main, _, closed := strings.Cut(content, "</main>")
+	if !marked || !closed || strings.Contains(main, "<script") {
+		t.Fatal("history should restore only main content, with initialization scripts outside it")
+	}
 }
 
 func withQuestionBank(t *testing.T, questions []Question) {

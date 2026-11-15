@@ -1,8 +1,13 @@
 package exam
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+	"time"
+)
 
 func TestDemoBankAndStableAttempt(t *testing.T) {
+	t.Setenv("QUESTION_BANK", "")
 	bank, err := loadQuestions()
 	if err != nil {
 		t.Fatal(err)
@@ -52,11 +57,7 @@ func TestCreateRejectsShortTopic(t *testing.T) {
 }
 
 func TestAttemptQuestionsAreGroupedAndDifficultySorted(t *testing.T) {
-	bank, err := loadQuestions()
-	if err != nil {
-		t.Fatal(err)
-	}
-	a, err := NewAttemptStore().Create(bank)
+	a, err := NewAttemptStore().Create(demoQuestions)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,5 +75,29 @@ func TestAttemptQuestionsAreGroupedAndDifficultySorted(t *testing.T) {
 			t.Fatalf("difficulty order changed in %q", q.Topic)
 		}
 		lastRank = rank
+	}
+}
+
+func TestFullStoreReclaimsOnlyExpiredAttempts(t *testing.T) {
+	store := NewAttemptStore()
+	for i := range maxAttempts {
+		id := fmt.Sprint(i)
+		store.attempts[id] = &Attempt{ID: id, Created: time.Now()}
+	}
+	if _, err := store.Create(demoQuestions); err != ErrStoreFull {
+		t.Fatalf("full store: got %v", err)
+	}
+	store.attempts["0"].Created = time.Now().Add(-attemptLifetime)
+	if _, ok := store.Get("0"); ok {
+		t.Fatal("expired attempt is visible")
+	}
+	if _, ok := store.Finish("0", nil); ok {
+		t.Fatal("expired attempt can be finished")
+	}
+	if _, err := store.Create(demoQuestions); err != nil {
+		t.Fatal(err)
+	}
+	if len(store.attempts) != maxAttempts || store.attempts["0"] != nil {
+		t.Fatal("new attempt must take the expired attempt's place")
 	}
 }

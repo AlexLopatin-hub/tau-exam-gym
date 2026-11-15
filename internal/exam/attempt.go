@@ -13,6 +13,10 @@ import (
 )
 
 var ErrInsufficientQuestions = errors.New("each topic needs at least 10 questions")
+var ErrStoreFull = errors.New("attempt store is full")
+
+const maxAttempts = 256
+const attemptLifetime = 24 * time.Hour
 
 type Attempt struct {
 	ID          string
@@ -71,18 +75,33 @@ func (s *AttemptStore) Create(bank []Question) (*Attempt, error) {
 	if _, err := rand.Read(idBytes); err != nil {
 		return nil, err
 	}
-	a := &Attempt{ID: hex.EncodeToString(idBytes), Questions: selected, Created: time.Now()}
 	s.mu.Lock()
+	defer s.mu.Unlock()
+	now := time.Now()
+	if len(s.attempts) >= maxAttempts {
+		for id, attempt := range s.attempts {
+			if attempt.expired(now) {
+				delete(s.attempts, id)
+			}
+		}
+		if len(s.attempts) >= maxAttempts {
+			return nil, ErrStoreFull
+		}
+	}
+	a := &Attempt{ID: hex.EncodeToString(idBytes), Questions: selected, Created: now}
 	s.attempts[a.ID] = a
-	s.mu.Unlock()
 	return copyAttempt(a), nil
+}
+
+func (a *Attempt) expired(now time.Time) bool {
+	return now.Sub(a.Created) >= attemptLifetime
 }
 
 func (s *AttemptStore) Get(id string) (*Attempt, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	a, ok := s.attempts[id]
-	if !ok {
+	if !ok || a.expired(time.Now()) {
 		return nil, false
 	}
 	return copyAttempt(a), true
@@ -92,7 +111,7 @@ func (s *AttemptStore) Finish(id string, answers url.Values) (*Attempt, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	a, ok := s.attempts[id]
-	if !ok {
+	if !ok || a.expired(time.Now()) {
 		return nil, false
 	}
 	if !a.Finished {

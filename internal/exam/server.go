@@ -1,12 +1,14 @@
 package exam
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/a-h/templ"
 )
@@ -32,7 +34,14 @@ func Run() {
 	if port == "" {
 		port = "8080"
 	}
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	server := &http.Server{
+		Addr:              ":" + port,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       30 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+	log.Fatal(server.ListenAndServe())
 }
 
 func wantsFragment(r *http.Request) bool {
@@ -104,6 +113,10 @@ func pageLinkClass(page, currentPage, totalPages int) string {
 func createAttempt(w http.ResponseWriter, r *http.Request) {
 	a, err := attempts.Create(bank)
 	if err != nil {
+		if errors.Is(err, ErrStoreFull) {
+			render(w, r, PageView{Tab: "exam", Error: "Сейчас все места для попыток заняты. Попробуйте начать экзамен позже."}, http.StatusServiceUnavailable)
+			return
+		}
 		if err == ErrInsufficientQuestions {
 			render(w, r, PageView{Title: "Экзамен", Tab: "exam", Error: "В одном из блоков пока меньше 10 вопросов. Экзамен создать нельзя."}, http.StatusServiceUnavailable)
 			return
@@ -127,8 +140,16 @@ func showAttempt(w http.ResponseWriter, r *http.Request) {
 	render(w, r, PageView{Title: title, Tab: "exam", Attempt: a, Blocks: groupQuestions(a)}, http.StatusOK)
 }
 
+const maxAnswerFormBytes = 256 << 10
+
 func finishAttempt(w http.ResponseWriter, r *http.Request) {
+	r.Body = http.MaxBytesReader(w, r.Body, maxAnswerFormBytes)
 	if err := r.ParseForm(); err != nil {
+		var tooLarge *http.MaxBytesError
+		if errors.As(err, &tooLarge) {
+			http.Error(w, "Ответы слишком длинные. Сократите их и отправьте ещё раз. Экзамен не завершён.", http.StatusRequestEntityTooLarge)
+			return
+		}
 		http.Error(w, "Не удалось прочитать ответы. Экзамен не завершён.", http.StatusBadRequest)
 		return
 	}

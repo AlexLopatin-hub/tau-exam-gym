@@ -1,9 +1,13 @@
-run:
-	go mod tidy
+.PHONY: generate run build test
+
+generate:
 	go tool templ generate
+
+run: generate
 	go run ./...
 
-build:
-	go mod tidy
-	go tool templ generate
+build: generate
 	go build
+
+test: generate
+	go test ./...
