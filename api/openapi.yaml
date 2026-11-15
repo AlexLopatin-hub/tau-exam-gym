@@ -57,6 +57,8 @@ paths:
       summary: Создать тренировочную попытку
       description: Случайная выборка без повторений, по десять вопросов из каждого из трёх блоков.
       responses:
+        "403":
+          $ref: "#/components/responses/CrossOriginDenied"
         "303":
           $ref: "#/components/responses/SeeExam"
         "503":
@@ -107,6 +109,8 @@ paths:
       responses:
         "400":
           description: Не удалось прочитать форму с ответами.
+        "403":
+          $ref: "#/components/responses/CrossOriginDenied"
         "413":
           description: Размер закодированной формы превышает 256 КиБ. Попытка не завершена.
         "303":
@@ -132,6 +136,12 @@ components:
         type: string
         minLength: 1
   responses:
+    CrossOriginDenied:
+      description: Браузер отправил запрос с другого источника.
+      content:
+        text/plain:
+          schema:
+            type: string
     SeeExam:
       description: Перейти методом GET к созданной или завершённой попытке.
       headers:

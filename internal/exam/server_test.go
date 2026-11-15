@@ -28,6 +28,35 @@ func TestPageUsesSingleExactProductHeading(t *testing.T) {
 	}
 }
 
+func TestExamRoutesRejectCrossOriginChanges(t *testing.T) {
+	handler := routes()
+	for _, path := range []string{"/exams", "/exams/example/finish"} {
+		req := httptest.NewRequest(http.MethodPost, path, nil)
+		req.Header.Set("Sec-Fetch-Site", "cross-site")
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+		if w.Code != http.StatusForbidden {
+			t.Errorf("%s: status %d, want 403", path, w.Code)
+		}
+	}
+}
+
+func TestAttemptPagesDisableAutomaticCaching(t *testing.T) {
+	for _, view := range []PageView{
+		{Attempt: &Attempt{}}, {Attempt: &Attempt{Finished: true}}, {ArchivedID: "example"},
+	} {
+		for _, fragment := range []string{"false", "true"} {
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			req.Header.Set("HX-Request", fragment)
+			w := httptest.NewRecorder()
+			render(w, req, view, http.StatusOK)
+			if w.Header().Get("Cache-Control") != "no-store" || !strings.Contains(w.Body.String(), `hx-history="false"`) {
+				t.Fatal("attempt page may be stored in HTTP or htmx navigation cache")
+			}
+		}
+	}
+}
+
 func TestCatalogUsesCommonLocalDisclosureCard(t *testing.T) {
 	t.Setenv("QUESTION_BANK", "")
 	bank, err := loadQuestions()
