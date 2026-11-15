@@ -30,7 +30,7 @@ func Run() {
 	http.HandleFunc("POST /exams/{id}/finish", finishAttempt)
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = ":8080"
+		port = "8080"
 	}
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
