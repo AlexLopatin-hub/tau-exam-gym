@@ -25,16 +25,12 @@ func Run() {
 	}
 	demoBank = os.Getenv("QUESTION_BANK") == ""
 	log.Printf("loaded %d questions", len(bank))
-	http.HandleFunc("GET /", home)
-	http.HandleFunc("GET /questions", questions)
-	http.HandleFunc("POST /exams", createAttempt)
-	http.HandleFunc("GET /exams/{id}", showAttempt)
-	http.HandleFunc("POST /exams/{id}/finish", finishAttempt)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 	server := &http.Server{
+		Handler:           routes(),
 		Addr:              ":" + port,
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       30 * time.Second,
@@ -44,11 +40,28 @@ func Run() {
 	log.Fatal(server.ListenAndServe())
 }
 
+func routes() http.Handler {
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /", home)
+	mux.HandleFunc("GET /questions", questions)
+	mux.HandleFunc("POST /exams", createAttempt)
+	mux.HandleFunc("GET /exams/{id}", showAttempt)
+	mux.HandleFunc("POST /exams/{id}/finish", finishAttempt)
+	protection := http.NewCrossOriginProtection()
+	protection.SetDenyHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Изменять экзамен можно только со страницы сервиса.", http.StatusForbidden)
+	}))
+	return protection.Handler(mux)
+}
+
 func wantsFragment(r *http.Request) bool {
 	return strings.EqualFold(r.Header.Get("HX-Request"), "true")
 }
 
 func render(w http.ResponseWriter, r *http.Request, view PageView, status int) {
+	if view.Attempt != nil || view.ArchivedID != "" {
+		w.Header().Set("Cache-Control", "no-store")
+	}
 	component := templ.Component(Page(view))
 	if wantsFragment(r) && !strings.EqualFold(r.Header.Get("HX-History-Restore-Request"), "true") {
 		component = Main(view)
@@ -58,6 +71,7 @@ func render(w http.ResponseWriter, r *http.Request, view PageView, status int) {
 
 func renderComponent(w http.ResponseWriter, r *http.Request, component templ.Component, status int) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(status)
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("render page: %v", err)

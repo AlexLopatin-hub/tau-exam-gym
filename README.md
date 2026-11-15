@@ -31,4 +31,4 @@ $env:QUESTION_BANK = "D:\\data\\questions.json"
 go run .
 ```
 
-Шаблон использует htmx 2.0.4 с версионированного URL unpkg.
+Шаблон загружает htmx 2.0.11 с jsDelivr. Браузер проверяет SHA-384 файла перед выполнением.
