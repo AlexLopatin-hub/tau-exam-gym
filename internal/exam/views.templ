@@ -25,6 +25,7 @@ type QuestionCardData struct {
 	Question Question
 	AttemptID string
 	Finished bool
+	UserAnswer string
 }
 
 type PageLink struct {
@@ -74,6 +75,9 @@ templ Page(view PageView) {
 				.meta { margin: 0; color: #78746a; font-size: .84rem; }
 				.answer { margin-top: 1rem; border-radius: 8px; padding: 1rem 1.1rem; line-height: 1.6; }
 				.answer p { margin: .35rem 0 0; }
+				.user-answer { margin-top: 1rem; display: block; }
+				.user-answer textarea { display: block; margin-top: .4rem; width: 100%; box-sizing: border-box; resize: vertical; padding: .6rem; border: 1px solid #bcb4a6; border-radius: 6px; font: inherit; }
+				.user-answer p { margin: .35rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 				.revealed { border: 1px solid #DEC2A9; background: #FAEBDD; color: #503523; }
 				details.catalog-answer { margin-top: 1rem; }
 				details.catalog-answer[open] summary { margin-bottom: 1rem; }
@@ -149,6 +153,19 @@ templ Page(view PageView) {
 						if (root.matches && root.matches("details[data-attempt-id]")) restoreAnswer(root);
 						root.querySelectorAll("details[data-attempt-id]").forEach(restoreAnswer);
 					};
+					const restoreDrafts = () => {
+						document.querySelectorAll("textarea[data-attempt-id]").forEach(field => {
+							const saved = getState(stateKey(field) + ":draft");
+							if (saved !== null) field.value = saved;
+						});
+					};
+					document.addEventListener("input", event => {
+						const field = event.target;
+						if (field.matches("textarea[data-attempt-id]")) setState(stateKey(field) + ":draft", field.value);
+					});
+					restoreDrafts();
+					document.body.addEventListener("htmx:afterSwap", restoreDrafts);
+					document.body.addEventListener("htmx:historyRestore", restoreDrafts);
 					document.addEventListener("toggle", event => {
 						const node = event.target;
 						if (node instanceof HTMLDetailsElement && node.dataset.attemptId) setState(stateKey(node), node.open ? "1" : "0");
@@ -191,10 +208,10 @@ templ Main(view PageView) {
 			if view.Attempt.Finished {
 				<p>Экзамен завершён. Ответы открыты для сверки.</p>
 			} else {
-				<p>В билете 30 вопросов из трёх тематических блоков. Открывайте ответы по одному или завершите экзамен, чтобы увидеть остальные.</p>
+				<p>В билете 30 вопросов из трёх тематических блоков. Свой ответ можно изменить до завершения экзамена. Для сверки откройте правильный ответ под вопросом или весь ключ в конце.</p>
 			}
 			if !view.Attempt.Finished {
-				<div class="finish-bar"><form method="post" action={ templ.URL("/exams/" + view.Attempt.ID + "/finish") }><button type="submit">Завершить экзамен</button></form></div>
+				<div class="finish-bar"><form id="finish-exam" method="post" action={ templ.URL("/exams/" + view.Attempt.ID + "/finish") }><button type="submit">Завершить экзамен</button></form></div>
 			}
 			for _, block := range view.Blocks {
 				<section class="block">
@@ -257,8 +274,21 @@ templ QuestionCard(q QuestionCardData) {
 		}
 		<p class="meta">{ q.Question.Topic } · { q.Question.Difficulty }</p>
 		if q.Finished {
+			<div class="user-answer">
+				<strong>Ваш ответ</strong>
+				if q.UserAnswer == "" {
+					<p>Ответ не указан.</p>
+				} else {
+					<p>{ q.UserAnswer }</p>
+				}
+			</div>
 			@AnswerBlock(q.Question.Answer)
 		} else {
+			if q.AttemptID != "" {
+				<label class="user-answer">Ваш ответ<span class="visually-hidden">{ fmt.Sprintf(" на вопрос %d", q.Number) }</span>
+					<textarea rows="3" name={ q.Question.ID } form="finish-exam" data-attempt-id={ q.AttemptID } data-question-number={ fmt.Sprint(q.Number) }></textarea>
+				</label>
+			}
 			<details class="catalog-answer" data-attempt-id={ q.AttemptID } data-question-number={ fmt.Sprint(q.Number) }>
 				<summary class="answer-toggle"><span class="catalog-show">Показать ответ</span><span class="catalog-hide">Скрыть ответ</span></summary>
 				@AnswerBlock(q.Question.Answer)

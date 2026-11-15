@@ -7,6 +7,7 @@ import (
 	"github.com/a-h/templ"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"regexp"
 	"strings"
 	"testing"
@@ -31,6 +32,9 @@ func TestCatalogUsesCommonLocalDisclosureCard(t *testing.T) {
 		t.Fatal(err)
 	}
 	body := renderHTML(t, Page(PageView{Tab: "questions", Questions: bank[:1]}))
+	if strings.Contains(body, "<textarea") {
+		t.Fatal("catalog contains an exam answer field")
+	}
 	if !strings.Contains(body, `<article class="card" id="question-`+bank[0].ID+`">`) {
 		t.Fatal("catalog does not render the shared question card")
 	}
@@ -64,12 +68,52 @@ func TestActiveAttemptAnswersArePreloadedAndStoredLocally(t *testing.T) {
 		t.Fatal("attempt disclosure should not make requests")
 	}
 
-	finished, ok := store.Finish(a.ID)
+	finished, ok := store.Finish(a.ID, nil)
 	if !ok {
 		t.Fatal("finish failed")
 	}
 	body := renderHTML(t, Page(PageView{Attempt: finished, Blocks: groupQuestions(finished)}))
 	assertFinishedAttemptAnswers(t, body, finished)
+}
+
+func TestFinishSubmitsAndFreezesAnswers(t *testing.T) {
+	questions, err := loadQuestions()
+	if err != nil {
+		t.Fatal(err)
+	}
+	a, err := attempts.Create(questions)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { delete(attempts.attempts, a.ID) })
+	show := func() string {
+		req := httptest.NewRequest(http.MethodGet, "/exams/"+a.ID, nil)
+		req.SetPathValue("id", a.ID)
+		w := httptest.NewRecorder()
+		showAttempt(w, req)
+		return w.Body.String()
+	}
+	active := show()
+	for _, q := range a.Questions {
+		if !strings.Contains(active, `name="`+q.ID+`" form="finish-exam"`) {
+			t.Fatalf("missing answer field for %s", q.ID)
+		}
+	}
+	for _, answer := range []string{"Строка 1\n<пример>", "Замена"} {
+		form := url.Values{a.Questions[0].ID: {answer}}
+		req := httptest.NewRequest(http.MethodPost, "/exams/"+a.ID+"/finish", strings.NewReader(form.Encode()))
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		req.SetPathValue("id", a.ID)
+		w := httptest.NewRecorder()
+		finishAttempt(w, req)
+		if w.Code != http.StatusSeeOther {
+			t.Fatalf("finish status %d", w.Code)
+		}
+		result := show()
+		if !strings.Contains(result, "Строка 1\n&lt;пример&gt;") || strings.Contains(result, "<textarea") || strings.Count(result, "Ответ не указан.") != 29 {
+			t.Fatal("finished page must retain the original submission and show unanswered questions")
+		}
+	}
 }
 
 func assertAttemptDetails(t *testing.T, body string, attempt *Attempt) {
