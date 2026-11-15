@@ -13,9 +13,14 @@ paths:
       summary: Открыть вкладку «Экзамен»
       parameters:
         - $ref: "#/components/parameters/HxRequest"
+        - name: attempt
+          in: query
+          description: Идентификатор завершённой попытки из истории этого браузера.
+          schema:
+            type: string
       responses:
         "200":
-          description: Страница с действием для создания попытки.
+          description: Страница запуска и локальной истории экзаменов. С параметром attempt браузер показывает билет из своего хранилища.
           content:
             text/html:
               schema:

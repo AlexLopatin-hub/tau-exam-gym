@@ -60,7 +60,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	render(w, r, PageView{Title: "Экзамен", Tab: "exam"}, http.StatusOK)
+	render(w, r, PageView{Title: "Экзамен", Tab: "exam", ArchivedID: r.URL.Query().Get("attempt")}, http.StatusOK)
 }
 
 func questions(w http.ResponseWriter, r *http.Request) {

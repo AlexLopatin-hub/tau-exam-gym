@@ -19,6 +19,7 @@ type Attempt struct {
 	Questions   []Question
 	UserAnswers map[string]string
 	Finished    bool
+	FinishedAt  time.Time
 	Created     time.Time
 }
 
@@ -102,6 +103,7 @@ func (s *AttemptStore) Finish(id string, answers url.Values) (*Attempt, bool) {
 			}
 		}
 		a.Finished = true
+		a.FinishedAt = time.Now()
 	}
 	return copyAttempt(a), true
 }

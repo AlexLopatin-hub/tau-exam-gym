@@ -3,12 +3,14 @@ package exam
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/a-h/templ"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"regexp"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -110,6 +112,13 @@ func TestFinishSubmitsAndFreezesAnswers(t *testing.T) {
 			t.Fatalf("finish status %d", w.Code)
 		}
 		result := show()
+		data := regexp.MustCompile(`(?s)<script id="completed-attempt" type="application/json">(.*?)</script>`).FindStringSubmatch(result)
+		var snapshot Attempt
+		if len(data) != 2 || json.Unmarshal([]byte(data[1]), &snapshot) != nil ||
+			snapshot.ID != a.ID || snapshot.FinishedAt.IsZero() || !slices.Equal(snapshot.Questions, a.Questions) ||
+			snapshot.UserAnswers[a.Questions[0].ID] != "Строка 1\n<пример>" {
+			t.Fatal("archive snapshot must include the original ordered questions and submitted answers")
+		}
 		if !strings.Contains(result, "Строка 1\n&lt;пример&gt;") || strings.Contains(result, "<textarea") || strings.Count(result, "Ответ не указан.") != 29 {
 			t.Fatal("finished page must retain the original submission and show unanswered questions")
 		}
