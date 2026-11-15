@@ -57,10 +57,12 @@ paths:
       summary: Создать тренировочную попытку
       description: Случайная выборка без повторений, по десять вопросов из каждого из трёх блоков.
       responses:
+        "403":
+          $ref: "#/components/responses/CrossOriginDenied"
         "303":
           $ref: "#/components/responses/SeeExam"
         "503":
-          description: В одном или нескольких блоках недостаточно вопросов. Попытка не создана.
+          description: Недостаточно вопросов для билета или все места для попыток заняты. Попытка не создана.
           content:
             text/html:
               schema:
@@ -107,6 +109,10 @@ paths:
       responses:
         "400":
           description: Не удалось прочитать форму с ответами.
+        "403":
+          $ref: "#/components/responses/CrossOriginDenied"
+        "413":
+          description: Размер закодированной формы превышает 256 КиБ. Попытка не завершена.
         "303":
           $ref: "#/components/responses/SeeExam"
         "404":
@@ -130,6 +136,12 @@ components:
         type: string
         minLength: 1
   responses:
+    CrossOriginDenied:
+      description: Браузер отправил запрос с другого источника.
+      content:
+        text/plain:
+          schema:
+            type: string
     SeeExam:
       description: Перейти методом GET к созданной или завершённой попытке.
       headers:
@@ -140,7 +152,7 @@ components:
             type: string
             example: /exams/a1b2c3
     ExamNotFound:
-      description: Попытка с таким идентификатором не найдена.
+      description: Попытка с таким идентификатором не найдена или истекли 24 часа с момента создания.
       content:
         text/html:
           schema:

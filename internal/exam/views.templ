@@ -45,7 +45,7 @@ templ Page(view PageView) {
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
 			<title>Вопросы по ТАУ</title>
 			<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400..700&display=swap" rel="stylesheet"/>
-			<script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js" crossorigin="anonymous"></script>
+			<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js" integrity="sha384-2OatzQy1H+Zd/IIrjr1TcuDGqLXeHhbooAyJY1KdQMKnr4LZ22k31GBLdYKHmVjg" crossorigin="anonymous"></script>
 			<style>
 				:root {
 					color-scheme: light;
@@ -279,8 +279,12 @@ templ Page(view PageView) {
 }
 
 templ Main(view PageView) {
-	<main id="content">
-		<nav class="tabs" aria-label="Основная навигация">
+	<main id="content" hx-history-elt>
+		<nav class="tabs" aria-label="Основная навигация"
+			if view.Attempt != nil || view.ArchivedID != "" {
+				hx-history="false"
+			}
+		>
 			if view.Tab == "exam" {
 				<a href="/" hx-get="/" hx-target="#content" hx-swap="outerHTML" hx-push-url="true" aria-current="page">Экзамен</a>
 			} else {

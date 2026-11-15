@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+
+# Check the exact files being committed, including partially staged changes.
+temp_root=$(cd "${TMPDIR:-/tmp}" && pwd -P)
+snapshot=$(mktemp -d "$temp_root/tau-templ.XXXXXXXX")
+trap 'rm -rf -- "$snapshot"' EXIT
+git checkout-index --all --prefix="$snapshot/"
+cd "$snapshot"
+go tool templ generate -check || {
+    echo "Запустите go tool templ generate и добавьте обновлённые файлы в индекс Git." >&2
+    exit 1
+}
