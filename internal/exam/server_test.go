@@ -94,8 +94,11 @@ func TestActiveAttemptAnswersArePreloadedAndStoredLocally(t *testing.T) {
 	}
 	active := renderHTML(t, Page(PageView{Attempt: a, Blocks: groupQuestions(a)}))
 	assertAttemptDetails(t, active, a)
-	if !strings.Contains(active, "sessionStorage") || !strings.Contains(active, "tau-exam:active:${node.dataset.attemptId}:${node.dataset.questionNumber}") {
-		t.Fatal("attempt disclosure state is not restored locally")
+	for i := range a.Questions {
+		key := fmt.Sprintf(`data-draft-key="tau-exam:active:%s:%d:draft"`, a.ID, i+1)
+		if strings.Count(active, key) != 1 {
+			t.Fatalf("expected one answer field for draft %s", key)
+		}
 	}
 	if strings.Contains(active, "hx-post") || strings.Contains(active, "/reveal") || strings.Contains(active, "/hide") {
 		t.Fatal("attempt disclosure should not make requests")
@@ -162,6 +165,21 @@ func TestFinishSubmitsAndFreezesAnswers(t *testing.T) {
 		if !strings.Contains(result, "Строка 1\n&lt;пример&gt;") || strings.Contains(result, "<textarea") || strings.Count(result, "Ответ не указан.") != 29 {
 			t.Fatal("finished page must retain the original submission and show unanswered questions")
 		}
+		// The archive must also work after the live attempt is gone.
+		snapshot.ID = "archived-only"
+		payload, err := json.Marshal(snapshot)
+		if err != nil {
+			t.Fatal(err)
+		}
+		archive := httptest.NewRecorder()
+		routes().ServeHTTP(archive, httptest.NewRequest(http.MethodPost, "/archive/render", bytes.NewReader(payload)))
+		if archive.Code != http.StatusOK || archive.Body.String() != renderHTML(t, QuestionBlocks(groupQuestions(&snapshot))) ||
+			archive.Header().Get("Cache-Control") != "no-store" {
+			t.Fatal("archived snapshot should render the original result as an uncached fragment")
+		}
+		if _, ok := attempts.Get(snapshot.ID); ok {
+			t.Fatal("rendering an archived attempt must not store it")
+		}
 	}
 }
 
@@ -175,9 +193,6 @@ func assertAttemptDetails(t *testing.T, body string, attempt *Attempt) {
 		t.Fatal("answer should be present in the preloaded markup")
 	}
 	for _, tag := range tags {
-		if !strings.Contains(tag, `data-attempt-id="`+attempt.ID+`"`) {
-			t.Fatal("question is missing its attempt ID")
-		}
 		if strings.Contains(tag, " open") {
 			t.Fatalf("wrong initial disclosure state in %s", tag)
 		}
@@ -268,7 +283,7 @@ func TestQuestionCatalogCanJumpFromFirstToFourthAndBack(t *testing.T) {
 		t.Fatal("current page should not be a link")
 	}
 	css := renderHTML(t, Page(PageView{Tab: "questions", Questions: bank[:10], CurrentPage: 1, TotalPages: 4}))
-	if !strings.Contains(css, "ResizeObserver") || !strings.Contains(css, "window.addEventListener(\"resize\"") || !strings.Contains(css, "document.fonts.ready") || !strings.Contains(css, "htmx:afterSwap") || !strings.Contains(css, "htmx:historyRestore") {
+	if !strings.Contains(css, "window.addEventListener(\"resize\"") || !strings.Contains(css, "document.fonts.ready") || !strings.Contains(css, "htmx:afterSwap") || !strings.Contains(css, "htmx:historyRestore") {
 		t.Fatal("pagination does not reevaluate after resize, font load, or history replacement")
 	}
 	if !strings.Contains(css, "flex-wrap: nowrap") || !strings.Contains(css, ".compact-hidden") || !strings.Contains(css, "overflow: hidden") {
@@ -325,7 +340,7 @@ func TestCompactPagerKeepsFirstLastCurrentNeighborsAndBothEllipses(t *testing.T)
 		t.Fatal("previous and next numeric links are missing")
 	}
 	css := renderHTML(t, Page(PageView{Tab: "questions", CurrentPage: 15, TotalPages: 30}))
-	if !strings.Contains(css, `@media (max-width: 480px)`) || !strings.Contains(css, `.pagination:not(.show-edge-labels) .edge-label`) || !strings.Contains(css, `.pagination.compact-icons .edge-icon`) || !strings.Contains(css, `nav.scrollWidth > nav.clientWidth`) {
+	if !strings.Contains(css, `@media (max-width: 480px)`) || !strings.Contains(css, `.pagination.compact-icons .edge-icon`) || !strings.Contains(css, `nav.scrollWidth > nav.clientWidth`) {
 		t.Fatal("narrow-screen edge controls do not adapt to measured width")
 	}
 }

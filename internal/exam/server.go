@@ -1,8 +1,10 @@
 package exam
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -44,6 +46,7 @@ func routes() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", home)
 	mux.HandleFunc("GET /questions", questions)
+	mux.HandleFunc("POST /archive/render", renderArchive)
 	mux.HandleFunc("POST /exams", createAttempt)
 	mux.HandleFunc("GET /exams/{id}", showAttempt)
 	mux.HandleFunc("POST /exams/{id}/finish", finishAttempt)
@@ -173,6 +176,32 @@ func finishAttempt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, "/exams/"+r.PathValue("id"), http.StatusSeeOther)
+}
+
+func renderArchive(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-store")
+	body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 16<<20))
+	if err != nil {
+		var tooLarge *http.MaxBytesError
+		if errors.As(err, &tooLarge) {
+			http.Error(w, "Архивный билет слишком большой.", http.StatusRequestEntityTooLarge)
+			return
+		}
+		http.Error(w, "Не удалось прочитать архивный билет.", http.StatusBadRequest)
+		return
+	}
+	var snapshot Attempt
+	if json.Unmarshal(body, &snapshot) != nil || !snapshot.Finished || snapshot.FinishedAt.IsZero() || len(snapshot.Questions) != 30 {
+		http.Error(w, "Некорректный архивный билет.", http.StatusBadRequest)
+		return
+	}
+	for _, q := range snapshot.Questions {
+		if q.ID == "" || q.Text == "" || q.Answer == "" || q.Topic == "" || q.Difficulty == "" {
+			http.Error(w, "В архивном билете неполные данные вопроса.", http.StatusBadRequest)
+			return
+		}
+	}
+	renderComponent(w, r, QuestionBlocks(groupQuestions(&snapshot)), http.StatusOK)
 }
 
 func groupQuestions(a *Attempt) []AttemptBlock {

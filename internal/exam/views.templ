@@ -101,8 +101,6 @@ templ Page(view PageView) {
 				.pagination .edge-icon { display: none; }
 				.pagination.compact-icons .edge-label { display: none; }
 				.pagination.compact-icons .edge-icon { display: inline; }
-				.pagination.show-edge-labels .edge-label { display: inline; }
-				.pagination.show-edge-labels .edge-icon { display: none; }
 				.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 				.empty-state { color: #78746a; }
 				.finish-bar { position: fixed; z-index: 5; right: max(1rem, calc((100vw - 900px)/2)); bottom: calc(.75rem + env(safe-area-inset-bottom)); display: flex; width: max-content; max-width: calc(100vw - 2rem); box-sizing: border-box; border: 1px solid #e4ddd2; border-radius: 9px; padding: .3rem; background: #fffdf8eb; box-shadow: 0 3px 12px #332b1b17; }
@@ -115,8 +113,6 @@ templ Page(view PageView) {
 				@media (max-width: 480px) {
 					.pagination { gap: .12rem; }
 					.pagination a, .pagination .page-number { min-width: 1.8rem; height: 2rem; padding: .2rem .25rem; font-size: .86rem; }
-					.pagination:not(.show-edge-labels) .edge-label { display: none; }
-					.pagination:not(.show-edge-labels) .edge-icon { display: inline; }
 				}
 				@media (max-width: 350px) {
 					.pagination { gap: .08rem; }
@@ -134,8 +130,7 @@ templ Page(view PageView) {
 					function readAttempt(id) {
 						try {
 							const a = JSON.parse(localStorage.getItem(prefix + id));
-							if (a?.ID === id && Number.isFinite(Date.parse(a.FinishedAt)) && Array.isArray(a.Questions) &&
-								a.Questions.every(q => ["id", "topic", "difficulty", "text", "answer"].every(key => typeof q[key] === "string"))) return a;
+							if (a?.ID === id && Number.isFinite(Date.parse(a.FinishedAt)) && Array.isArray(a.Questions)) return a;
 						} catch {}
 						return null;
 					}
@@ -160,35 +155,23 @@ templ Page(view PageView) {
 							status.textContent = "История экзаменов недоступна в этом браузере.";
 						}
 					}
-					function showArchived(root) {
+					async function showArchived(root) {
 						const a = readAttempt(root.dataset.id);
 						if (!a) {
 							root.textContent = "Эта попытка не найдена в истории браузера.";
 							return;
 						}
-						const date = document.createElement("p");
-						date.textContent = dateLabel.format(new Date(a.FinishedAt));
-						root.replaceChildren(date);
-						const template = document.getElementById("archived-card");
-						let section, topic;
-						a.Questions.forEach((q, index) => {
-							if (topic !== q.topic) {
-								topic = q.topic;
-								section = document.createElement("section");
-								section.className = "block";
-								const heading = document.createElement("h2");
-								heading.textContent = topic;
-								section.append(heading);
-								root.append(section);
-							}
-							const card = template.content.firstElementChild.cloneNode(true);
-							card.id = "question-" + (index + 1);
-							card.querySelector("h3").textContent = (index + 1) + ". " + q.text;
-							card.querySelector(".meta").textContent = q.topic + " · " + q.difficulty;
-							card.querySelector(".revealed p").textContent = q.answer;
-							if (a.UserAnswers && Object.hasOwn(a.UserAnswers, q.id)) card.querySelector(".user-answer p").textContent = a.UserAnswers[q.id];
-							section.append(card);
-						});
+						if (root.querySelector(".block")) return;
+						document.getElementById("archived-date").textContent = dateLabel.format(new Date(a.FinishedAt));
+						try {
+							const response = await fetch("/archive/render", {
+								method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(a)
+							});
+							if (!response.ok) throw new Error();
+							root.innerHTML = await response.text();
+						} catch {
+							root.textContent = "Не удалось открыть архивный билет. Обновите страницу, чтобы попробовать снова.";
+						}
 					}
 					function loadArchive() {
 						const completed = document.getElementById("completed-attempt");
@@ -205,73 +188,38 @@ templ Page(view PageView) {
 						const archived = document.getElementById("archived-exam");
 						if (archived) showArchived(archived);
 					}
-					loadArchive();
-					document.body.addEventListener("htmx:afterSwap", loadArchive);
-					document.body.addEventListener("htmx:historyRestore", loadArchive);
-					window.addEventListener("pageshow", event => { if (event.persisted) loadArchive(); });
-					window.addEventListener("storage", () => {
-						const list = document.getElementById("exam-history");
-						if (list) showHistory(list);
-					});
-				})();
-			</script>
-			<script>
-				(() => {
-					const stateKey = node => `tau-exam:active:${node.dataset.attemptId}:${node.dataset.questionNumber}`;
-					const getState = key => { try { return sessionStorage.getItem(key); } catch { return null; } };
-					const setState = (key, value) => { try { sessionStorage.setItem(key, value); } catch {} };
-					const restoreAnswer = node => {
-						if (!node.dataset.attemptId) return;
-						const saved = getState(stateKey(node));
-						if (saved !== null) node.open = saved === "1";
-					};
-					const pagers = root => {
-						return [...(root.matches && root.matches(".pagination") ? [root] : []), ...root.querySelectorAll(".pagination")];
-					};
-					const fit = nav => {
-						if (!nav.clientWidth) return;
-						nav.classList.remove("expanded", "compact-icons", "show-edge-labels");
-						nav.classList.add("expanded", "show-edge-labels");
+					function fitPager() {
+						const nav = document.querySelector(".pagination");
+						if (!nav) return;
+						nav.classList.remove("compact-icons");
+						nav.classList.add("expanded");
 						if (nav.scrollWidth > nav.clientWidth + 1) {
 							nav.classList.remove("expanded");
-							if (nav.scrollWidth > nav.clientWidth + 1) {
-								nav.classList.remove("show-edge-labels");
-								nav.classList.add("compact-icons");
-							}
+							nav.classList.toggle("compact-icons", nav.scrollWidth > nav.clientWidth + 1);
 						}
-					};
-					const init = (root) => {
-						for (const nav of pagers(root)) fit(nav);
-						if (root.matches && root.matches("details[data-attempt-id]")) restoreAnswer(root);
-						root.querySelectorAll("details[data-attempt-id]").forEach(restoreAnswer);
-					};
-					const restoreDrafts = () => {
-						document.querySelectorAll("textarea[data-attempt-id]").forEach(field => {
-							const saved = getState(stateKey(field) + ":draft");
-							if (saved !== null) field.value = saved;
-						});
-					};
-					document.addEventListener("input", event => {
-						const field = event.target;
-						if (field.matches("textarea[data-attempt-id]")) setState(stateKey(field) + ":draft", field.value);
+					}
+					function init() {
+						loadArchive();
+						fitPager();
+						try {
+							for (const field of document.querySelectorAll("textarea[data-draft-key]")) {
+								const saved = sessionStorage.getItem(field.dataset.draftKey);
+								if (saved !== null) field.value = saved;
+							}
+						} catch {}
+					}
+					document.addEventListener("input", ({ target }) => {
+						if (target.matches("textarea[data-draft-key]")) {
+							try { sessionStorage.setItem(target.dataset.draftKey, target.value); } catch {}
+						}
 					});
-					restoreDrafts();
-					document.body.addEventListener("htmx:afterSwap", restoreDrafts);
-					document.body.addEventListener("htmx:historyRestore", restoreDrafts);
-					document.addEventListener("toggle", event => {
-						const node = event.target;
-						if (node instanceof HTMLDetailsElement && node.dataset.attemptId) setState(stateKey(node), node.open ? "1" : "0");
-					}, true);
-					const observer = "ResizeObserver" in window ? new ResizeObserver(entries => entries.forEach(entry => fit(entry.target))) : null;
-					const watch = root => pagers(root).forEach(nav => observer && observer.observe(nav));
-					const fitAll = () => { watch(document); init(document); };
-					watch(document);
-					init(document);
-					window.addEventListener("resize", fitAll);
-					if (document.fonts) document.fonts.ready.then(fitAll);
-					if (document.fonts) document.fonts.addEventListener("loadingdone", fitAll);
-					document.body.addEventListener("htmx:afterSwap", event => { watch(event.detail.target); init(event.detail.target); });
-					document.body.addEventListener("htmx:historyRestore", () => requestAnimationFrame(fitAll));
+					init();
+					document.body.addEventListener("htmx:afterSwap", init);
+					document.body.addEventListener("htmx:historyRestore", init);
+					window.addEventListener("pageshow", event => { if (event.persisted) init(); });
+					window.addEventListener("resize", fitPager);
+					document.fonts.ready.then(fitPager);
+					document.fonts.addEventListener("loadingdone", fitPager);
 				})();
 			</script>
 		</body>
@@ -311,18 +259,11 @@ templ Main(view PageView) {
 			if !view.Attempt.Finished {
 				<div class="finish-bar"><form id="finish-exam" method="post" action={ templ.URL("/exams/" + view.Attempt.ID + "/finish") }><button type="submit">Завершить экзамен</button></form></div>
 			}
-			for _, block := range view.Blocks {
-				<section class="block">
-					<h2>{ block.Topic }</h2>
-					for _, q := range block.Questions {
-						@QuestionCard(q)
-					}
-				</section>
-			}
+			@QuestionBlocks(view.Blocks)
 		} else if view.ArchivedID != "" {
 			<h2>Пройденный экзамен</h2>
-			<div id="archived-exam" data-id={ view.ArchivedID }></div>
-			<template id="archived-card">@QuestionCard(QuestionCardData{Finished: true})</template>
+			<p id="archived-date"></p>
+			<div id="archived-exam" data-id={ view.ArchivedID }>Загрузка билета…</div>
 			<a href="/">К списку экзаменов</a>
 		} else if view.Tab == "questions" {
 			if view.Demo {
@@ -375,6 +316,17 @@ templ Main(view PageView) {
 	</main>
 }
 
+templ QuestionBlocks(blocks []AttemptBlock) {
+	for _, block := range blocks {
+		<section class="block">
+			<h2>{ block.Topic }</h2>
+			for _, q := range block.Questions {
+				@QuestionCard(q)
+			}
+		</section>
+	}
+}
+
 templ QuestionCard(q QuestionCardData) {
 	<article class="card" id={ q.AnchorID }>
 		if q.Number > 0 {
@@ -396,10 +348,10 @@ templ QuestionCard(q QuestionCardData) {
 		} else {
 			if q.AttemptID != "" {
 				<label class="user-answer">Ваш ответ<span class="visually-hidden">{ fmt.Sprintf(" на вопрос %d", q.Number) }</span>
-					<textarea rows="3" name={ q.Question.ID } form="finish-exam" data-attempt-id={ q.AttemptID } data-question-number={ fmt.Sprint(q.Number) }></textarea>
+					<textarea rows="3" name={ q.Question.ID } form="finish-exam" data-draft-key={ fmt.Sprintf("tau-exam:active:%s:%d:draft", q.AttemptID, q.Number) }></textarea>
 				</label>
 			}
-			<details class="catalog-answer" data-attempt-id={ q.AttemptID } data-question-number={ fmt.Sprint(q.Number) }>
+			<details class="catalog-answer">
 				<summary class="answer-toggle"><span class="catalog-show">Показать ответ</span><span class="catalog-hide">Скрыть ответ</span></summary>
 				@AnswerBlock(q.Question.Answer)
 			</details>
