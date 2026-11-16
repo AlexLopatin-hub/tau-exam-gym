@@ -25,6 +25,51 @@ paths:
             text/html:
               schema:
                 type: string
+  /archive/render:
+    post:
+      operationId: renderArchivedExam
+      summary: Отобразить завершённый билет из истории браузера
+      description: Возвращает карточки из переданной копии билета без записи в хранилище попыток.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [Finished, FinishedAt, Questions]
+              properties:
+                ID: {type: string}
+                Finished: {type: boolean, enum: [true]}
+                FinishedAt: {type: string, format: date-time}
+                Questions:
+                  type: array
+                  minItems: 30
+                  maxItems: 30
+                  items:
+                    type: object
+                    required: [id, text, answer, topic, difficulty]
+                    properties:
+                      id: {type: string}
+                      text: {type: string}
+                      answer: {type: string}
+                      topic: {type: string}
+                      difficulty: {type: string}
+                UserAnswers:
+                  type: object
+                  nullable: true
+                  additionalProperties: {type: string}
+      responses:
+        "200":
+          description: HTML-фрагмент с блоками вопросов и ответами для сверки.
+          content:
+            text/html:
+              schema: {type: string}
+        "400":
+          description: Некорректный архивный билет.
+        "403":
+          $ref: "#/components/responses/CrossOriginDenied"
+        "413":
+          description: Размер JSON превышает 16 МиБ.
   /questions:
     get:
       operationId: listQuestions
