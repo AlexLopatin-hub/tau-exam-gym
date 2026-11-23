@@ -46,6 +46,8 @@ func routes() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", home)
 	mux.HandleFunc("GET /questions", questions)
+	mux.HandleFunc("GET /lectures", showLecture)
+	mux.HandleFunc("GET /lectures/{date}", showLecture)
 	mux.HandleFunc("POST /archive/render", renderArchive)
 	mux.HandleFunc("POST /exams", createAttempt)
 	mux.HandleFunc("GET /exams/{id}", showAttempt)

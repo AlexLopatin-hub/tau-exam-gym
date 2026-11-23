@@ -28,6 +28,67 @@ func TestPageUsesSingleExactProductHeading(t *testing.T) {
 	}
 }
 
+func TestLectureRoutes(t *testing.T) {
+	handler := routes()
+	for _, tc := range []struct {
+		path     string
+		fragment bool
+		status   int
+		want     []string
+	}{
+		{"/lectures", false, http.StatusOK, []string{`<html lang="ru">`, "Лекция 17 октября", `href="/lectures/10-17"`, `hx-get="/lectures/10-17"`, ">17 октября</a>", ">5 сентября</a>", `class="lecture-sidebar"`, `<details class="lecture-picker">`, "<math", "<h3>Преобразование Фурье"}},
+		{"/lectures/10-10", true, http.StatusOK, []string{`<main id="content"`, "Лекция 10 октября", "<math", "<mtable"}},
+		{"/lectures/12-31", false, http.StatusNotFound, []string{"Лекция с такой датой не найдена.", `href="/lectures/10-17"`}},
+	} {
+		t.Run(tc.path, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, tc.path, nil)
+			if tc.fragment {
+				req.Header.Set("HX-Request", "true")
+			}
+			w := httptest.NewRecorder()
+			handler.ServeHTTP(w, req)
+			if w.Code != tc.status {
+				t.Fatalf("status %d, want %d", w.Code, tc.status)
+			}
+			body := w.Body.String()
+			for _, want := range tc.want {
+				if !strings.Contains(body, want) {
+					t.Errorf("response missing %q", want)
+				}
+			}
+			if tc.fragment && strings.Contains(body, "<html") {
+				t.Error("htmx response contains the full HTML document")
+			}
+			if tc.path == "/lectures" && strings.Index(body, ">5 сентября</a>") >= strings.Index(body, ">17 октября</a>") {
+				t.Error("lecture menu is not chronological")
+			}
+		})
+	}
+	w := httptest.NewRecorder()
+	handler.ServeHTTP(w, httptest.NewRequest(http.MethodGet, "/lectures/10.17", nil))
+	if w.Code != http.StatusPermanentRedirect || w.Header().Get("Location") != "/lectures/10-17" {
+		t.Errorf("old lecture link: status %d, Location %q", w.Code, w.Header().Get("Location"))
+	}
+}
+
+func TestEmbeddedLecturesRender(t *testing.T) {
+	items, err := lectures()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, lecture := range items {
+		t.Run(lecture.ID, func(t *testing.T) {
+			body, err := lecture.render()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if strings.TrimSpace(body) == "" {
+				t.Error("lecture rendered empty HTML")
+			}
+		})
+	}
+}
+
 func TestExamRoutesRejectCrossOriginChanges(t *testing.T) {
 	handler := routes()
 	for _, path := range []string{"/exams", "/exams/example/finish"} {
