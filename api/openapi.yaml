@@ -43,24 +43,28 @@ paths:
                 FinishedAt: {type: string, format: date-time}
                 Questions:
                   type: array
-                  minItems: 30
-                  maxItems: 30
+                  description: В новых билетах 20 вопросов, в ранее сохранённых билетах 30.
+                  oneOf:
+                    - minItems: 20
+                      maxItems: 20
+                    - minItems: 30
+                      maxItems: 30
                   items:
                     type: object
-                    required: [id, text, answer, topic, difficulty]
+                    required: [id, text, answer, difficulty]
                     properties:
                       id: {type: string}
                       text: {type: string}
                       answer: {type: string}
-                      topic: {type: string}
                       difficulty: {type: string}
+                      format: {type: string, enum: [mathml]}
                 UserAnswers:
                   type: object
                   nullable: true
                   additionalProperties: {type: string}
       responses:
         "200":
-          description: HTML-фрагмент с блоками вопросов и ответами для сверки.
+          description: HTML-фрагмент с вопросами и ответами для сверки.
           content:
             text/html:
               schema: {type: string}
@@ -107,7 +111,7 @@ paths:
             default: 1
       responses:
         "200":
-          description: Карточки выбранной страницы с формулировками, блоками и сложностью. Ответы изначально свёрнуты. Если страниц несколько, доступны переходы по каталогу.
+          description: Карточки выбранной страницы с формулировками и сложностью. Ответы изначально свёрнуты. Если страниц несколько, доступны переходы по каталогу.
           content:
             text/html:
               schema:
@@ -170,7 +174,7 @@ paths:
     post:
       operationId: startExam
       summary: Создать тренировочную попытку
-      description: Случайная выборка без повторений, по десять вопросов из каждого из трёх блоков.
+      description: Случайная выборка 20 вопросов из общего банка без повторений, из них 7 лёгких, 7 средних и 6 сложных.
       responses:
         "403":
           $ref: "#/components/responses/CrossOriginDenied"
@@ -193,8 +197,7 @@ paths:
       responses:
         "200":
           description: >
-            Вопросы разделены на три тематических блока и отсортированы
-            по возрастанию сложности внутри каждого блока. В активной попытке
+            Вопросы отсортированы по возрастанию сложности. В активной попытке
             ответы включены в HTML и изначально свёрнуты. Браузер переключает их локально.
             В активном билете можно вводить и редактировать свои ответы.
             Завершённая попытка показывает свои и правильные ответы постоянно, без элементов

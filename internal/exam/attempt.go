@@ -5,16 +5,22 @@ import (
 	"encoding/hex"
 	"errors"
 	"maps"
-	"math/big"
+	randv2 "math/rand/v2"
 	"net/url"
-	"sort"
 	"sync"
 	"time"
 )
 
-var ErrInsufficientQuestions = errors.New("each topic needs at least 10 questions")
+var ErrInsufficientQuestions = errors.New("question bank has too few questions for a difficulty quota")
 var ErrStoreFull = errors.New("attempt store is full")
 
+const (
+	easyPerAttempt            = 7
+	mediumPerAttempt          = 7
+	hardPerAttempt            = 6
+	questionsPerAttempt       = easyPerAttempt + mediumPerAttempt + hardPerAttempt
+	legacyQuestionsPerAttempt = 30
+)
 const maxAttempts = 2_000
 const attemptLifetime = 24 * time.Hour
 
@@ -35,42 +41,25 @@ type AttemptStore struct {
 func NewAttemptStore() *AttemptStore { return &AttemptStore{attempts: make(map[string]*Attempt)} }
 
 func (s *AttemptStore) Create(bank []Question) (*Attempt, error) {
-	byTopic := map[string][]Question{}
-	for _, q := range bank {
-		byTopic[q.Topic] = append(byTopic[q.Topic], q)
-	}
-	if len(byTopic) != 3 {
+	if len(bank) < questionsPerAttempt {
 		return nil, ErrInsufficientQuestions
 	}
-	selected := make([]Question, 0, 30)
-	for _, topicQuestions := range byTopic {
-		if len(topicQuestions) < 10 {
+	quotas := [...]int{easyPerAttempt, mediumPerAttempt, hardPerAttempt}
+	var groups [len(quotas)][]Question
+	for _, index := range randv2.Perm(len(bank)) {
+		question := bank[index]
+		rank := difficultyRank(question.Difficulty)
+		if rank < len(quotas) && len(groups[rank]) < quotas[rank] {
+			groups[rank] = append(groups[rank], question)
+		}
+	}
+	selected := make([]Question, 0, questionsPerAttempt)
+	for rank, questions := range groups {
+		if len(questions) < quotas[rank] {
 			return nil, ErrInsufficientQuestions
 		}
-		for i := range 10 {
-			n, err := rand.Int(rand.Reader, big.NewInt(int64(len(topicQuestions)-i)))
-			if err != nil {
-				return nil, err
-			}
-			j := i + int(n.Int64())
-			topicQuestions[i], topicQuestions[j] = topicQuestions[j], topicQuestions[i]
-			selected = append(selected, topicQuestions[i])
-		}
+		selected = append(selected, questions...)
 	}
-	for i := len(selected) - 1; i > 0; i-- {
-		n, err := rand.Int(rand.Reader, big.NewInt(int64(i+1)))
-		if err != nil {
-			return nil, err
-		}
-		j := int(n.Int64())
-		selected[i], selected[j] = selected[j], selected[i]
-	}
-	sort.SliceStable(selected, func(i, j int) bool {
-		if selected[i].Topic != selected[j].Topic {
-			return selected[i].Topic < selected[j].Topic
-		}
-		return difficultyRank(selected[i].Difficulty) < difficultyRank(selected[j].Difficulty)
-	})
 	idBytes := make([]byte, 16)
 	if _, err := rand.Read(idBytes); err != nil {
 		return nil, err

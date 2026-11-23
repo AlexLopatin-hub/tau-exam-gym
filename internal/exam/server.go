@@ -4,7 +4,6 @@ import (
 	"embed"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -21,7 +20,6 @@ var assets embed.FS
 
 var bank []Question
 var attempts = NewAttemptStore()
-var demoBank bool
 
 func Run() {
 	var err error
@@ -29,7 +27,6 @@ func Run() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	demoBank = os.Getenv("QUESTION_BANK") == ""
 	log.Printf("loaded %d questions", len(bank))
 	if items, err := lectures(); err != nil {
 		log.Printf("load lectures: %v", err)
@@ -127,7 +124,7 @@ func questions(w http.ResponseWriter, r *http.Request) {
 	}
 	start := (page - 1) * 10
 	end := min(start+10, len(bank))
-	render(w, r, PageView{Title: "Все вопросы", Tab: "questions", Questions: bank[start:end], Demo: demoBank, CurrentPage: page, TotalPages: totalPages}, http.StatusOK)
+	render(w, r, PageView{Title: "Все вопросы", Tab: "questions", Questions: bank[start:end], CurrentPage: page, TotalPages: totalPages}, http.StatusOK)
 }
 
 func invalidCatalogPage(w http.ResponseWriter, r *http.Request) {
@@ -149,7 +146,7 @@ func createAttempt(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if err == ErrInsufficientQuestions {
-			render(w, r, PageView{Title: "Экзамен", Tab: "exam", Error: "В одном из блоков пока меньше 10 вопросов. Экзамен создать нельзя."}, http.StatusServiceUnavailable)
+			render(w, r, PageView{Title: "Экзамен", Tab: "exam", Error: "Для экзамена нужно как минимум 7 лёгких, 7 средних и 6 сложных вопросов."}, http.StatusServiceUnavailable)
 			return
 		}
 		http.Error(w, "Не удалось создать экзамен", http.StatusInternalServerError)
@@ -168,7 +165,7 @@ func showAttempt(w http.ResponseWriter, r *http.Request) {
 	if a.Finished {
 		title = "Результат экзамена"
 	}
-	render(w, r, PageView{Title: title, Tab: "exam", Attempt: a, Blocks: groupQuestions(a)}, http.StatusOK)
+	render(w, r, PageView{Title: title, Tab: "exam", Attempt: a}, http.StatusOK)
 }
 
 const maxAnswerFormBytes = 256 << 10
@@ -205,31 +202,18 @@ func renderArchive(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var snapshot Attempt
-	if json.Unmarshal(body, &snapshot) != nil || !snapshot.Finished || snapshot.FinishedAt.IsZero() || len(snapshot.Questions) != 30 {
+	if json.Unmarshal(body, &snapshot) != nil || !snapshot.Finished || snapshot.FinishedAt.IsZero() ||
+		(len(snapshot.Questions) != questionsPerAttempt && len(snapshot.Questions) != legacyQuestionsPerAttempt) {
 		http.Error(w, "Некорректный архивный билет.", http.StatusBadRequest)
 		return
 	}
 	for _, q := range snapshot.Questions {
-		if q.ID == "" || q.Text == "" || q.Answer == "" || q.Topic == "" || q.Difficulty == "" {
+		if q.ID == "" || q.Text == "" || q.Answer == "" || q.Difficulty == "" {
 			http.Error(w, "В архивном билете неполные данные вопроса.", http.StatusBadRequest)
 			return
 		}
 	}
-	renderComponent(w, r, QuestionBlocks(groupQuestions(&snapshot)), http.StatusOK)
-}
-
-func groupQuestions(a *Attempt) []AttemptBlock {
-	blocks := make([]AttemptBlock, 0, 3)
-	for i, question := range a.Questions {
-		if len(blocks) == 0 || blocks[len(blocks)-1].Topic != question.Topic {
-			blocks = append(blocks, AttemptBlock{Topic: question.Topic})
-		}
-		blocks[len(blocks)-1].Questions = append(blocks[len(blocks)-1].Questions, QuestionCardData{
-			AnchorID: fmt.Sprintf("question-%d", i+1), Number: i + 1, Question: question, AttemptID: a.ID, Finished: a.Finished,
-			UserAnswer: a.UserAnswers[question.ID],
-		})
-	}
-	return blocks
+	renderComponent(w, r, AttemptQuestions(&snapshot), http.StatusOK)
 }
 
 func catalogCard(question Question) QuestionCardData {

@@ -14,7 +14,7 @@ import (
 
 //go:generate go run ./cmd/lecturegen
 
-//go:embed lecture_pages.json
+//go:embed data/lecture_pages.json
 var lecturePages []byte
 
 type Lecture struct {

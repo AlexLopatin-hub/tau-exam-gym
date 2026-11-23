@@ -35,7 +35,7 @@
 			root.textContent = "Эта попытка не найдена в истории браузера.";
 			return;
 		}
-		if (root.querySelector(".block")) return;
+		if (root.querySelector(".attempt-questions")) return;
 		document.getElementById("archived-date").textContent = dateLabel.format(new Date(a.FinishedAt));
 		try {
 			const response = await fetch("/archive/render", {
