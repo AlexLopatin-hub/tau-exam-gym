@@ -1,6 +1,9 @@
 package exam
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type PageView struct {
 	Title string
@@ -8,19 +11,12 @@ type PageView struct {
 	Questions []Question
 	Attempt *Attempt
 	ArchivedID string
-	Blocks []AttemptBlock
 	CurrentPage int
 	TotalPages int
 	Error string
-	Demo bool
 	Lectures []Lecture
 	Lecture *Lecture
 	LectureHTML string
-}
-
-type AttemptBlock struct {
-	Topic string
-	Questions []QuestionCardData
 }
 
 type QuestionCardData struct {
@@ -91,12 +87,12 @@ templ Main(view PageView) {
 				@templ.JSONScript("completed-attempt", view.Attempt)
 				<p id="archive-status" class="error" role="status"></p>
 			} else {
-				<p>В билете 30 вопросов из трёх тематических блоков. Свой ответ можно изменить до завершения экзамена. Для сверки откройте правильный ответ под вопросом или весь ключ в конце.</p>
+				<p>В билете { fmt.Sprint(len(view.Attempt.Questions)) } вопросов. Свой ответ можно изменить до завершения экзамена. Для сверки откройте правильный ответ под вопросом или весь ключ в конце.</p>
 			}
 			if !view.Attempt.Finished {
 				<div class="finish-bar"><form id="finish-exam" method="post" action={ templ.URL("/exams/" + view.Attempt.ID + "/finish") }><button type="submit">Завершить экзамен</button></form></div>
 			}
-			@QuestionBlocks(view.Blocks)
+			@AttemptQuestions(view.Attempt)
 		} else if view.ArchivedID != "" {
 			<h2>Пройденный экзамен</h2>
 			<p id="archived-date"></p>
@@ -105,11 +101,7 @@ templ Main(view PageView) {
 		} else if view.Tab == "lectures" {
 			@LectureNotes(view.Lectures, view.Lecture, view.LectureHTML)
 		} else if view.Tab == "questions" {
-			if view.Demo {
-				<p>Демонстрационный банк учебных вопросов.</p>
-			} else {
-				<p>В каталоге можно раскрывать и скрывать ответы.</p>
-			}
+			<p>В каталоге можно раскрывать и скрывать ответы.</p>
 			<div id="question-results">
 				if len(view.Questions) == 0 {
 					<p class="empty-state">В банке пока нет вопросов.</p>
@@ -143,7 +135,7 @@ templ Main(view PageView) {
 				</nav>
 			}
 		} else {
-			<section class="card start-card"><p>Тренировочный билет: 30 вопросов, по 10 из каждого тематического блока.</p><form method="post" action="/exams"><button type="submit">Начать экзамен</button></form></section>
+			<section class="card start-card"><p>В билете { fmt.Sprint(questionsPerAttempt) } случайных вопросов: 7 лёгких, 7 средних и 6 сложных.</p><form method="post" action="/exams"><button type="submit">Начать экзамен</button></form></section>
 			if view.Tab == "exam" {
 				<section class="exam-history">
 					<h2>Пройденные экзамены</h2>
@@ -194,25 +186,39 @@ templ LectureDates(lectures []Lecture, selected *Lecture) {
 	</nav>
 }
 
-templ QuestionBlocks(blocks []AttemptBlock) {
-	for _, block := range blocks {
-		<section class="block">
-			<h2>{ block.Topic }</h2>
-			for _, q := range block.Questions {
-				@QuestionCard(q)
-			}
-		</section>
-	}
+templ AttemptQuestions(attempt *Attempt) {
+	<div class="attempt-questions">
+		for i, question := range attempt.Questions {
+			@QuestionCard(QuestionCardData{
+				AnchorID: fmt.Sprintf("question-%d", i+1),
+				Number: i+1,
+				Question: question,
+				AttemptID: attempt.ID,
+				Finished: attempt.Finished,
+				UserAnswer: attempt.UserAnswers[question.ID],
+			})
+		}
+	</div>
 }
 
 templ QuestionCard(q QuestionCardData) {
-	<article class="card" id={ q.AnchorID }>
-		if q.Number > 0 {
-			<h3>{ fmt.Sprintf("%d. %s", q.Number, q.Question.Text) }</h3>
-		} else {
-			<h3>{ q.Question.Text }</h3>
+	{{
+		title, givens, _ := strings.Cut(q.Question.Text, "\n")
+		if q.Question.Format == "mathml" && strings.Count(title, "<math") > strings.Count(title, "</math>") {
+			title, givens = q.Question.Text, ""
 		}
-		<p class="meta">{ q.Question.Topic } · { q.Question.Difficulty }</p>
+	}}
+	<article class="card" id={ q.AnchorID }>
+		<h2 class="question-text">
+			if q.Number > 0 {
+				{ fmt.Sprintf("%d. ", q.Number) }
+			}
+			@templ.Raw(renderQuestionContent(title, q.Question.Format))
+		</h2>
+		if givens != "" {
+			<p class="question-givens">@templ.Raw(renderQuestionContent(givens, q.Question.Format))</p>
+		}
+		<p class="meta">{ q.Question.Difficulty }</p>
 		if q.Finished {
 			<div class="user-answer">
 				<strong>Ваш ответ</strong>
@@ -222,7 +228,7 @@ templ QuestionCard(q QuestionCardData) {
 					<p>{ q.UserAnswer }</p>
 				}
 			</div>
-			@AnswerBlock(q.Question.Answer)
+			@AnswerBlock(q.Question)
 		} else {
 			if q.AttemptID != "" {
 				<label class="user-answer">Ваш ответ<span class="visually-hidden">{ fmt.Sprintf(" на вопрос %d", q.Number) }</span>
@@ -231,14 +237,14 @@ templ QuestionCard(q QuestionCardData) {
 			}
 			<details class="catalog-answer">
 				<summary class="answer-toggle"><span class="catalog-show">Показать ответ</span><span class="catalog-hide">Скрыть ответ</span></summary>
-				@AnswerBlock(q.Question.Answer)
+				@AnswerBlock(q.Question)
 			</details>
 		}
 	</article>
 }
 
-templ AnswerBlock(answer string) {
-	<div class="answer revealed"><strong>Правильный ответ</strong><p>{ answer }</p></div>
+templ AnswerBlock(question Question) {
+	<div class="answer revealed"><strong>Правильный ответ</strong><p>@templ.Raw(renderQuestionContent(question.Answer, question.Format))</p></div>
 }
 
 templ PageNavLink(link PageLink) {

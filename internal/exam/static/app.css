@@ -61,24 +61,69 @@ h1 {
     line-height: 1.15;
 }
 
-h3 {
+h3,
+.question-text {
     margin: 0 0 .45rem;
     font-size: 1.08rem;
     font-weight: 620;
     line-height: 1.45;
 }
 
-.block {
-    margin: 2rem 0;
+.question-text,
+.question-givens,
+.answer p {
+    white-space: pre-line;
 }
 
-.block>h2 {
-    margin-bottom: .9rem;
-    border-bottom: 1px solid #dfd8cc;
-    padding-bottom: .55rem;
-    font-size: 1.2rem;
-    font-weight: 650;
-    letter-spacing: -.015em;
+.question-text {
+    margin-bottom: .5rem;
+}
+
+.question-text:has(math) {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-block-end: .375rem;
+    margin-bottom: .125rem;
+}
+
+.answer p:has(math) {
+    overflow-x: auto;
+    overflow-y: hidden;
+    /* Leave room for MathML fractions and other descenders below the line box. */
+    padding-block-end: .5em;
+}
+
+.question-text math,
+.question-givens math,
+.answer math {
+    white-space: normal;
+}
+
+.question-text math {
+    font-weight: normal;
+}
+
+.question-text math[display="block"],
+.question-givens math[display="block"],
+.answer math[display="block"] {
+    width: max-content;
+}
+
+.answer math[display="block"] {
+    margin-inline: auto;
+}
+
+.question-givens {
+    margin: 0 0 .25rem;
+    padding-block-end: .375rem;
+    font-size: 1.08rem;
+    line-height: 1.5;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.question-givens math:not([display="block"]) {
+    vertical-align: middle;
 }
 
 .card {
@@ -157,6 +202,11 @@ h3 {
 
 .lecture table {
     border-collapse: collapse;
+}
+
+.lecture-table {
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 .lecture pre {

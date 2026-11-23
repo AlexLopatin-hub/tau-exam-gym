@@ -1,0 +1,398 @@
+[
+  {
+    "id": "tau-01",
+    "text": "Что такое система автоматического управления (САУ)?",
+    "answer": "САУ – совокупность объекта управления (ОУ) и управляющего устройства (УУ), взаимодействующих на основе принципов управления.",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-02",
+    "text": "Из каких основных частей состоит САУ и какова роль каждой из них?",
+    "answer": "Основными частями САУ являются объект управления и управляющее устройство. Объект управления – система или процесс, состояние которого необходимо изменить. Управляющее устройство формирует управляющее воздействие на объект в соответствии с заданным алгоритмом",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-03",
+    "text": "Что такое управляющее воздействие и возмущение?",
+    "answer": "Управляющее воздействие – сигнал, с помощью которого система управления влияет на объект, изменяя его состояние или поведение. Возмущение – внешнее воздействие, которое влияет на работу объекта и может отклонять его от требуемого режима",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-04",
+    "text": "Что такое математическая модель системы управления и зачем она нужна?",
+    "answer": "Математическая модель – это математическое описание поведения системы, позволяющее представить взаимосвязь её входных воздействий, состояния и выходных величин. Модель используется для анализа свойств системы, исследования её поведения, расчёта характеристик и разработки алгоритмов управления",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-05",
+    "text": "Что означают модели «вход-выход» и «вход-состояние-выход»?",
+    "answer": "Модель «вход-выход» описывает непосредственную зависимость выходной величины системы от входных воздействий, обычно с помощью дифференциального уравнения. Модель «вход-состояние–выход» дополнительно вводит переменные состояния, которые характеризуют внутреннее состояние системы в текущий момент времени",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-06",
+    "text": "Что такое линейная и нелинейная системы?",
+    "answer": "Линейная система – система, математическая модель которой удовлетворяет принципу суперпозиции. Нелинейная система не удовлетворяет этому принципу",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-07",
+    "text": "Как выглядит общее дифференциальное уравнение модели типа «вход–выход»?",
+    "answer": "<math display=\"block\"><msub><mrow><mi>a</mi></mrow><mrow><mi>n</mi></mrow></msub><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><msup><mrow><mi>y</mi></mrow><mrow><mrow><mo>(</mo><mrow><mi>n</mi></mrow><mo>)</mo></mrow></mrow></msup><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>+</mo><msub><mrow><mi>a</mi></mrow><mrow><mi>n</mi><mo>-</mo><mn>1</mn></mrow></msub><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><msup><mrow><mi>y</mi></mrow><mrow><mrow><mo>(</mo><mrow><mi>n</mi><mo>-</mo><mn>1</mn></mrow><mo>)</mo></mrow></mrow></msup><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>+</mo><mo>⋯</mo><mo>+</mo><msub><mrow><mi>a</mi></mrow><mrow><mn>0</mn></mrow></msub><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mi>y</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mo>=</mo><msub><mrow><mi>b</mi></mrow><mrow><mi>m</mi></mrow></msub><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><msup><mrow><mi>u</mi></mrow><mrow><mrow><mo>(</mo><mrow><mi>m</mi></mrow><mo>)</mo></mrow></mrow></msup><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>+</mo><msub><mrow><mi>b</mi></mrow><mrow><mi>m</mi><mo>-</mo><mn>1</mn></mrow></msub><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><msup><mrow><mi>u</mi></mrow><mrow><mrow><mo>(</mo><mrow><mi>m</mi><mo>-</mo><mn>1</mn></mrow><mo>)</mo></mrow></mrow></msup><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>+</mo><mo>⋯</mo><mo>+</mo><msub><mrow><mi>b</mi></mrow><mrow><mn>0</mn></mrow></msub><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mi>u</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow></math>\ny(t) – выход системы, u(t) – входное воздействие, ai(t) и bi(t) – коэффициенты модели, а n – порядок дифференциального уравнения",
+    "difficulty": "лёгкий",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-08",
+    "text": "Что такое пространство состояний и вектор состояния?",
+    "answer": "Пространство состояний – математическое пространство, в котором описывается возможное состояние системы. Вектор состояния представляет собой набор переменных, достаточный для определения дальнейшего поведения системы при известных входных воздействиях",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-09",
+    "text": "Как выглядит общая модель линейной системы в пространстве состояний?",
+    "answer": "<math display=\"block\"><msup><mrow><mi>x</mi></mrow><mrow><mi>'</mi></mrow></msup><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mi>A</mi><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>+</mo><mi>B</mi><mi>u</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>y</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mi>C</mi><mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>+</mo><mi>D</mi><mi>u</mi><mo>(</mo><mi>t</mi><mo>)</mo></math>\nЗдесь x(t) – вектор состояния, u(t) – вектор входов, y(t) – вектор выходов, а A, B, C, D – матрицы.",
+    "difficulty": "лёгкий",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-10",
+    "text": "Что обозначают матрицы A, B, C, D, какую роль они выполняют и каковы их размерности?",
+    "answer": "Матрица A (матрица состояния) описывает внутреннюю динамику системы и взаимосвязи между переменными состояния. Матрица B (матрица управления) определяет влияние входных воздействий на изменение состояния. Матрица C (матрица выхода) задаёт связь состояния с выходными величинами. Матрица D (прямого воздействия) описывает непосредственное влияние входа на выход без прохождения через динамику состояния.\n<math display=\"block\"><mi>A</mi><mi> </mi><mo>∈</mo><msup><mrow><mi>R</mi></mrow><mrow><mi>n</mi><mo>×</mo><mi>n</mi></mrow></msup><mo>,</mo></math>\n<math display=\"block\"><mi>B</mi><mi> </mi><mo>∈</mo><msup><mrow><mi>R</mi></mrow><mrow><mi>n</mi><mo>×</mo><mi>m</mi></mrow></msup><mo>,</mo></math>\n<math display=\"block\"><mi>C</mi><mi> </mi><mo>∈</mo><msup><mrow><mi>R</mi></mrow><mrow><mi>p</mi><mo>×</mo><mi>n</mi></mrow></msup><mo>,</mo></math>\n<math display=\"block\"><mi>D</mi><mi> </mi><mo>∈</mo><msup><mrow><mi>R</mi></mrow><mrow><mi>p</mi><mo>×</mo><mi>m</mi></mrow></msup><mo>.</mo></math>\nДля системы с n состояниями, m входами и p выходами размерности матриц следующие:",
+    "difficulty": "лёгкий",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-11",
+    "text": "Что такое стационарная и нестационарная система?",
+    "answer": "Стационарная система – система, параметры математической модели которой не изменяются со временем. В её уравнениях коэффициенты являются постоянными. Нестационарная система – система, параметры которой зависят от времени.",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-12",
+    "text": "Что такое преобразование Лапласа и как выглядит его формула?",
+    "answer": "Преобразование Лапласа – математический метод, позволяющий преобразовать функцию времени в функцию комплексной переменной s\n<math display=\"block\"><mi>F</mi><mo>(</mo><mi>s</mi><mo>)</mo><mo>=</mo><mi>L</mi><mo>{</mo><mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>}</mo><mo>=</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>∞</mi></mrow></msubsup><mrow><mi>f</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>s</mi><mi>t</mi></mrow></msup><mi>d</mi><mi>t</mi></mrow></mrow></math>\nЗдесь f(t) – функция времени, F(s) – её изображение, s – комплексная переменная.",
+    "difficulty": "лёгкий",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-13",
+    "text": "Что такое передаточная функция и как выглядит её формула?",
+    "answer": "Передаточная функция – математическая характеристика линейной стационарной системы, описывающая отношение изображения выходного сигнала к изображению входного сигнала при нулевых начальных условиях.\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mi>Y</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow></mrow><mrow><mi>U</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow></mrow></mfrac><mo>.</mo></math>",
+    "difficulty": "лёгкий",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-14",
+    "text": "Что такое полюса и нули передаточной функции?",
+    "answer": "Нули передаточной функции – значения комплексной переменной s, при которых числитель передаточной функции обращается в ноль. Полюса – значения s, при которых знаменатель передаточной функции обращается в ноль",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-15",
+    "text": "Что такое преобразование Фурье и как выглядит его формула?",
+    "answer": "Преобразование Фурье – математический метод представления сигнала в частотной области. Оно позволяет представить сигнал как совокупность гармонических составляющих различной частоты и определить, какие частоты присутствуют в сигнале.\n<math display=\"block\"><mi>F</mi><mrow><mo>(</mo><mrow><mi>ω</mi></mrow><mo>)</mo></mrow><mo>=</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mo>-</mo><mi>∞</mi></mrow><mrow><mi>∞</mi></mrow></msubsup><mrow><mi>f</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>j</mi><mi>ω</mi><mi>t</mi></mrow></msup><mi>d</mi><mi>t</mi></mrow></mrow><mi> </mi></math>\nЗдесь f(t) – исходный сигнал, F(<math><mi>ω</mi></math>) – его частотное представление, ( <math><mi>ω</mi></math>) – круговая частота, j – мнимая единица.",
+    "difficulty": "лёгкий",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-16",
+    "text": "Что такое частотная характеристика системы?",
+    "answer": "Частотная характеристика системы описывает её реакцию на гармонические входные воздействия различной частоты. Она показывает, как система изменяет амплитуду и фазу входного сигнала при прохождении через неё",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-17",
+    "text": "Как связаны преобразования Лапласа и Фурье?",
+    "answer": "Преобразование Фурье можно рассматривать как частный случай преобразования Лапласа при s=j<math><mi>ω</mi></math> , если интеграл преобразования Лапласа сходится на соответствующей линии комплексной плоскости",
+    "difficulty": "лёгкий",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-18",
+    "text": "Формула Коши для линейной стационарной системы?",
+    "answer": "<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mi>t</mi></mrow></msup><msub><mrow><mi>x</mi></mrow><mrow><mn>0</mn></mrow></msub><mo>+</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup><mi>B</mi><mi>u</mi><mo>(</mo><mi>τ</mi><mo>)</mo><mi>d</mi><mi>τ</mi></mrow></mrow></math>",
+    "difficulty": "лёгкий",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-19",
+    "text": "Что такое единичная функция Хевисайда, как она выглядит?",
+    "answer": "Единичная функция Хевисайда – функция, которая моделирует включение воздействия в определённый момент времени\n<math display=\"block\"><mi>H</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mrow><mo>{</mo><mtable><mtr><mtd><mn>0</mn><mo>,</mo></mtd><mtd><mi>t</mi><mo>&lt;</mo><mn>0</mn></mtd></mtr><mtr><mtd><mn>1</mn><mo>,</mo></mtd><mtd><mi>t</mi><mo>≥</mo><mn>0</mn></mtd></mtr></mtable></mrow></math>",
+    "difficulty": "лёгкий",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-20",
+    "text": "Что такое Жорданова форма матрицы?",
+    "answer": "Жорданова форма матрицы – это специальный вид матрицы, к которому квадратную матрицу можно привести с помощью преобразования подобия. Она состоит из жордановых блоков, на главной диагонали которых расположены собственные значения, а над диагональю могут находиться единицы. Жорданова форма упрощает анализ матриц и решение систем дифференциальных уравнений, поскольку позволяет выделить структуру, связанную с собственными значениями матрицы",
+    "difficulty": "лёгкий"
+  },
+  {
+    "id": "tau-21",
+    "text": "Почему при построении математической модели системы необходимо выделять входные воздействия и выход системы?",
+    "answer": "Входные воздействия определяют, каким образом внешняя среда или управляющее устройство влияют на систему, а выход характеризует результат её работы. Это необходимо для анализа, прогнозирования поведения объекта и оценки того, насколько система реагирует на заданные воздействия.",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-22",
+    "text": "Почему модель должна учитывать не только вход и выход, но и внутреннее состояние объекта?",
+    "answer": "Вход и выход не всегда позволяют полностью описать поведение системы, поскольку её динамика зависит от внутренних процессов и накопленной информации о предыдущих воздействиях. Вектор состояния содержит переменные, которые позволяют определить дальнейшее поведение системы при известных текущем состоянии и входе.",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-23",
+    "text": "В каких случаях удобнее использовать модель «вход–выход», а в каких — модель «вход–состояние–выход»?",
+    "answer": "Модель «вход–выход» удобна, когда необходимо исследовать зависимость выходной величины от входного воздействия, например получить передаточную функцию и анализировать частотные характеристики. Модель «вход–состояние–выход» удобнее при исследовании внутренней динамики системы, решении задач управления, анализе нескольких переменных состояния",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-24",
+    "text": "Почему одна и та же система может иметь несколько математических моделей?",
+    "answer": "Одна и та же система может описываться различными математическими моделями, поскольку её поведение можно представлять разными способами. Например, можно использовать дифференциальное уравнение «вход–выход», модель в пространстве состояний, передаточную функцию или частотную характеристику. Эти модели могут описывать один и тот же объект, но каждая форма удобна для решения определённых задач. Кроме того, модели могут отличаться выбором переменных состояния.",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-25",
+    "text": "Почему нелинейная модель не удовлетворяет принципу суперпозиции?",
+    "answer": "Нелинейная модель содержит нелинейные зависимости, например произведения переменных, степени или нелинейные функции. Поэтому при суммировании входных воздействий результат не обязательно равен сумме результатов от каждого воздействия отдельно. Также масштабирование входа может не приводить к пропорциональному масштабированию выхода",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-26",
+    "text": "Как по дифференциальному уравнению определить порядок системы и число переменных состояния?",
+    "answer": "Порядок системы определяется наивысшей производной выходной величины, присутствующей в дифференциальном уравнении. Для уравнения, содержащего y(n)(t), порядок системы обычно равен n",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-27",
+    "text": "Как определить коэффициенты модели «вход–выход» по заданному дифференциальному уравнению?",
+    "answer": "Коэффициенты модели определяются непосредственно из дифференциального уравнения. Коэффициенты при производных выходной величины относятся к левой части уравнения, а коэффициенты при входном воздействии и его производных — к правой части.\n<math display=\"block\"><mn>2</mn><msup><mrow><mi>y</mi></mrow><mrow><mrow><mo>(</mo><mrow><mn>2</mn></mrow><mo>)</mo></mrow></mrow></msup><mo>+</mo><mn>5</mn><msup><mrow><mi>y</mi></mrow><mrow><mrow><mo>(</mo><mrow><mn>1</mn></mrow><mo>)</mo></mrow></mrow></msup><mo>+</mo><mn>3</mn><mi>y</mi><mo>=</mo><mn>4</mn><mi>u</mi></math>\nкоэффициенты при выходе равны a2=2, a1=5, a0=3, а коэффициент входного воздействия равен b0=4.",
+    "difficulty": "средний",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-28",
+    "text": "Как связаны порядок дифференциального уравнения, число переменных состояния и размерность матрицы A?",
+    "answer": "Для стандартной модели линейной системы порядок дифференциального уравнения определяет количество переменных состояния. Если порядок системы равен n, то вектор состояния обычно содержит n переменных. Матрица A, описывающая динамику состояния, имеет размерность n * n. Следовательно, число переменных состояния равно порядку системы, а размерность матрицы A определяется этим числом.",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-29",
+    "text": "Почему состояния системы не обязательно совпадают с её выходами?",
+    "answer": "Выходы системы представляют величины, которые непосредственно наблюдаются или интересуют исследователя, тогда как переменные состояния характеризуют внутреннюю динамику объекта. Состояния выбираются таким образом, чтобы их совокупность полностью описывала поведение системы в дальнейшем. Поэтому состояние может быть физической величиной, например скоростью или током, либо математически введённой переменной, которая непосредственно не измеряется на выходе.",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-30",
+    "text": "Почему матрица D в модели состояния может быть нулевой?",
+    "answer": "Матрица D описывает непосредственную связь входного воздействия с выходом, которая не проходит через динамику переменных состояния. Если вход влияет на выход только через изменение состояния системы, то непосредственной связи нет и матрица D=0",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-31",
+    "text": "Почему при получении передаточной функции рассматриваются нулевые начальные условия?",
+    "answer": "Передаточная функция определяется как отношение изображения выходного сигнала к изображению входного сигнала при нулевых начальных условиях. Это позволяет выделить влияние именно входного воздействия на поведение системы, исключив составляющую движения, обусловленную начальным состоянием",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-32",
+    "text": "Как передаточная функция связана с дифференциальным уравнением модели «вход–выход»?",
+    "answer": "Передаточная функция получается из дифференциального уравнения модели «вход–выход» с помощью преобразования Лапласа при нулевых начальных условиях. После этого дифференциальное уравнение превращается в алгебраическое, и передаточная функция определяется как отношение Y(s) к U(s).\n<math display=\"block\"><mi>y</mi><mi>'</mi><mi>'</mi><mo>+</mo><mn>3</mn><mi>y</mi><mi>'</mi><mo>+</mo><mn>2</mn><mi>y</mi><mo>=</mo><mi>u</mi></math>\n<math display=\"block\"><mrow><mo>(</mo><mrow><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>s</mi><mo>+</mo><mn>2</mn></mrow><mo>)</mo></mrow><mi>Y</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mi>U</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mi>Y</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow></mrow><mrow><mi>U</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac></math>",
+    "difficulty": "средний",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-33",
+    "text": "Как передаточная функция связана с моделью в пространстве состояний?",
+    "answer": "Передаточная функция может быть получена из модели в пространстве состояний путём преобразования Лапласа уравнения состояния при нулевых начальных условиях\n<math display=\"block\"><mi>x</mi><mi>'</mi><mo>=</mo><mi>A</mi><mi>x</mi><mo>+</mo><mi>B</mi><mi>u</mi></math>\n<math display=\"block\"><mi>y</mi><mo>=</mo><mi>C</mi><mi>x</mi><mo>+</mo><mi>D</mi><mi>u</mi></math>\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mi>C</mi><msup><mrow><mrow><mo>(</mo><mrow><mi>s</mi><mi>I</mi><mo>-</mo><mi>A</mi></mrow><mo>)</mo></mrow></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>B</mi><mo>+</mo><mi>D</mi></math>",
+    "difficulty": "средний",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-34",
+    "text": "Что можно определить по передаточной функции системы?",
+    "answer": "По передаточной функции можно определить порядок системы, её полюса и нули, а также исследовать динамические свойства. Полюса позволяют оценивать характер переходных процессов и устойчивость системы, а нули характеризуют особенности передачи сигналов через систему. Также передаточная функция позволяет получать частотную характеристику, анализировать усиление и фазовый сдвиг при различных частотах входного воздействия.",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-35",
+    "text": "Объясните физический смысл преобразования Фурье: что оно позволяет узнать о сигнале или системе?",
+    "answer": "Преобразование Фурье позволяет представить сигнал в виде совокупности гармонических составляющих различных частот. Оно показывает, какие частоты присутствуют в сигнале и насколько сильно выражена каждая из них.",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-36",
+    "text": "Как из передаточной функции получить частотную характеристику системы?",
+    "answer": "Для получения частотной характеристики из передаточной функции необходимо заменить комплексную переменную s на j<math><mi>ω</mi></math>, где <math><mi>ω</mi></math> – круговая частота, а j – мнимая единица.\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>j</mi><mi>ω</mi></mrow><mo>)</mo></mrow><mo>=</mo><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><msub><mrow><mrow><mo></mo><mrow><mi>​</mi></mrow><mo>|</mo></mrow></mrow><mrow><mi>s</mi><mo>=</mo><mi>j</mi><mi>ω</mi></mrow></msub></math>",
+    "difficulty": "средний",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-37",
+    "text": "Как преобразование Лапласа позволяет перейти от дифференциального уравнения к алгебраическому?",
+    "answer": "Преобразование Лапласа переводит производные функции времени в выражения, содержащие комплексную переменную s и изображения исходной функции\n<math display=\"block\"><mi>L</mi><mrow><mo>{</mo><mrow><msup><mrow><mi>y</mi></mrow><mrow><mi>'</mi></mrow></msup><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow></mrow><mo>}</mo></mrow><mo>=</mo><mi>s</mi><mi>Y</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>-</mo><mi>y</mi><mrow><mo>(</mo><mrow><mn>0</mn></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>L</mi><mrow><mo>{</mo><mrow><msup><mrow><mi>y</mi></mrow><mrow><mi>'</mi><mi>'</mi></mrow></msup><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow></mrow><mo>}</mo></mrow><mo>=</mo><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mi>Y</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>-</mo><mi>s</mi><mi>y</mi><mrow><mo>(</mo><mrow><mn>0</mn></mrow><mo>)</mo></mrow><mo>-</mo><msup><mrow><mi>y</mi></mrow><mrow><mi>'</mi></mrow></msup><mrow><mo>(</mo><mrow><mn>0</mn></mrow><mo>)</mo></mrow></math>",
+    "difficulty": "средний",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-38",
+    "text": "Как формула Коши учитывает начальное состояние системы и входное воздействие?",
+    "answer": "<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mi>t</mi></mrow></msup><msub><mrow><mi>x</mi></mrow><mrow><mn>0</mn></mrow></msub><mo>+</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup><mi>B</mi><mi>u</mi><mo>(</mo><mi>τ</mi><mo>)</mo><mi>d</mi><mi>τ</mi></mrow></mrow></math>\nПервое слагаемое eAtx0 описывает изменение состояния, вызванное начальным состоянием системы при отсутствии входного воздействия. Второе слагаемое – интеграл описывает влияние входного сигнала на состояние системы за весь промежуток времени от 0 до t",
+    "difficulty": "средний",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-39",
+    "text": "Что произойдёт с решением системы по формуле Коши, если <math><mi>u</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mn>0</mn></math>? Что произойдёт, если <math><msub><mi>x</mi><mn>0</mn></msub><mo>=</mo><mn>0</mn></math>?",
+    "answer": "<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mi>t</mi></mrow></msup><msub><mrow><mi>x</mi></mrow><mrow><mn>0</mn></mrow></msub><mo>+</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup><mi>B</mi><mi>u</mi><mo>(</mo><mi>τ</mi><mo>)</mo><mi>d</mi><mi>τ</mi></mrow></mrow></math>\nЕсли u(t)=0, то интегральное слагаемое в формуле Коши исчезает, и решение принимает вид:\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mi>t</mi></mrow></msup><msub><mrow><mi>x</mi></mrow><mrow><mn>0</mn></mrow></msub></math>\nЭто свободное движение системы, обусловленное только начальным состоянием.\nЕсли x0=0, то первое слагаемое исчезает, и решение определяется только входным воздействием:\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup><mi>B</mi><mi>u</mi><mo>(</mo><mi>τ</mi><mo>)</mo><mi>d</mi><mi>τ</mi></mrow></mrow></math>\nЭто вынужденное движение системы.",
+    "difficulty": "средний",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-40",
+    "text": "Почему единичная ступенчатая функция используется как типовое входное воздействие?",
+    "answer": "Единичная ступенчатая функция используется как типовое воздействие, поскольку моделирует внезапное включение постоянного сигнала в момент времени t=0. Она позволяет исследовать переходный процесс системы при изменении входа от нуля к постоянному значению.",
+    "difficulty": "средний"
+  },
+  {
+    "id": "tau-41",
+    "text": "По заданному дифференциальному уравнению определить порядок системы, выделить коэффициенты и записать уравнение в стандартном виде модели «вход–выход».\nПример:\n<math display=\"block\"><mn>2</mn><msup><mi>y</mi><mo>″</mo></msup><mo>+</mo><mn>6</mn><msup><mi>y</mi><mo>′</mo></msup><mo>+</mo><mn>4</mn><mi>y</mi><mo>=</mo><mn>8</mn><mi>u</mi></math>",
+    "answer": "Делим на 2\n<math display=\"block\"><mi>y</mi><mi>'</mi><mi>'</mi><mo>+</mo><mn>3</mn><mi>y</mi><mi>'</mi><mo>+</mo><mn>2</mn><mi>y</mi><mo>=</mo><mn>4</mn><mi>u</mi></math>\nПорядок системы n = 2\nКоэффициенты: <math><msub><mrow><mi>a</mi></mrow><mrow><mn>2</mn></mrow></msub><mo>=</mo><mn>1</mn><mo>,</mo><mi> </mi><mi> </mi><msub><mrow><mi>a</mi></mrow><mrow><mn>1</mn></mrow></msub><mo>=</mo><mn>3</mn><mo>,</mo><mi> </mi><mi> </mi><mi> </mi><msub><mrow><mi>a</mi></mrow><mrow><mn>0</mn></mrow></msub><mo>=</mo><mn>2</mn><mo>,</mo><mi> </mi><mi> </mi><mi> </mi><msub><mrow><mi>b</mi></mrow><mrow><mn>0</mn></mrow></msub><mo>=</mo><mn>4</mn><mo>.</mo></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-42",
+    "text": "По заданному дифференциальному уравнению построить модель в пространстве состояний в матричной форме.\nПример: <math><msup><mi>y</mi><mo>″</mo></msup><mo>+</mo><mn>3</mn><msup><mi>y</mi><mo>′</mo></msup><mo>+</mo><mn>2</mn><mi>y</mi><mo>=</mo><mn>4</mn><mi>u</mi><mo>.</mo></math>",
+    "answer": "Выбираем переменные состояния: <math><msub><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow></msub><mo>=</mo><mi>y</mi><mo>,</mo><mi> </mi><mi> </mi><msub><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow></msub><mo>=</mo><msup><mrow><mi>y</mi></mrow><mrow><mi>'</mi></mrow></msup></math>\nПолучаем:\n<math display=\"block\"><msubsup><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow><mrow><mi>'</mi></mrow></msubsup><mo>=</mo><msub><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow></msub></math>\n<math display=\"block\"><msubsup><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow><mrow><mi>'</mi></mrow></msubsup><mo>=</mo><mo>-</mo><mn>2</mn><msub><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow></msub><mo>-</mo><mn>3</mn><msub><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow></msub><mo>+</mo><mn>4</mn><mi>u</mi></math>\n<math display=\"block\"><mi>y</mi><mo>=</mo><msub><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow></msub></math>\nЗаписываем в матричной форме:\n<math display=\"block\"><msup><mrow><mi>x</mi></mrow><mrow><mi>'</mi></mrow></msup><mo>=</mo><mi>A</mi><mi>x</mi><mo>+</mo><mi>B</mi><mi>u</mi></math>\n<math display=\"block\"><mi> </mi><mi>y</mi><mo>=</mo><mi>C</mi><mi>x</mi><mo>+</mo><mi>D</mi><mi>u</mi></math>\nМатрицы:\n<math display=\"block\"><mi>A</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mo>-</mo><mn>2</mn></mtd><mtd><mo>-</mo><mn>3</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>,</mo><mi> </mi><mi>B</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>4</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>,</mo><mi> </mi><mi>C</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>,</mo><mi> </mi><mi>D</mi><mo>=</mo><mi> </mi><mn>0</mn></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-43",
+    "text": "По заданному дифференциальному уравнению определить, является ли система линейной и стационарной.\nПример 1: <math><msup><mi>y</mi><mo>″</mo></msup><mo>+</mo><mn>3</mn><msup><mi>y</mi><mo>′</mo></msup><mo>+</mo><msup><mrow><mi>y</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>=</mo><mi>u</mi></math>\nПример 2: <math><msup><mi>y</mi><mo>′</mo></msup><mo>+</mo><mrow><mo>(</mo><mrow><mi>sin</mi><mo>⁡</mo><mi>t</mi></mrow><mo>)</mo></mrow><mi>y</mi><mo>=</mo><mn>3</mn><mi>u</mi></math>",
+    "answer": "Система нелинейная, поскольку содержит y2. Она стационарная, поскольку все коэффициенты постоянны и явно не зависят от времени.\nСистема линейная, поскольку y и u входят линейно. Нестационарная, поскольку коэффициент при y зависит от времени.",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-44",
+    "text": "По заданной модели в пространстве состояний получить эквивалентное дифференциальное уравнение модели «вход–выход».\nПример:\n<math><mi>A</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mo>-</mo><mn>2</mn></mtd><mtd><mo>-</mo><mn>3</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><mi>B</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><mi>C</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><mi>D</mi><mo>=</mo><mn>0</mn></math>.",
+    "answer": "<math display=\"block\"><msubsup><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow><mrow><mi>'</mi></mrow></msubsup><mo>=</mo><msub><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow></msub><mo>,</mo><mi> </mi><mi> </mi><mi>y</mi><mo>=</mo><msub><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow></msub></math>\n<math display=\"block\"><msubsup><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow><mrow><mi>'</mi></mrow></msubsup><mo>=</mo><mo>-</mo><mn>2</mn><msub><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow></msub><mo>-</mo><mn>3</mn><msub><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow></msub><mo>+</mo><mi>u</mi></math>\nПолучаем:\n<math display=\"block\"><mi>y</mi><mi>'</mi><mi>'</mi><mo>+</mo><mn>3</mn><mi>y</mi><mi>'</mi><mo>+</mo><mn>2</mn><mi>y</mi><mo>=</mo><mi>u</mi></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-45",
+    "text": "Получить передаточную функцию из дифференциального уравнения модели «вход–выход» с помощью преобразования Лапласа.\nПример: <math><msup><mi>y</mi><mo>″</mo></msup><mo>+</mo><mn>3</mn><msup><mi>y</mi><mo>′</mo></msup><mo>+</mo><mn>2</mn><mi>y</mi><mo>=</mo><mi>u</mi></math>",
+    "answer": "При нулевых начальных условиях: <math><mrow><mo>(</mo><mrow><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>s</mi><mo>+</mo><mn>2</mn></mrow><mo>)</mo></mrow><mi>Y</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mi>U</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>.</mo></math>\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac><mo>.</mo></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-46",
+    "text": "Получить передаточную функцию из модели в пространстве состояний с помощью преобразования Лапласа.\n<math><mi>A</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mo>-</mo><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mo>-</mo><mn>2</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><mi>B</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><mi>C</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><mi>D</mi><mo>=</mo><mn>0</mn></math>.",
+    "answer": "Так как <math><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mi>C</mi><msup><mrow><mrow><mo>(</mo><mrow><mi>s</mi><mi>I</mi><mo>-</mo><mi>A</mi></mrow><mo>)</mo></mrow></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>B</mi><mo>+</mo><mi>D</mi></math>\n<math display=\"block\"><mi>s</mi><mi>I</mi><mo>-</mo><mi>A</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mi>s</mi><mo>+</mo><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mi>s</mi><mo>+</mo><mn>2</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><msup><mrow><mrow><mo>(</mo><mrow><mi>s</mi><mi>I</mi><mo>-</mo><mi>A</mi></mrow><mo>)</mo></mrow></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><msup><mrow><mrow><mo>(</mo><mrow><mi>s</mi><mi>I</mi><mo>-</mo><mi>A</mi></mrow><mo>)</mo></mrow></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>B</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mtd></mtr><mtr><mtd><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>C</mi><msup><mrow><mrow><mo>(</mo><mrow><mi>s</mi><mi>I</mi><mo>-</mo><mi>A</mi></mrow><mo>)</mo></mrow></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>B</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mtd></mtr><mtr><mtd><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>=</mo><mn>1</mn><mrow><mo>(</mo><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mrow><mo>)</mo></mrow><mo>+</mo><mn>1</mn><mrow><mo>(</mo><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>1</mn></mrow></mfrac><mo>+</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac><mo>+</mo><mn>0</mn></math><math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mi>s</mi><mo>+</mo><mn>2</mn><mo>+</mo><mi>s</mi><mo>+</mo><mn>1</mn></mrow><mrow><mrow><mo>(</mo><mrow><mi>s</mi><mo>+</mo><mn>1</mn></mrow><mo>)</mo></mrow><mrow><mo>(</mo><mrow><mi>s</mi><mo>+</mo><mn>2</mn></mrow><mo>)</mo></mrow></mrow></mfrac></math>\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mn>2</mn><mi>s</mi><mo>+</mo><mn>3</mn></mrow><mrow><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac><mo>.</mo></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-47",
+    "text": "По заданной передаточной функции определить порядок системы, полюса и нули.\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mi>s</mi><mo>+</mo><mn>4</mn></mrow><mrow><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>5</mn><mi>s</mi><mo>+</mo><mn>6</mn></mrow></mfrac></math>",
+    "answer": "Знаменатель: <math><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>5</mn><mi>s</mi><mo>+</mo><mn>6</mn><mo>=</mo><mrow><mo>(</mo><mrow><mi>s</mi><mo>+</mo><mn>2</mn></mrow><mo>)</mo></mrow><mrow><mo>(</mo><mrow><mi>s</mi><mo>+</mo><mn>3</mn></mrow><mo>)</mo></mrow></math>\nПорядок системы = 2\nПолюса: <math><msub><mrow><mi>s</mi></mrow><mrow><mn>1</mn></mrow></msub><mo>=</mo><mo>-</mo><mn>2</mn><mo>,</mo><mi> </mi><mi> </mi><msub><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msub><mo>=</mo><mo>-</mo><mn>3</mn><mo>.</mo></math>\nНоль: <math><mi>s</mi><mo>=</mo><mo>-</mo><mn>4</mn></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-48",
+    "text": "По заданной передаточной функции получить дифференциальное уравнение системы.\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mn>2</mn></mrow><mrow><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>4</mn><mi>s</mi><mo>+</mo><mn>3</mn></mrow></mfrac></math>",
+    "answer": "<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mi>Y</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow></mrow><mrow><mi>U</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow></mrow></mfrac><mo>=</mo><mo>&gt;</mo></math>\n<math display=\"block\"><mi>Y</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mrow><mo>(</mo><mrow><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>4</mn><mi>s</mi><mo>+</mo><mn>3</mn></mrow><mo>)</mo></mrow><mo>=</mo><mn>2</mn><mi>U</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>y</mi><mi>'</mi><mi>'</mi><mo>+</mo><mn>4</mn><mi>y</mi><mi>'</mi><mo>+</mo><mn>3</mn><mi>y</mi><mo>=</mo><mn>2</mn><mi>u</mi></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-49",
+    "text": "По заданной передаточной функции построить модель в пространстве состояний.\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac></math>",
+    "answer": "<math display=\"block\"><mi>y</mi><mi>'</mi><mi>'</mi><mo>+</mo><mn>3</mn><mi>y</mi><mi>'</mi><mo>+</mo><mn>2</mn><mi>y</mi><mo>=</mo><mi>u</mi></math>\n<math display=\"block\"><msub><mrow><mi>x</mi></mrow><mrow><mn>1</mn></mrow></msub><mo>=</mo><mi>y</mi><mo>,</mo><msub><mrow><mi>x</mi></mrow><mrow><mn>2</mn></mrow></msub><mo>=</mo><msup><mrow><mi>y</mi></mrow><mrow><mi>'</mi></mrow></msup></math>\n<math display=\"block\"><mi>A</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mo>-</mo><mn>2</mn></mtd><mtd><mo>-</mo><mn>3</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>,</mo><mi> </mi><mi>B</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>,</mo><mi> </mi><mi>C</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>,</mo><mi>D</mi><mo>=</mo><mn>0</mn></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-50",
+    "text": "По заданной передаточной функции получить частотную характеристику и определить её модуль.\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mn>2</mn></mrow><mrow><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>s</mi><mo>+</mo><mn>2</mn></mrow></mfrac></math>",
+    "answer": "<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>j</mi><mi>ω</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mn>2</mn></mrow><mrow><msup><mrow><mrow><mo>(</mo><mrow><mi>j</mi><mi>ω</mi></mrow><mo>)</mo></mrow></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>j</mi><mi>ω</mi><mo>+</mo><mn>2</mn></mrow></mfrac></math>\n<math display=\"block\"><mi>W</mi><mrow><mo>(</mo><mrow><mi>j</mi><mi>ω</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mn>2</mn></mrow><mrow><mn>2</mn><mo>-</mo><msup><mrow><mi>ω</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>j</mi><mi>ω</mi></mrow></mfrac><mo>,</mo><mi> </mi><mi>т</mi><mi>а</mi><mi>к</mi><mi> </mi><mi>к</mi><mi>а</mi><mi>к</mi><mi> </mi><msup><mrow><mi>j</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>=</mo><mo>-</mo><mn>1</mn></math>\n<math display=\"block\"><mrow><mo>|</mo><mrow><mi>W</mi><mrow><mo>(</mo><mrow><mi>j</mi><mi>ω</mi></mrow><mo>)</mo></mrow></mrow><mo>|</mo></mrow><mo>=</mo><mfrac><mrow><mn>2</mn></mrow><mrow><msqrt><msup><mrow><mrow><mo>(</mo><mrow><mn>2</mn><mo>-</mo><msup><mrow><mi>ω</mi></mrow><mrow><mn>2</mn></mrow></msup></mrow><mo>)</mo></mrow></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>9</mn><msup><mrow><mi>ω</mi></mrow><mrow><mn>2</mn></mrow></msup></msqrt></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>2</mn></mrow><mrow><msqrt><msup><mrow><mi>ω</mi></mrow><mrow><mn>4</mn></mrow></msup><mo>+</mo><mn>5</mn><msup><mrow><mi>ω</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>4</mn></msqrt></mrow></mfrac><mo>.</mo></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-51",
+    "text": "По заданному полиному выполнить преобразование по схеме Горнера, показать последовательность действий и сравнить количество операций с обычным вычислением полинома.\nОбычная запись: <math><mi>P</mi><mrow><mo>(</mo><mrow><mi>s</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>s</mi></mrow><mrow><mn>3</mn></mrow></msup><mo>+</mo><mn>2</mn><msup><mrow><mi>s</mi></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>s</mi><mo>+</mo><mn>4</mn></math>",
+    "answer": "Схема Горнера: <math><mi>P</mi><mo>(</mo><mi>s</mi><mo>)</mo><mo>=</mo><mi>s</mi><mo>(</mo><mi>s</mi><mo>(</mo><mi>s</mi><mo>+</mo><mn>2</mn><mo>)</mo><mo>+</mo><mn>3</mn><mo>)</mo><mo>+</mo><mn>4</mn></math>\nПри s=2:\n<math display=\"block\"><mi>P</mi><mrow><mo>(</mo><mrow><mn>2</mn></mrow><mo>)</mo></mrow><mo>=</mo><mn>2</mn><mrow><mo>(</mo><mrow><mn>2</mn><mrow><mo>(</mo><mrow><mn>2</mn><mo>+</mo><mn>2</mn></mrow><mo>)</mo></mrow><mo>+</mo><mn>3</mn></mrow><mo>)</mo></mrow><mo>+</mo><mn>4</mn><mo>=</mo><mn>26</mn><mo>,</mo><mi>к</mi><mi>о</mi><mi>л</mi><mi>в</mi><mi>о</mi><mi> </mi><mi>о</mi><mi>п</mi><mi>е</mi><mi>р</mi><mi>а</mi><mi>ц</mi><mi>и</mi><mi>й</mi><mo>=</mo><mn>5</mn></math>\n<math display=\"block\"><msup><mrow><mn>2</mn></mrow><mrow><mn>3</mn></mrow></msup><mo>+</mo><mn>2</mn><mi>*</mi><msup><mrow><mn>2</mn></mrow><mrow><mn>2</mn></mrow></msup><mo>+</mo><mn>3</mn><mi>*</mi><mn>2</mn><mo>+</mo><mn>4</mn><mo>=</mo><mn>26</mn><mo>,</mo><mi> </mi><mi>к</mi><mi>о</mi><mi>л</mi><mi>в</mi><mi>о</mi><mi> </mi><mi>о</mi><mi>п</mi><mi>е</mi><mi>р</mi><mi>а</mi><mi>ц</mi><mi>и</mi><mi>й</mi><mo>=</mo><mn>8</mn></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-52",
+    "text": "По заданным матрицам A, B, C, D определить размерности состояния, входа и выхода и проверить корректность модели.\n<math><mi>A</mi><mi> </mi><mo>∈</mo><msup><mrow><mi>R</mi></mrow><mrow><mn>2</mn><mo>×</mo><mn>2</mn></mrow></msup></math>, <math><mi>B</mi><mi> </mi><mo>∈</mo><msup><mrow><mi>R</mi></mrow><mrow><mn>2</mn><mo>×</mo><mn>1</mn></mrow></msup></math>, <math><mi>C</mi><mi> </mi><mo>∈</mo><msup><mrow><mi>R</mi></mrow><mrow><mn>1</mn><mo>×</mo><mn>2</mn></mrow></msup></math>, <math><mi>D</mi><mi> </mi><mo>∈</mo><msup><mrow><mi>R</mi></mrow><mrow><mn>1</mn><mo>×</mo><mn>1</mn></mrow></msup></math>",
+    "answer": "число состояний n=2, число входов m=1, число выходов p=1\nРазмерности соответствуют модели: <math><msup><mrow><mi>x</mi></mrow><mrow><mi>'</mi></mrow></msup><mo>=</mo><mi>A</mi><mi>x</mi><mo>+</mo><mi>B</mi><mi>u</mi><mo>,</mo><mi>y</mi><mo>=</mo><mi>C</mi><mi>x</mi><mo>+</mo><mi>D</mi><mi>u</mi></math>. Модель корректна по размерностям.",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-53",
+    "text": "По заданной матрице выполнить переход к новому базису с помощью матрицы подобного преобразования и получить преобразованные матрицы A/ B/ C/ D.\nПример: <math><mi>A</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>2</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><mi>S</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><msup><mrow><mi>S</mi></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mo>-</mo><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>",
+    "answer": "Используем: <math><msup><mrow><mi>A</mi></mrow><mrow><mi>'</mi></mrow></msup><mo>=</mo><msup><mrow><mi>S</mi></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>A</mi><mi>S</mi></math>\n<math display=\"block\"><mi>A</mi><mi>S</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>2</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>2</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><msup><mrow><mi>A</mi></mrow><mrow><mi>'</mi></mrow></msup><mo>=</mo><msup><mrow><mi>S</mi></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>A</mi><mi>S</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mo>-</mo><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>2</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>2</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-54",
+    "text": "Объяснить, почему при переходе к новому базису матрицы преобразуются по формулам <math><msup><mi>A</mi><mo>′</mo></msup><mo>=</mo><msup><mi>S</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mi>A</mi><mi>S</mi></math>, <math><msup><mi>B</mi><mo>′</mo></msup><mo>=</mo><msup><mi>S</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mi>B</mi></math>, <math><msup><mi>C</mi><mo>′</mo></msup><mo>=</mo><mi>C</mi><mi>S</mi></math>, <math><msup><mi>D</mi><mo>′</mo></msup><mo>=</mo><mi>D</mi></math>.",
+    "answer": "<math display=\"block\"><mi>x</mi><mo>=</mo><mi>S</mi><mi>z</mi><mo>,</mo><mi>z</mi><mo>=</mo><msup><mrow><mi>S</mi></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>x</mi></math>\n<math display=\"block\"><mi>x</mi><mi>'</mi><mo>=</mo><mi>A</mi><mi>x</mi><mo>+</mo><mi>B</mi><mi>u</mi></math>\nПодставляем в исходное ур-ние:\n<math display=\"block\"><mi>S</mi><mi>z</mi><mi>'</mi><mo>=</mo><mi>A</mi><mi>S</mi><mi>z</mi><mo>+</mo><mi>B</mi><mi>u</mi></math>\nУмножаем на S-1\n<math display=\"block\"><msup><mrow><mi>z</mi></mrow><mrow><mi>'</mi></mrow></msup><mo>=</mo><msup><mrow><mi>S</mi></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>A</mi><mi>S</mi><mi>z</mi><mo>+</mo><msup><mrow><mi>S</mi></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>B</mi><mi>u</mi></math>\n<math display=\"block\"><msup><mrow><mi>A</mi></mrow><mrow><mi>'</mi></mrow></msup><mo>=</mo><msup><mrow><mi>S</mi></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>A</mi><mi>S</mi><mo>,</mo><msup><mrow><mi>B</mi></mrow><mrow><mi>'</mi></mrow></msup><mo>=</mo><msup><mrow><mi>S</mi></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>B</mi></math>\n<math display=\"block\"><mi>y</mi><mo>=</mo><mi>C</mi><mi>x</mi><mo>+</mo><mi>D</mi><mi>u</mi><mo>=</mo><mi>C</mi><mi>S</mi><mi>z</mi><mo>+</mo><mi>D</mi><mi>u</mi></math>\n<math display=\"block\"><msup><mrow><mi>C</mi></mrow><mrow><mi>'</mi></mrow></msup><mo>=</mo><mi>C</mi><mi>S</mi><mo>,</mo><msup><mrow><mi>D</mi></mrow><mrow><mi>'</mi></mrow></msup><mo>=</mo><mi>D</mi></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-55",
+    "text": "По заданной матрице и её собственным векторам построить Жорданову форму и определить матрицу перехода к Жордановой форме\nПример: <math><mi>A</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>2</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>3</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><msub><mrow><mi>v</mi></mrow><mrow><mn>1</mn></mrow></msub><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><msub><mrow><mi>v</mi></mrow><mrow><mn>2</mn></mrow></msub><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>",
+    "answer": "<math display=\"block\"><mi>P</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><msup><mrow><mi>P</mi></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mo>-</mo><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>A</mi><mi>P</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>2</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>3</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>2</mn></mtd><mtd><mn>3</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>3</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>J</mi><mo>=</mo><msup><mrow><mi>P</mi></mrow><mrow><mo>-</mo><mn>1</mn></mrow></msup><mi>A</mi><mi>P</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mo>-</mo><mn>1</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>2</mn></mtd><mtd><mn>3</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>3</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>2</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>3</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-56",
+    "text": "По заданной диагональной матрице A и начальному состоянию <math><msub><mi>x</mi><mn>0</mn></msub></math> найти решение системы <math><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mi>A</mi><mi>x</mi></math>\n<math><mi>A</mi><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mo>-</mo><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mo>-</mo><mn>2</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>, <math><msub><mrow><mi>x</mi></mrow><mrow><mn>0</mn></mrow></msub><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>2</mn></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>",
+    "answer": "<math display=\"block\"><mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mi>t</mi></mrow></msup><msub><mrow><mi>x</mi></mrow><mrow><mn>0</mn></mrow></msub></math>\n<math display=\"block\"><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mi>t</mi></mrow></msup><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mn>2</mn><mi>t</mi></mrow></msup></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mrow><mo>(</mo><mrow><mtable><mtr><mtd><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup></mtd></mtr><mtr><mtd><mn>2</mn><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mn>2</mn><mi>t</mi></mrow></msup></mtd></mtr></mtable></mrow><mo>)</mo></mrow></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-57",
+    "text": "Вывести формулу Коши для линейной стационарной системы <math><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mi>A</mi><mi>x</mi><mo>+</mo><mi>B</mi><mi>u</mi></math>.",
+    "answer": "<math display=\"block\"><mi>x</mi><mi>'</mi><mo>=</mo><mi>A</mi><mi>x</mi><mo>+</mo><mi>B</mi><mi>u</mi></math>\n<math display=\"block\"><mi> </mi><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>t</mi></mrow></msup><msup><mrow><mi>x</mi></mrow><mrow><mi>'</mi></mrow></msup><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>t</mi></mrow></msup><mi>A</mi><mi>x</mi><mo>+</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>t</mi></mrow></msup><mi>B</mi><mi>u</mi></math>\n<math display=\"block\"><mi>т</mi><mi>а</mi><mi>к</mi><mi> </mi><mi>к</mi><mi>а</mi><mi>к</mi><mi> </mi><mfrac><mrow><mi>d</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mrow><mo>(</mo><mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>t</mi></mrow></msup><mi>x</mi></mrow><mo>)</mo></mrow><mo>=</mo><mo>-</mo><mi>A</mi><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>t</mi></mrow></msup><mi>x</mi><mo>+</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>t</mi></mrow></msup><msup><mrow><mi>x</mi></mrow><mrow><mi>'</mi></mrow></msup><mi> </mi><mi>т</mi><mi>о</mi></math>\n<math display=\"block\"><mfrac><mrow><mi>d</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mrow><mo>(</mo><mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>t</mi></mrow></msup><mi>x</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>t</mi></mrow></msup><mi>B</mi><mi>u</mi></math>\n<math display=\"block\"><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>t</mi></mrow></msup><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>-</mo><mi>x</mi><mrow><mo>(</mo><mrow><mn>0</mn></mrow><mo>)</mo></mrow><mo>=</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>τ</mi></mrow></msup><mi>B</mi><mi>u</mi><mo>(</mo><mi>τ</mi><mo>)</mo><mi>d</mi><mi>τ</mi></mrow></mrow></math>\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mi>t</mi></mrow></msup><msub><mrow><mi>x</mi></mrow><mrow><mn>0</mn></mrow></msub><mo>+</mo><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mi>t</mi></mrow></msup><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>A</mi><mi>τ</mi></mrow></msup><mi>B</mi><mi>u</mi><mo>(</mo><mi>τ</mi><mo>)</mo><mi>d</mi><mi>τ</mi></mrow></mrow></math>\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mi>t</mi></mrow></msup><msub><mrow><mi>x</mi></mrow><mrow><mn>0</mn></mrow></msub><mo>+</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup><mi>B</mi><mi>u</mi><mrow><mo>(</mo><mrow><mi>τ</mi></mrow><mo>)</mo></mrow><mi>d</mi><mi>τ</mi></mrow></mrow></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-58",
+    "text": "По заданным дифференциальному уравнению, начальному состоянию <math><msub><mi>x</mi><mn>0</mn></msub></math> и входному воздействию <math><mi>u</mi><mo>(</mo><mi>t</mi><mo>)</mo></math> получить решение системы по формуле Коши.\nПример: <math><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mo>-</mo><mi>x</mi><mo>+</mo><mn>2</mn><mi>u</mi></math>, <math><mi>x</mi><mrow><mo>(</mo><mrow><mn>0</mn></mrow><mo>)</mo></mrow><mo>=</mo><mn>1</mn></math>, <math><mi>u</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mn>1</mn></math>",
+    "answer": "<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mi>t</mi></mrow></msup><msub><mrow><mi>x</mi></mrow><mrow><mn>0</mn></mrow></msub><mo>+</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mi>A</mi><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup><mi>B</mi><mi>u</mi><mrow><mo>(</mo><mrow><mi>τ</mi></mrow><mo>)</mo></mrow><mi>d</mi><mi>τ</mi></mrow></mrow></math>\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup><mn>1</mn><mo>+</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup><mn>2</mn><mi>*</mi><mn>1</mn><mi> </mi><mi>d</mi><mi>τ</mi></mrow></mrow></math>\n<math display=\"block\"><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><mn>2</mn><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup></mrow></mrow><mi>d</mi><mi>τ</mi><mo>=</mo><mn>2</mn><mrow><mo>(</mo><mrow><mn>1</mn><mo>-</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup><mo>+</mo><mn>2</mn><mrow><mo>(</mo><mrow><mn>1</mn><mo>-</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup></mrow><mo>)</mo></mrow><mo>=</mo><mn>2</mn><mo>-</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-59",
+    "text": "Получить решение системы по формуле Коши при нулевом начальном состоянии и единичном ступенчатом воздействии.\nПример: <math><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mo>-</mo><mn>2</mn><mi>x</mi><mo>+</mo><mi>u</mi></math>, <math><mi>x</mi><mrow><mo>(</mo><mrow><mn>0</mn></mrow><mo>)</mo></mrow><mo>=</mo><mn>0</mn></math>, <math><mi>u</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mn>1</mn></math> при <math><mi>t</mi><mo>≥</mo><mn>0</mn></math>.",
+    "answer": "<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mn>2</mn><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup></mrow></mrow><mi> </mi><mi>d</mi><mi>τ</mi></math>\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mrow><mo>(</mo><mrow><mn>1</mn><mo>-</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mn>2</mn><mi>t</mi></mrow></msup></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mrow><mo>(</mo><mrow><mn>1</mn><mo>-</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mn>2</mn><mi>t</mi></mrow></msup></mrow><mo>)</mo></mrow></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  },
+  {
+    "id": "tau-60",
+    "text": "Для заданной линейной стационарной системы получить реакцию на единичное ступенчатое воздействие, используя формулу Коши.\n<math><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mo>-</mo><mi>x</mi><mo>+</mo><mi>u</mi></math>, <math><mi>x</mi><mrow><mo>(</mo><mrow><mn>0</mn></mrow><mo>)</mo></mrow><mo>=</mo><mn>2</mn></math>, <math><mi>u</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mn>1</mn></math> при <math><mi>t</mi><mo>≥</mo><mn>0</mn></math>.",
+    "answer": "<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup><msub><mrow><mi>x</mi></mrow><mrow><mn>0</mn></mrow></msub><mo>+</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup><mi>u</mi><mo>(</mo><mi>τ</mi><mo>)</mo></mrow></mrow><mi>d</mi><mi>τ</mi></math>\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mn>2</mn><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup><mo>+</mo><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup></mrow></mrow><mi>d</mi><mi>τ</mi></math>\nПервое слагаемое – влияние начального состояния, второе – влияние входа\n<math display=\"block\"><msub><mrow><mi>x</mi></mrow><mrow><mi>н</mi><mi>а</mi><mi>ч</mi></mrow></msub><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mn>2</mn><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup></math>\n<math display=\"block\"><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup></mrow></mrow><mi>d</mi><mi>τ</mi></math>\n<math display=\"block\"><mi>т</mi><mi>а</mi><mi>к</mi><mi> </mi><mi>к</mi><mi>а</mi><mi>к</mi><mi> </mi><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup><msup><mrow><mi>e</mi></mrow><mrow><mi>τ</mi></mrow></msup><mi> </mi><mi>т</mi><mi>о</mi></math>\n<math display=\"block\"><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mrow><mo>(</mo><mrow><mi>t</mi><mo>-</mo><mi>τ</mi></mrow><mo>)</mo></mrow></mrow></msup></mrow></mrow><mi>d</mi><mi>τ</mi><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup><mrow><msubsup><mo stretchy=\"false\">∫</mo><mrow><mn>0</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mrow><msup><mrow><mi>e</mi></mrow><mrow><mi>τ</mi></mrow></msup></mrow></mrow><mi>d</mi><mi>τ</mi><mo>=</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup><mrow><mo>(</mo><mrow><msup><mrow><mi>e</mi></mrow><mrow><mi>t</mi></mrow></msup><mo>-</mo><mn>1</mn></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><msub><mrow><mi>x</mi></mrow><mrow><mi>в</mi><mi>х</mi><mi>о</mi><mi>д</mi></mrow></msub><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mn>1</mn><mo>-</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup></math>\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><msub><mrow><mi>x</mi></mrow><mrow><mi>н</mi><mi>а</mi><mi>ч</mi></mrow></msub><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>+</mo><msub><mrow><mi>x</mi></mrow><mrow><mi>в</mi><mi>х</mi><mi>о</mi><mi>д</mi></mrow></msub><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow></math>\n<math display=\"block\"><mi>x</mi><mrow><mo>(</mo><mrow><mi>t</mi></mrow><mo>)</mo></mrow><mo>=</mo><mn>2</mn><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup><mo>+</mo><mn>1</mn><mo>-</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup><mo>=</mo><mn>1</mn><mo>+</mo><msup><mrow><mi>e</mi></mrow><mrow><mo>-</mo><mi>t</mi></mrow></msup></math>",
+    "difficulty": "сложный",
+    "format": "mathml"
+  }
+]

@@ -18,4 +18,4 @@ jobs:
       - name: Check generated lectures
         run: |
           go generate ./internal/exam
-          git diff --exit-code -- internal/exam/lecture_pages.json
+          git diff --exit-code -- internal/exam/data/lecture_pages.json
