@@ -1,69 +1,51 @@
 package exam
 
 import (
-	"bytes"
-	"embed"
+	_ "embed"
+	"encoding/json"
 	"fmt"
-	"io/fs"
-	"log"
+	"maps"
 	"net/http"
+	"slices"
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/FurqanSoftware/goldmark-katex"
-	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/extension"
 )
 
-//go:embed lectures/*.md
-var lectureFiles embed.FS
+//go:generate go run ./cmd/lecturegen
+
+//go:embed lecture_pages.json
+var lecturePages []byte
 
 type Lecture struct {
-	ID     string
-	Date   string
-	render func() (string, error)
+	ID   string
+	Date string
+	html string
 }
 
 var lectures = sync.OnceValues(loadLectures)
 
 func loadLectures() ([]Lecture, error) {
-	files, err := fs.Glob(lectureFiles, "lectures/*.md")
-	if err != nil {
-		return nil, err
+	var pages map[string]string
+	if err := json.Unmarshal(lecturePages, &pages); err != nil {
+		return nil, fmt.Errorf("read generated lectures: %w", err)
 	}
 
-	lectures := make([]Lecture, 0, len(files))
+	lectures := make([]Lecture, 0, len(pages))
 	months := [...]string{"января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"}
-	// The fixed-width MM.DD names returned by Glob sort chronologically.
-	for _, filename := range files {
-		basename := strings.TrimSuffix(strings.TrimPrefix(filename, "lectures/"), ".md")
-		date, err := time.Parse("01.02", basename)
+	// The fixed-width MM.DD names sort chronologically.
+	for _, name := range slices.Sorted(maps.Keys(pages)) {
+		date, err := time.Parse("01.02", name)
 		if err != nil {
-			return nil, fmt.Errorf("lecture %s: %w", filename, err)
+			return nil, fmt.Errorf("lecture %s: %w", name, err)
 		}
 		lectures = append(lectures, Lecture{
 			ID:   date.Format("01-02"),
 			Date: fmt.Sprintf("%d %s", date.Day(), months[date.Month()-1]),
-			render: sync.OnceValues(func() (string, error) {
-				return renderLectureFile(filename)
-			}),
+			html: pages[name],
 		})
 	}
 	return lectures, nil
-}
-
-func renderLectureFile(filename string) (string, error) {
-	source, err := lectureFiles.ReadFile(filename)
-	if err != nil {
-		return "", err
-	}
-	markdown := goldmark.New(goldmark.WithExtensions(extension.GFM, &katex.Extender{ThrowOnError: true}))
-	var body bytes.Buffer
-	if err := markdown.Convert(source, &body); err != nil {
-		return "", fmt.Errorf("lecture %s: %w", filename, err)
-	}
-	return body.String(), nil
 }
 
 func showLecture(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +54,6 @@ func showLecture(w http.ResponseWriter, r *http.Request) {
 	var err error
 	view.Lectures, err = lectures()
 	if err != nil {
-		log.Printf("load lectures: %v", err)
 		view.Error = "Не удалось открыть конспекты."
 		render(w, r, view, http.StatusInternalServerError)
 		return
@@ -90,13 +71,7 @@ func showLecture(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			view.Lecture = &view.Lectures[i]
-			view.LectureHTML, err = view.Lecture.render()
-			if err != nil {
-				log.Printf("render lecture: %v", err)
-				view.Error = "Не удалось отобразить эту лекцию."
-				render(w, r, view, http.StatusInternalServerError)
-				return
-			}
+			view.LectureHTML = view.Lecture.html
 			render(w, r, view, http.StatusOK)
 			return
 		}

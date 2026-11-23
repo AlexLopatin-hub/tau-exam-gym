@@ -2,9 +2,10 @@
 
 generate:
 	go tool templ generate
+	go generate ./internal/exam
 
 run: generate
-	go run ./...
+	go run .
 
 build: generate
 	go build

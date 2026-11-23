@@ -1,6 +1,7 @@
 package exam
 
 import (
+	"embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,6 +16,9 @@ import (
 	"github.com/a-h/templ"
 )
 
+//go:embed static/app.css static/app.js
+var assets embed.FS
+
 var bank []Question
 var attempts = NewAttemptStore()
 var demoBank bool
@@ -27,6 +31,11 @@ func Run() {
 	}
 	demoBank = os.Getenv("QUESTION_BANK") == ""
 	log.Printf("loaded %d questions", len(bank))
+	if items, err := lectures(); err != nil {
+		log.Printf("load lectures: %v", err)
+	} else {
+		log.Printf("loaded %d lectures", len(items))
+	}
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -44,6 +53,9 @@ func Run() {
 
 func routes() http.Handler {
 	mux := http.NewServeMux()
+	static := http.FileServerFS(assets)
+	mux.Handle("GET /static/app.css", static)
+	mux.Handle("GET /static/app.js", static)
 	mux.HandleFunc("GET /", home)
 	mux.HandleFunc("GET /questions", questions)
 	mux.HandleFunc("GET /lectures", showLecture)

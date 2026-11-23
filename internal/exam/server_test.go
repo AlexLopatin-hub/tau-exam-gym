@@ -42,7 +42,7 @@ func TestLectureRoutes(t *testing.T) {
 		want     []string
 	}{
 		{"/lectures", false, http.StatusOK, []string{`<html lang="ru">`, "<h2>Лекция " + latest.Date + "</h2>", `href="/lectures/10-17"`, `hx-get="/lectures/10-17"`, ">17 октября</a>", ">5 сентября</a>", `class="lecture-sidebar"`, `<details class="lecture-picker">`}},
-		{"/lectures/09-26", true, http.StatusOK, []string{`<code class="language-mermaid">flowchart TB`, `&lt;b&gt;ВХОД-ВЫХОД&lt;/b&gt;&lt;br/&gt;`, "<math", "<table>"}},
+		{"/lectures/09-26", true, http.StatusOK, []string{`<code class="language-mermaid">`, "flowchart TB", `&lt;b&gt;ВХОД-ВЫХОД&lt;/b&gt;&lt;br/&gt;`, "<math", "<table>"}},
 		{"/lectures/10-10", true, http.StatusOK, []string{`<main id="content"`, "Лекция 10 октября", "<math", "<mtable"}},
 		{"/lectures/12-31", false, http.StatusNotFound, []string{"Лекция с такой датой не найдена.", `href="/lectures/10-17"`}},
 	} {
@@ -77,18 +77,14 @@ func TestLectureRoutes(t *testing.T) {
 	}
 }
 
-func TestEmbeddedLecturesRender(t *testing.T) {
+func TestEmbeddedLecturesContainHTML(t *testing.T) {
 	items, err := lectures()
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, lecture := range items {
 		t.Run(lecture.ID, func(t *testing.T) {
-			body, err := lecture.render()
-			if err != nil {
-				t.Fatal(err)
-			}
-			if strings.TrimSpace(body) == "" {
+			if strings.TrimSpace(lecture.html) == "" {
 				t.Error("lecture rendered empty HTML")
 			}
 		})
@@ -349,10 +345,11 @@ func TestQuestionCatalogCanJumpFromFirstToFourthAndBack(t *testing.T) {
 	if strings.Contains(first.Body.String(), `href="/questions?page=1"`) {
 		t.Fatal("current page should not be a link")
 	}
-	css := renderHTML(t, Page(PageView{Tab: "questions", Questions: bank[:10], CurrentPage: 1, TotalPages: 4}))
-	if !strings.Contains(css, "window.addEventListener(\"resize\"") || !strings.Contains(css, "document.fonts.ready") || !strings.Contains(css, "htmx:afterSwap") || !strings.Contains(css, "htmx:historyRestore") {
+	js := requestAsset(t, "/static/app.js", "text/javascript", "application/javascript")
+	if !strings.Contains(js, "window.addEventListener(\"resize\"") || !strings.Contains(js, "document.fonts.ready") || !strings.Contains(js, "htmx:afterSwap") || !strings.Contains(js, "htmx:historyRestore") {
 		t.Fatal("pagination does not reevaluate after resize, font load, or history replacement")
 	}
+	css := requestAsset(t, "/static/app.css", "text/css")
 	if !strings.Contains(css, "flex-wrap: nowrap") || !strings.Contains(css, ".compact-hidden") || !strings.Contains(css, "overflow: hidden") {
 		t.Fatal("pagination is missing its one-line compact fallback")
 	}
@@ -406,8 +403,9 @@ func TestCompactPagerKeepsFirstLastCurrentNeighborsAndBothEllipses(t *testing.T)
 	if !strings.Contains(body, `href="/questions?page=14"`) || !strings.Contains(body, `href="/questions?page=16"`) {
 		t.Fatal("previous and next numeric links are missing")
 	}
-	css := renderHTML(t, Page(PageView{Tab: "questions", CurrentPage: 15, TotalPages: 30}))
-	if !strings.Contains(css, `@media (max-width: 480px)`) || !strings.Contains(css, `.pagination.compact-icons .edge-icon`) || !strings.Contains(css, `nav.scrollWidth > nav.clientWidth`) {
+	css := requestAsset(t, "/static/app.css", "text/css")
+	js := requestAsset(t, "/static/app.js", "text/javascript", "application/javascript")
+	if !strings.Contains(css, `@media (max-width: 480px)`) || !strings.Contains(css, `.pagination.compact-icons .edge-icon`) || !strings.Contains(js, `nav.scrollWidth > nav.clientWidth`) {
 		t.Fatal("narrow-screen edge controls do not adapt to measured width")
 	}
 }
@@ -458,12 +456,29 @@ func TestQuestionCatalogHistoryRestoreReturnsFullPage(t *testing.T) {
 	if recorder.Code != http.StatusOK || !strings.Contains(recorder.Body.String(), "<html") {
 		t.Fatal("HTMX history restore should return a full document")
 	}
+	if !strings.Contains(recorder.Body.String(), `href="/static/app.css"`) || !strings.Contains(recorder.Body.String(), `src="/static/app.js"`) {
+		t.Fatal("full document must link to the application stylesheet and script")
+	}
 	assertQuestionIDs(t, recorder.Body.String(), 11, 15)
 	_, content, marked := strings.Cut(recorder.Body.String(), `<main id="content" hx-history-elt>`)
 	main, _, closed := strings.Cut(content, "</main>")
 	if !marked || !closed || strings.Contains(main, "<script") {
 		t.Fatal("history should restore only main content, with initialization scripts outside it")
 	}
+}
+
+func requestAsset(t *testing.T, path string, contentTypes ...string) string {
+	t.Helper()
+	recorder := httptest.NewRecorder()
+	routes().ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, path, nil))
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("GET %s returned %d", path, recorder.Code)
+	}
+	contentType, _, _ := strings.Cut(recorder.Header().Get("Content-Type"), ";")
+	if !slices.Contains(contentTypes, contentType) {
+		t.Fatalf("GET %s returned unexpected Content-Type %q", path, contentType)
+	}
+	return recorder.Body.String()
 }
 
 func withQuestionBank(t *testing.T, questions []Question) {

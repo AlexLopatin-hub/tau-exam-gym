@@ -70,6 +70,28 @@ paths:
           $ref: "#/components/responses/CrossOriginDenied"
         "413":
           description: Размер JSON превышает 16 МиБ.
+  /static/app.css:
+    get:
+      operationId: getApplicationStyles
+      summary: Получить стили интерфейса
+      responses:
+        "200":
+          description: Таблица стилей приложения.
+          content:
+            text/css:
+              schema: {type: string}
+  /static/app.js:
+    get:
+      operationId: getApplicationScript
+      summary: Получить скрипт интерфейса
+      responses:
+        "200":
+          description: Скрипт приложения.
+          content:
+            text/javascript:
+              schema: {type: string}
+            application/javascript:
+              schema: {type: string}
   /questions:
     get:
       operationId: listQuestions
