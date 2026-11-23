@@ -66,7 +66,7 @@ func Page(view PageView) templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"ru\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Вопросы по ТАУ</title><link href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400..700&display=swap\" rel=\"stylesheet\"><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js\" integrity=\"sha384-2OatzQy1H+Zd/IIrjr1TcuDGqLXeHhbooAyJY1KdQMKnr4LZ22k31GBLdYKHmVjg\" crossorigin=\"anonymous\"></script><style>\n\t\t\t\t:root {\n\t\t\t\t\tcolor-scheme: light;\n\t\t\t\t\tfont-family: \"IBM Plex Sans\", system-ui, -apple-system, \"Segoe UI\", sans-serif;\n\t\t\t\t\tcolor: #292923;\n\t\t\t\t\tbackground: #f4f1e9;\n\t\t\t\t\tfont-synthesis: none;\n\t\t\t\t}\n\t\t\t\tbody { margin: 0; min-height: 100vh; padding-bottom: 6rem; }\n\t\t\t\ta { color: #92502f; }\n\t\t\t\tnav { display: flex; gap: .25rem; }\n\t\t\t\t.tabs { margin: 0 0 1.4rem; border-bottom: 1px solid #e4ddd2; padding-bottom: .5rem; }\n\t\t\t\t.tabs a { padding: .48rem .8rem; border-radius: 7px; color: #6e6a60; font-size: .92rem; font-weight: 600; text-decoration: none; transition: background-color .15s, color .15s; }\n\t\t\t\t.tabs a:hover { background: #eae5da; color: #292923; }\n\t\t\t\t.tabs a[aria-current=\"page\"] { background: #92502f; color: #fffdf8; }\n\t\t\t\tmain { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }\n\t\t\t\th1 { margin: 0 0 1.15rem; font-size: clamp(1.8rem, 3vw, 2.25rem); font-weight: 690; letter-spacing: -.035em; line-height: 1.15; }\n\t\t\t\th3 { margin: 0 0 .45rem; font-size: 1.08rem; font-weight: 620; line-height: 1.45; }\n\t\t\t\t.block { margin: 2rem 0; }\n\t\t\t\t.block > h2 { margin-bottom: .9rem; border-bottom: 1px solid #dfd8cc; padding-bottom: .55rem; font-size: 1.2rem; font-weight: 650; letter-spacing: -.015em; }\n\t\t\t\t.card { margin: .85rem 0; border: 1px solid #e5dfd4; border-radius: 11px; padding: 1.1rem 1.2rem; background: #fffdf8; box-shadow: 0 1px 2px #332b1b0a; scroll-margin-top: 1rem; }\n\t\t\t\t.lecture-layout { display: grid; grid-template-columns: minmax(0, 1fr) 9rem; grid-template-areas: \"lecture dates\"; gap: 1rem; align-items: start; }\n\t\t\t\t.lecture-sidebar { grid-area: dates; margin-top: .85rem; }\n\t\t\t\t.lecture-picker { display: none; }\n\t\t\t\t.lecture-dates { flex-direction: column; gap: .4rem; }\n\t\t\t\t.lecture-dates a, .lecture-picker summary { padding: .4rem .7rem; border: 1px solid #e3dbce; border-radius: 6px; background: #fffdf8; text-decoration: none; }\n\t\t\t\t.lecture-dates a:hover { background: #eae5da; }\n\t\t\t\t.lecture-dates a[aria-current=\"page\"] { border-color: #92502f; background: #92502f; color: #fffdf8; }\n\t\t\t\t.lecture { grid-area: lecture; min-width: 0; line-height: 1.6; overflow-wrap: anywhere; }\n\t\t\t\t.lecture h2 { margin: 0 0 1rem; }\n\t\t\t\t.lecture blockquote { margin-inline: 0; padding-inline-start: 1rem; border-inline-start: 3px solid #dec2a9; }\n\t\t\t\t.lecture th, .lecture td { padding: .25rem .6rem; border: 1px solid #e3dbce; }\n\t\t\t\t.lecture table { border-collapse: collapse; }\n\t\t\t\t.lecture pre { overflow-x: auto; }\n\t\t\t\t.lecture img { max-width: 100%; }\n\t\t\t\t.lecture .katex-html { display: none; }\n\t\t\t\t.lecture .katex-display { display: block; margin-block: .75rem; overflow-x: auto; overflow-y: hidden; }\n\t\t\t\t.lecture .katex-display .katex-mathml { display: block; }\n\t\t\t\t.start-card { margin-top: 1.4rem; }\n\t\t\t\t.exam-history { margin-top: 2.5rem; border-top: 1px solid #dfd8cc; }\n\t\t\t\t.exam-history ul { padding-left: 1.4rem; }\n\t\t\t\t.exam-history li { margin: .65rem 0; }\n\t\t\t\t.start-card p { margin: 0 0 1rem; color: #5f5b52; line-height: 1.55; }\n\t\t\t\tbutton { padding: .63rem .95rem; border: 0; border-radius: 7px; background: #92502f; color: #fffdf8; cursor: pointer; font: inherit; font-size: .94rem; font-weight: 650; transition: background-color .15s, box-shadow .15s; }\n\t\t\t\tbutton:hover { background: #783e24; }\n\t\t\t\tbutton:focus-visible, a:focus-visible, .answer-toggle:focus-visible { outline: 3px solid #c58a67; outline-offset: 3px; }\n\t\t\t\t.error { color: #9b3329; }\n\t\t\t\t.meta { margin: 0; color: #78746a; font-size: .84rem; }\n\t\t\t\t.answer { margin-top: 1rem; border-radius: 8px; padding: 1rem 1.1rem; line-height: 1.6; }\n\t\t\t\t.answer p { margin: .35rem 0 0; }\n\t\t\t\t.user-answer { margin-top: 1rem; display: block; }\n\t\t\t\t.user-answer textarea { display: block; margin-top: .4rem; width: 100%; box-sizing: border-box; resize: vertical; padding: .6rem; border: 1px solid #bcb4a6; border-radius: 6px; font: inherit; }\n\t\t\t\t.user-answer p { margin: .35rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }\n\t\t\t\t.revealed { border: 1px solid #DEC2A9; background: #FAEBDD; color: #503523; }\n\t\t\t\tdetails.catalog-answer { margin-top: 1rem; }\n\t\t\t\tdetails.catalog-answer[open] summary { margin-bottom: 1rem; }\n\t\t\t\tdetails.catalog-answer summary { display: inline-block; list-style: none; }\n\t\t\t\tdetails.catalog-answer summary::-webkit-details-marker { display: none; }\n\t\t\t\t.answer-toggle { padding: .43rem .68rem; border: 1px solid #e3dbce; border-radius: 6px; background: #f1ede4; color: #665f54; cursor: pointer; font-size: .87rem; font-weight: 570; }\n\t\t\t\t.answer-toggle:hover { border-color: #d2c6b5; background: #e9e3d8; color: #3c382f; }\n\t\t\t\tdetails[open] .catalog-show, details:not([open]) .catalog-hide { display: none; }\n\t\t\t\t.pagination { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: .35rem; width: 100%; max-width: 100%; overflow: hidden; white-space: nowrap; }\n\t\t\t\t.pagination a, .pagination .page-number { display: inline-flex; flex: 0 0 auto; min-width: 2.15rem; height: 2.15rem; box-sizing: border-box; align-items: center; justify-content: center; padding: .25rem .45rem; border: 1px solid #e3dbce; border-radius: 6px; color: #665f54; background: #fffdf8; font-size: .9rem; font-weight: 600; text-decoration: none; }\n\t\t\t\t.pagination a:hover { background: #eae5da; color: #292923; }\n\t\t\t\t.pagination .compact-hidden { display: none; }\n\t\t\t\t.pagination.expanded .compact-hidden { display: inline-flex; }\n\t\t\t\t.pagination .page-ellipsis { display: none; }\n\t\t\t\t.pagination:not(.expanded) .page-ellipsis[data-needed=\"true\"] { display: inline-flex; align-items: center; justify-content: center; min-width: 1.25rem; color: #78746a; }\n\t\t\t\t.pagination .page-number[aria-current=\"page\"] { border-color: #92502f; background: #92502f; color: #fffdf8; }\n\t\t\t\t.pagination .edge-icon { display: none; }\n\t\t\t\t.pagination.compact-icons .edge-label { display: none; }\n\t\t\t\t.pagination.compact-icons .edge-icon { display: inline; }\n\t\t\t\t.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }\n\t\t\t\t.empty-state { color: #78746a; }\n\t\t\t\t.finish-bar { position: fixed; z-index: 5; right: max(1rem, calc((100vw - 900px)/2)); bottom: calc(.75rem + env(safe-area-inset-bottom)); display: flex; width: max-content; max-width: calc(100vw - 2rem); box-sizing: border-box; border: 1px solid #e4ddd2; border-radius: 9px; padding: .3rem; background: #fffdf8eb; box-shadow: 0 3px 12px #332b1b17; }\n\t\t\t\t@media (max-width: 600px) {\n\t\t\t\t\tmain { margin-top: 1rem; }\n\t\t\t\t\t.tabs a { flex: 1; padding: .58rem .4rem; text-align: center; }\n\t\t\t\t\t.card { padding: 1rem; }\n\t\t\t\t\t.lecture-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: \"dates\" \"lecture\"; gap: 0; }\n\t\t\t\t\t.lecture-sidebar { display: none; }\n\t\t\t\t\t.lecture-picker { display: block; grid-area: dates; }\n\t\t\t\t\t.lecture-picker summary { cursor: pointer; }\n\t\t\t\t\t.lecture-picker .lecture-dates { margin-top: .4rem; }\n\t\t\t\t\t.finish-bar { right: 1rem; bottom: calc(.5rem + env(safe-area-inset-bottom)); }\n\t\t\t\t}\n\t\t\t\t@media (max-width: 480px) {\n\t\t\t\t\t.pagination { gap: .12rem; }\n\t\t\t\t\t.pagination a, .pagination .page-number { min-width: 1.8rem; height: 2rem; padding: .2rem .25rem; font-size: .86rem; }\n\t\t\t\t}\n\t\t\t\t@media (max-width: 350px) {\n\t\t\t\t\t.pagination { gap: .08rem; }\n\t\t\t\t\t.pagination a, .pagination .page-number { min-width: 1.45rem; height: 1.75rem; padding: .15rem .16rem; font-size: .8rem; }\n\t\t\t\t\t.pagination:not(.expanded) .page-ellipsis[data-needed=\"true\"] { min-width: .55rem; }\n\t\t\t\t}\n\t\t\t</style></head><body>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"ru\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Вопросы по ТАУ</title><link href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400..700&display=swap\" rel=\"stylesheet\"><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js\" integrity=\"sha384-2OatzQy1H+Zd/IIrjr1TcuDGqLXeHhbooAyJY1KdQMKnr4LZ22k31GBLdYKHmVjg\" crossorigin=\"anonymous\"></script><style>\n\t\t\t\t:root {\n\t\t\t\t\tcolor-scheme: light;\n\t\t\t\t\tfont-family: \"IBM Plex Sans\", system-ui, -apple-system, \"Segoe UI\", sans-serif;\n\t\t\t\t\tcolor: #292923;\n\t\t\t\t\tbackground: #f4f1e9;\n\t\t\t\t\tfont-synthesis: none;\n\t\t\t\t}\n\t\t\t\tbody { margin: 0; min-height: 100vh; padding-bottom: 6rem; }\n\t\t\t\ta { color: #92502f; }\n\t\t\t\tnav { display: flex; gap: .25rem; }\n\t\t\t\t.tabs { margin: 0 0 1.4rem; border-bottom: 1px solid #e4ddd2; padding-bottom: .5rem; }\n\t\t\t\t.tabs a { padding: .48rem .8rem; border-radius: 7px; color: #6e6a60; font-size: .92rem; font-weight: 600; text-decoration: none; transition: background-color .15s, color .15s; }\n\t\t\t\t.tabs a:hover { background: #eae5da; color: #292923; }\n\t\t\t\t.tabs a[aria-current=\"page\"] { background: #92502f; color: #fffdf8; }\n\t\t\t\tmain { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }\n\t\t\t\th1 { margin: 0 0 1.15rem; font-size: clamp(1.8rem, 3vw, 2.25rem); font-weight: 690; letter-spacing: -.035em; line-height: 1.15; }\n\t\t\t\th3 { margin: 0 0 .45rem; font-size: 1.08rem; font-weight: 620; line-height: 1.45; }\n\t\t\t\t.block { margin: 2rem 0; }\n\t\t\t\t.block > h2 { margin-bottom: .9rem; border-bottom: 1px solid #dfd8cc; padding-bottom: .55rem; font-size: 1.2rem; font-weight: 650; letter-spacing: -.015em; }\n\t\t\t\t.card { margin: .85rem 0; border: 1px solid #e5dfd4; border-radius: 11px; padding: 1.1rem 1.2rem; background: #fffdf8; box-shadow: 0 1px 2px #332b1b0a; scroll-margin-top: 1rem; }\n\t\t\t\t.lecture-layout { display: grid; grid-template-columns: minmax(0, 1fr) 9rem; grid-template-areas: \"lecture dates\"; gap: 1rem; align-items: start; }\n\t\t\t\t.lecture-sidebar { grid-area: dates; margin-top: .85rem; }\n\t\t\t\t.lecture-picker { display: none; }\n\t\t\t\t.lecture-dates { flex-direction: column; gap: .4rem; }\n\t\t\t\t.lecture-dates a, .lecture-picker summary { padding: .4rem .7rem; border: 1px solid #e3dbce; border-radius: 6px; background: #fffdf8; text-decoration: none; }\n\t\t\t\t.lecture-dates a:hover { background: #eae5da; }\n\t\t\t\t.lecture-dates a[aria-current=\"page\"] { border-color: #92502f; background: #92502f; color: #fffdf8; }\n\t\t\t\t.lecture { grid-area: lecture; min-width: 0; line-height: 1.6; overflow-wrap: anywhere; }\n\t\t\t\t.lecture h2 { margin: 0 0 1rem; }\n\t\t\t\t.lecture blockquote { margin-inline: 0; padding-inline-start: 1rem; border-inline-start: 3px solid #dec2a9; }\n\t\t\t\t.lecture th, .lecture td { padding: .25rem .6rem; border: 1px solid #e3dbce; }\n\t\t\t\t.lecture table { border-collapse: collapse; }\n\t\t\t\t.lecture pre { overflow-x: auto; }\n\t\t\t\t.lecture-diagram { margin: 1rem 0; }\n\t\t\t\t.lecture-diagram svg { display: block; width: 100%; height: auto; margin-inline: auto; }\n\t\t\t\t.lecture img { max-width: 100%; }\n\t\t\t\t.lecture .katex-html { display: none; }\n\t\t\t\t.lecture .katex-display { display: block; margin-block: .75rem; overflow-x: auto; overflow-y: hidden; }\n\t\t\t\t.lecture .katex-display .katex-mathml { display: block; }\n\t\t\t\t.start-card { margin-top: 1.4rem; }\n\t\t\t\t.exam-history { margin-top: 2.5rem; border-top: 1px solid #dfd8cc; }\n\t\t\t\t.exam-history ul { padding-left: 1.4rem; }\n\t\t\t\t.exam-history li { margin: .65rem 0; }\n\t\t\t\t.start-card p { margin: 0 0 1rem; color: #5f5b52; line-height: 1.55; }\n\t\t\t\tbutton { padding: .63rem .95rem; border: 0; border-radius: 7px; background: #92502f; color: #fffdf8; cursor: pointer; font: inherit; font-size: .94rem; font-weight: 650; transition: background-color .15s, box-shadow .15s; }\n\t\t\t\tbutton:hover { background: #783e24; }\n\t\t\t\tbutton:focus-visible, a:focus-visible, .answer-toggle:focus-visible { outline: 3px solid #c58a67; outline-offset: 3px; }\n\t\t\t\t.error { color: #9b3329; }\n\t\t\t\t.meta { margin: 0; color: #78746a; font-size: .84rem; }\n\t\t\t\t.answer { margin-top: 1rem; border-radius: 8px; padding: 1rem 1.1rem; line-height: 1.6; }\n\t\t\t\t.answer p { margin: .35rem 0 0; }\n\t\t\t\t.user-answer { margin-top: 1rem; display: block; }\n\t\t\t\t.user-answer textarea { display: block; margin-top: .4rem; width: 100%; box-sizing: border-box; resize: vertical; padding: .6rem; border: 1px solid #bcb4a6; border-radius: 6px; font: inherit; }\n\t\t\t\t.user-answer p { margin: .35rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }\n\t\t\t\t.revealed { border: 1px solid #DEC2A9; background: #FAEBDD; color: #503523; }\n\t\t\t\tdetails.catalog-answer { margin-top: 1rem; }\n\t\t\t\tdetails.catalog-answer[open] summary { margin-bottom: 1rem; }\n\t\t\t\tdetails.catalog-answer summary { display: inline-block; list-style: none; }\n\t\t\t\tdetails.catalog-answer summary::-webkit-details-marker { display: none; }\n\t\t\t\t.answer-toggle { padding: .43rem .68rem; border: 1px solid #e3dbce; border-radius: 6px; background: #f1ede4; color: #665f54; cursor: pointer; font-size: .87rem; font-weight: 570; }\n\t\t\t\t.answer-toggle:hover { border-color: #d2c6b5; background: #e9e3d8; color: #3c382f; }\n\t\t\t\tdetails[open] .catalog-show, details:not([open]) .catalog-hide { display: none; }\n\t\t\t\t.pagination { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: .35rem; width: 100%; max-width: 100%; overflow: hidden; white-space: nowrap; }\n\t\t\t\t.pagination a, .pagination .page-number { display: inline-flex; flex: 0 0 auto; min-width: 2.15rem; height: 2.15rem; box-sizing: border-box; align-items: center; justify-content: center; padding: .25rem .45rem; border: 1px solid #e3dbce; border-radius: 6px; color: #665f54; background: #fffdf8; font-size: .9rem; font-weight: 600; text-decoration: none; }\n\t\t\t\t.pagination a:hover { background: #eae5da; color: #292923; }\n\t\t\t\t.pagination .compact-hidden { display: none; }\n\t\t\t\t.pagination.expanded .compact-hidden { display: inline-flex; }\n\t\t\t\t.pagination .page-ellipsis { display: none; }\n\t\t\t\t.pagination:not(.expanded) .page-ellipsis[data-needed=\"true\"] { display: inline-flex; align-items: center; justify-content: center; min-width: 1.25rem; color: #78746a; }\n\t\t\t\t.pagination .page-number[aria-current=\"page\"] { border-color: #92502f; background: #92502f; color: #fffdf8; }\n\t\t\t\t.pagination .edge-icon { display: none; }\n\t\t\t\t.pagination.compact-icons .edge-label { display: none; }\n\t\t\t\t.pagination.compact-icons .edge-icon { display: inline; }\n\t\t\t\t.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }\n\t\t\t\t.empty-state { color: #78746a; }\n\t\t\t\t.finish-bar { position: fixed; z-index: 5; right: max(1rem, calc((100vw - 900px)/2)); bottom: calc(.75rem + env(safe-area-inset-bottom)); display: flex; width: max-content; max-width: calc(100vw - 2rem); box-sizing: border-box; border: 1px solid #e4ddd2; border-radius: 9px; padding: .3rem; background: #fffdf8eb; box-shadow: 0 3px 12px #332b1b17; }\n\t\t\t\t@media (max-width: 600px) {\n\t\t\t\t\tmain { margin-top: 1rem; }\n\t\t\t\t\t.tabs a { flex: 1; padding: .58rem .4rem; text-align: center; }\n\t\t\t\t\t.card { padding: 1rem; }\n\t\t\t\t\t.lecture-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: \"dates\" \"lecture\"; gap: 0; }\n\t\t\t\t\t.lecture-sidebar { display: none; }\n\t\t\t\t\t.lecture-picker { display: block; grid-area: dates; }\n\t\t\t\t\t.lecture-picker summary { cursor: pointer; }\n\t\t\t\t\t.lecture-picker .lecture-dates { margin-top: .4rem; }\n\t\t\t\t\t.finish-bar { right: 1rem; bottom: calc(.5rem + env(safe-area-inset-bottom)); }\n\t\t\t\t}\n\t\t\t\t@media (max-width: 480px) {\n\t\t\t\t\t.pagination { gap: .12rem; }\n\t\t\t\t\t.pagination a, .pagination .page-number { min-width: 1.8rem; height: 2rem; padding: .2rem .25rem; font-size: .86rem; }\n\t\t\t\t}\n\t\t\t\t@media (max-width: 350px) {\n\t\t\t\t\t.pagination { gap: .08rem; }\n\t\t\t\t\t.pagination a, .pagination .page-number { min-width: 1.45rem; height: 1.75rem; padding: .15rem .16rem; font-size: .8rem; }\n\t\t\t\t\t.pagination:not(.expanded) .page-ellipsis[data-needed=\"true\"] { min-width: .55rem; }\n\t\t\t\t}\n\t\t\t</style></head><body>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -74,7 +74,7 @@ func Page(view PageView) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<script>\n\t\t\t\t(() => {\n\t\t\t\t\tconst prefix = \"tau-exam:completed:v1:\";\n\t\t\t\t\tconst dateLabel = new Intl.DateTimeFormat(\"ru-RU\", {dateStyle: \"long\", timeStyle: \"medium\"});\n\t\t\t\t\tfunction readAttempt(id) {\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\tconst a = JSON.parse(localStorage.getItem(prefix + id));\n\t\t\t\t\t\t\tif (a?.ID === id && Number.isFinite(Date.parse(a.FinishedAt)) && Array.isArray(a.Questions)) return a;\n\t\t\t\t\t\t} catch {}\n\t\t\t\t\t\treturn null;\n\t\t\t\t\t}\n\t\t\t\t\tfunction showHistory(list) {\n\t\t\t\t\t\tconst status = document.getElementById(\"history-status\");\n\t\t\t\t\t\tlist.replaceChildren();\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\tconst attempts = Object.keys(localStorage).filter(key => key.startsWith(prefix))\n\t\t\t\t\t\t\t\t.map(key => readAttempt(key.slice(prefix.length))).filter(Boolean)\n\t\t\t\t\t\t\t\t.sort((a, b) => Date.parse(b.FinishedAt) - Date.parse(a.FinishedAt));\n\t\t\t\t\t\t\tstatus.hidden = attempts.length > 0;\n\t\t\t\t\t\t\tfor (const a of attempts) {\n\t\t\t\t\t\t\t\tconst link = document.createElement(\"a\");\n\t\t\t\t\t\t\t\tlink.href = \"/?attempt=\" + encodeURIComponent(a.ID);\n\t\t\t\t\t\t\t\tlink.textContent = \"Экзамен · \" + dateLabel.format(new Date(a.FinishedAt));\n\t\t\t\t\t\t\t\tconst item = document.createElement(\"li\");\n\t\t\t\t\t\t\t\titem.append(link);\n\t\t\t\t\t\t\t\tlist.append(item);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t} catch {\n\t\t\t\t\t\t\tstatus.hidden = false;\n\t\t\t\t\t\t\tstatus.textContent = \"История экзаменов недоступна в этом браузере.\";\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tasync function showArchived(root) {\n\t\t\t\t\t\tconst a = readAttempt(root.dataset.id);\n\t\t\t\t\t\tif (!a) {\n\t\t\t\t\t\t\troot.textContent = \"Эта попытка не найдена в истории браузера.\";\n\t\t\t\t\t\t\treturn;\n\t\t\t\t\t\t}\n\t\t\t\t\t\tif (root.querySelector(\".block\")) return;\n\t\t\t\t\t\tdocument.getElementById(\"archived-date\").textContent = dateLabel.format(new Date(a.FinishedAt));\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\tconst response = await fetch(\"/archive/render\", {\n\t\t\t\t\t\t\t\tmethod: \"POST\", headers: {\"Content-Type\": \"application/json\"}, body: JSON.stringify(a)\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\tif (!response.ok) throw new Error();\n\t\t\t\t\t\t\troot.innerHTML = await response.text();\n\t\t\t\t\t\t} catch {\n\t\t\t\t\t\t\troot.textContent = \"Не удалось открыть архивный билет. Обновите страницу, чтобы попробовать снова.\";\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tfunction loadArchive() {\n\t\t\t\t\t\tconst completed = document.getElementById(\"completed-attempt\");\n\t\t\t\t\t\tif (completed) {\n\t\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t\tconst a = JSON.parse(completed.textContent);\n\t\t\t\t\t\t\t\tlocalStorage.setItem(prefix + a.ID, completed.textContent);\n\t\t\t\t\t\t\t} catch {\n\t\t\t\t\t\t\t\tdocument.getElementById(\"archive-status\").textContent = \"Не удалось сохранить экзамен в истории этого браузера.\";\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t\tconst list = document.getElementById(\"exam-history\");\n\t\t\t\t\t\tif (list) showHistory(list);\n\t\t\t\t\t\tconst archived = document.getElementById(\"archived-exam\");\n\t\t\t\t\t\tif (archived) showArchived(archived);\n\t\t\t\t\t}\n\t\t\t\t\tfunction fitPager() {\n\t\t\t\t\t\tconst nav = document.querySelector(\".pagination\");\n\t\t\t\t\t\tif (!nav) return;\n\t\t\t\t\t\tnav.classList.remove(\"compact-icons\");\n\t\t\t\t\t\tnav.classList.add(\"expanded\");\n\t\t\t\t\t\tif (nav.scrollWidth > nav.clientWidth + 1) {\n\t\t\t\t\t\t\tnav.classList.remove(\"expanded\");\n\t\t\t\t\t\t\tnav.classList.toggle(\"compact-icons\", nav.scrollWidth > nav.clientWidth + 1);\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tfunction init() {\n\t\t\t\t\t\tloadArchive();\n\t\t\t\t\t\tfitPager();\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\tfor (const field of document.querySelectorAll(\"textarea[data-draft-key]\")) {\n\t\t\t\t\t\t\t\tconst saved = sessionStorage.getItem(field.dataset.draftKey);\n\t\t\t\t\t\t\t\tif (saved !== null) field.value = saved;\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t} catch {}\n\t\t\t\t\t}\n\t\t\t\t\tdocument.addEventListener(\"input\", ({ target }) => {\n\t\t\t\t\t\tif (target.matches(\"textarea[data-draft-key]\")) {\n\t\t\t\t\t\t\ttry { sessionStorage.setItem(target.dataset.draftKey, target.value); } catch {}\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t\tinit();\n\t\t\t\t\tdocument.body.addEventListener(\"htmx:afterSwap\", init);\n\t\t\t\t\tdocument.body.addEventListener(\"htmx:historyRestore\", init);\n\t\t\t\t\twindow.addEventListener(\"pageshow\", event => { if (event.persisted) init(); });\n\t\t\t\t\twindow.addEventListener(\"resize\", fitPager);\n\t\t\t\t\tdocument.fonts.ready.then(fitPager);\n\t\t\t\t\tdocument.fonts.addEventListener(\"loadingdone\", fitPager);\n\t\t\t\t})();\n\t\t\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<script>\n\t\t\t\t(() => {\n\t\t\t\t\tconst prefix = \"tau-exam:completed:v1:\";\n\t\t\t\t\tconst dateLabel = new Intl.DateTimeFormat(\"ru-RU\", {dateStyle: \"long\", timeStyle: \"medium\"});\n\t\t\t\t\tfunction readAttempt(id) {\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\tconst a = JSON.parse(localStorage.getItem(prefix + id));\n\t\t\t\t\t\t\tif (a?.ID === id && Number.isFinite(Date.parse(a.FinishedAt)) && Array.isArray(a.Questions)) return a;\n\t\t\t\t\t\t} catch {}\n\t\t\t\t\t\treturn null;\n\t\t\t\t\t}\n\t\t\t\t\tfunction showHistory(list) {\n\t\t\t\t\t\tconst status = document.getElementById(\"history-status\");\n\t\t\t\t\t\tlist.replaceChildren();\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\tconst attempts = Object.keys(localStorage).filter(key => key.startsWith(prefix))\n\t\t\t\t\t\t\t\t.map(key => readAttempt(key.slice(prefix.length))).filter(Boolean)\n\t\t\t\t\t\t\t\t.sort((a, b) => Date.parse(b.FinishedAt) - Date.parse(a.FinishedAt));\n\t\t\t\t\t\t\tstatus.hidden = attempts.length > 0;\n\t\t\t\t\t\t\tfor (const a of attempts) {\n\t\t\t\t\t\t\t\tconst link = document.createElement(\"a\");\n\t\t\t\t\t\t\t\tlink.href = \"/?attempt=\" + encodeURIComponent(a.ID);\n\t\t\t\t\t\t\t\tlink.textContent = \"Экзамен · \" + dateLabel.format(new Date(a.FinishedAt));\n\t\t\t\t\t\t\t\tconst item = document.createElement(\"li\");\n\t\t\t\t\t\t\t\titem.append(link);\n\t\t\t\t\t\t\t\tlist.append(item);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t} catch {\n\t\t\t\t\t\t\tstatus.hidden = false;\n\t\t\t\t\t\t\tstatus.textContent = \"История экзаменов недоступна в этом браузере.\";\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tasync function showArchived(root) {\n\t\t\t\t\t\tconst a = readAttempt(root.dataset.id);\n\t\t\t\t\t\tif (!a) {\n\t\t\t\t\t\t\troot.textContent = \"Эта попытка не найдена в истории браузера.\";\n\t\t\t\t\t\t\treturn;\n\t\t\t\t\t\t}\n\t\t\t\t\t\tif (root.querySelector(\".block\")) return;\n\t\t\t\t\t\tdocument.getElementById(\"archived-date\").textContent = dateLabel.format(new Date(a.FinishedAt));\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\tconst response = await fetch(\"/archive/render\", {\n\t\t\t\t\t\t\t\tmethod: \"POST\", headers: {\"Content-Type\": \"application/json\"}, body: JSON.stringify(a)\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\tif (!response.ok) throw new Error();\n\t\t\t\t\t\t\troot.innerHTML = await response.text();\n\t\t\t\t\t\t} catch {\n\t\t\t\t\t\t\troot.textContent = \"Не удалось открыть архивный билет. Обновите страницу, чтобы попробовать снова.\";\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tfunction loadArchive() {\n\t\t\t\t\t\tconst completed = document.getElementById(\"completed-attempt\");\n\t\t\t\t\t\tif (completed) {\n\t\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t\tconst a = JSON.parse(completed.textContent);\n\t\t\t\t\t\t\t\tlocalStorage.setItem(prefix + a.ID, completed.textContent);\n\t\t\t\t\t\t\t} catch {\n\t\t\t\t\t\t\t\tdocument.getElementById(\"archive-status\").textContent = \"Не удалось сохранить экзамен в истории этого браузера.\";\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t\tconst list = document.getElementById(\"exam-history\");\n\t\t\t\t\t\tif (list) showHistory(list);\n\t\t\t\t\t\tconst archived = document.getElementById(\"archived-exam\");\n\t\t\t\t\t\tif (archived) showArchived(archived);\n\t\t\t\t\t}\n\t\t\t\t\tfunction fitPager() {\n\t\t\t\t\t\tconst nav = document.querySelector(\".pagination\");\n\t\t\t\t\t\tif (!nav) return;\n\t\t\t\t\t\tnav.classList.remove(\"compact-icons\");\n\t\t\t\t\t\tnav.classList.add(\"expanded\");\n\t\t\t\t\t\tif (nav.scrollWidth > nav.clientWidth + 1) {\n\t\t\t\t\t\t\tnav.classList.remove(\"expanded\");\n\t\t\t\t\t\t\tnav.classList.toggle(\"compact-icons\", nav.scrollWidth > nav.clientWidth + 1);\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tconst diagramSources = new WeakSet();\n\t\t\t\t\tlet mermaidModule;\n\t\t\t\t\tlet diagramID = 0;\n\t\t\t\t\tasync function renderDiagrams() {\n\t\t\t\t\t\tfor (const source of document.querySelectorAll(\".lecture pre > code.language-mermaid\")) {\n\t\t\t\t\t\t\tif (diagramSources.has(source)) continue;\n\t\t\t\t\t\t\tdiagramSources.add(source);\n\t\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t\tmermaidModule ??= import(\"https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.esm.min.mjs\")\n\t\t\t\t\t\t\t\t\t.then(({ default: mermaid }) => {\n\t\t\t\t\t\t\t\t\t\tmermaid.initialize({ startOnLoad: false, securityLevel: \"strict\", suppressErrorRendering: true });\n\t\t\t\t\t\t\t\t\t\treturn mermaid;\n\t\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t\tconst mermaid = await mermaidModule;\n\t\t\t\t\t\t\t\tawait document.fonts.ready;\n\t\t\t\t\t\t\t\tif (!source.isConnected) continue;\n\t\t\t\t\t\t\t\tconst { svg } = await mermaid.render(`lecture-diagram-${++diagramID}`, source.textContent);\n\t\t\t\t\t\t\t\tconst diagram = document.createElement(\"figure\");\n\t\t\t\t\t\t\t\tdiagram.className = \"lecture-diagram\";\n\t\t\t\t\t\t\t\tdiagram.innerHTML = svg;\n\t\t\t\t\t\t\t\tsource.parentElement.replaceWith(diagram);\n\t\t\t\t\t\t\t} catch (error) {\n\t\t\t\t\t\t\t\tconsole.warn(\"Не удалось отрисовать диаграмму Mermaid.\", error);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tfunction init() {\n\t\t\t\t\t\tloadArchive();\n\t\t\t\t\t\tfitPager();\n\t\t\t\t\t\trenderDiagrams();\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\tfor (const field of document.querySelectorAll(\"textarea[data-draft-key]\")) {\n\t\t\t\t\t\t\t\tconst saved = sessionStorage.getItem(field.dataset.draftKey);\n\t\t\t\t\t\t\t\tif (saved !== null) field.value = saved;\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t} catch {}\n\t\t\t\t\t}\n\t\t\t\t\tdocument.addEventListener(\"input\", ({ target }) => {\n\t\t\t\t\t\tif (target.matches(\"textarea[data-draft-key]\")) {\n\t\t\t\t\t\t\ttry { sessionStorage.setItem(target.dataset.draftKey, target.value); } catch {}\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t\tinit();\n\t\t\t\t\tdocument.body.addEventListener(\"htmx:afterSwap\", init);\n\t\t\t\t\tdocument.body.addEventListener(\"htmx:historyRestore\", init);\n\t\t\t\t\twindow.addEventListener(\"pageshow\", event => { if (event.persisted) init(); });\n\t\t\t\t\twindow.addEventListener(\"resize\", fitPager);\n\t\t\t\t\tdocument.fonts.ready.then(fitPager);\n\t\t\t\t\tdocument.fonts.addEventListener(\"loadingdone\", fitPager);\n\t\t\t\t})();\n\t\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -157,7 +157,7 @@ func Main(view PageView) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(view.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 279, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 308, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -200,7 +200,7 @@ func Main(view PageView) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL("/exams/" + view.Attempt.ID + "/finish")).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 290, Col: 124}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 319, Col: 124}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 				if templ_7745c5c3_Err != nil {
@@ -227,7 +227,7 @@ func Main(view PageView) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.NewAttributeExpression(view.ArchivedID).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 296, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 325, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
@@ -314,7 +314,7 @@ func Main(view PageView) templ.Component {
 						var templ_7745c5c3_Var6 string
 						templ_7745c5c3_Var6, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("Страница %d", page)).Resolve(ctx)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 327, Col: 106}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 356, Col: 106}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 						if templ_7745c5c3_Err != nil {
@@ -327,7 +327,7 @@ func Main(view PageView) templ.Component {
 						var templ_7745c5c3_Var7 string
 						templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(page))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 327, Col: 127}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 356, Col: 127}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 						if templ_7745c5c3_Err != nil {
@@ -357,7 +357,7 @@ func Main(view PageView) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(view.CurrentPage))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 335, Col: 82}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 364, Col: 82}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -370,7 +370,7 @@ func Main(view PageView) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(view.TotalPages))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 335, Col: 119}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 364, Col: 119}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -443,7 +443,7 @@ func LectureNotes(lectures []Lecture, selected *Lecture, body string) templ.Comp
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(selected.Date)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 360, Col: 34}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 389, Col: 34}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -476,7 +476,7 @@ func LectureNotes(lectures []Lecture, selected *Lecture, body string) templ.Comp
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(selected.Date)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 370, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 399, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -532,7 +532,7 @@ func LectureDates(lectures []Lecture, selected *Lecture) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL("/lectures/" + lecture.ID)).ResolveURL(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 380, Col: 49}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 409, Col: 49}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 			if templ_7745c5c3_Err != nil {
@@ -545,7 +545,7 @@ func LectureDates(lectures []Lecture, selected *Lecture) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templruntime.NewAttributeExpression("/lectures/" + lecture.ID).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 381, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 410, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 			if templ_7745c5c3_Err != nil {
@@ -568,7 +568,7 @@ func LectureDates(lectures []Lecture, selected *Lecture) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(lecture.Date)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 385, Col: 18}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 414, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -612,7 +612,7 @@ func QuestionBlocks(blocks []AttemptBlock) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(block.Topic)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 393, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 422, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -661,7 +661,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templruntime.NewAttributeExpression(q.AnchorID).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 402, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 431, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 		if templ_7745c5c3_Err != nil {
@@ -679,7 +679,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d. %s", q.Number, q.Question.Text))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 404, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 433, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
@@ -697,7 +697,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(q.Question.Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 406, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 435, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -715,7 +715,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(q.Question.Topic)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 408, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 437, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -728,7 +728,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(q.Question.Difficulty)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 408, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 437, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -756,7 +756,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 				var templ_7745c5c3_Var25 string
 				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(q.UserAnswer)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 415, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 444, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 				if templ_7745c5c3_Err != nil {
@@ -784,7 +784,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 				var templ_7745c5c3_Var26 string
 				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(" на вопрос %d", q.Number))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 421, Col: 126}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 450, Col: 126}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 				if templ_7745c5c3_Err != nil {
@@ -797,7 +797,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 				var templ_7745c5c3_Var27 string
 				templ_7745c5c3_Var27, templ_7745c5c3_Err = templruntime.NewAttributeExpression(q.Question.ID).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 422, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 451, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var27)
 				if templ_7745c5c3_Err != nil {
@@ -810,7 +810,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 				var templ_7745c5c3_Var28 string
 				templ_7745c5c3_Var28, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("tau-exam:active:%s:%d:draft", q.AttemptID, q.Number)).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 422, Col: 148}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 451, Col: 148}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
 				if templ_7745c5c3_Err != nil {
@@ -866,7 +866,7 @@ func AnswerBlock(answer string) templ.Component {
 		var templ_7745c5c3_Var30 string
 		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(answer)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 434, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 463, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 		if templ_7745c5c3_Err != nil {
@@ -926,7 +926,7 @@ func PageNavLink(link PageLink) templ.Component {
 			var templ_7745c5c3_Var34 string
 			templ_7745c5c3_Var34, templ_7745c5c3_Err = templruntime.NewAttributeExpression(link.AriaLabel).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 438, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 467, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var34)
 			if templ_7745c5c3_Err != nil {
@@ -939,7 +939,7 @@ func PageNavLink(link PageLink) templ.Component {
 			var templ_7745c5c3_Var35 string
 			templ_7745c5c3_Var35, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(fmt.Sprintf("/questions?page=%d", link.Page))).ResolveURL(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 439, Col: 64}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 468, Col: 64}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var35)
 			if templ_7745c5c3_Err != nil {
@@ -952,7 +952,7 @@ func PageNavLink(link PageLink) templ.Component {
 			var templ_7745c5c3_Var36 string
 			templ_7745c5c3_Var36, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("/questions?page=%d", link.Page)).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 440, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 469, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var36)
 			if templ_7745c5c3_Err != nil {
@@ -984,7 +984,7 @@ func PageNavLink(link PageLink) templ.Component {
 			var templ_7745c5c3_Var37 string
 			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(link.Icon)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 443, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 472, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 			if templ_7745c5c3_Err != nil {
@@ -997,7 +997,7 @@ func PageNavLink(link PageLink) templ.Component {
 			var templ_7745c5c3_Var38 string
 			templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 443, Col: 103}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 472, Col: 103}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 			if templ_7745c5c3_Err != nil {
@@ -1011,7 +1011,7 @@ func PageNavLink(link PageLink) templ.Component {
 			var templ_7745c5c3_Var39 string
 			templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 445, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 474, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 			if templ_7745c5c3_Err != nil {

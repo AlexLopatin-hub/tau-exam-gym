@@ -30,13 +30,19 @@ func TestPageUsesSingleExactProductHeading(t *testing.T) {
 
 func TestLectureRoutes(t *testing.T) {
 	handler := routes()
+	items, err := lectures()
+	if err != nil || len(items) == 0 {
+		t.Fatalf("load lecture menu: %v", err)
+	}
+	latest := items[len(items)-1]
 	for _, tc := range []struct {
 		path     string
 		fragment bool
 		status   int
 		want     []string
 	}{
-		{"/lectures", false, http.StatusOK, []string{`<html lang="ru">`, "Лекция 17 октября", `href="/lectures/10-17"`, `hx-get="/lectures/10-17"`, ">17 октября</a>", ">5 сентября</a>", `class="lecture-sidebar"`, `<details class="lecture-picker">`, "<math", "<h3>Преобразование Фурье"}},
+		{"/lectures", false, http.StatusOK, []string{`<html lang="ru">`, "<h2>Лекция " + latest.Date + "</h2>", `href="/lectures/10-17"`, `hx-get="/lectures/10-17"`, ">17 октября</a>", ">5 сентября</a>", `class="lecture-sidebar"`, `<details class="lecture-picker">`}},
+		{"/lectures/09-26", true, http.StatusOK, []string{`<code class="language-mermaid">flowchart TB`, `&lt;b&gt;ВХОД-ВЫХОД&lt;/b&gt;&lt;br/&gt;`, "<math", "<table>"}},
 		{"/lectures/10-10", true, http.StatusOK, []string{`<main id="content"`, "Лекция 10 октября", "<math", "<mtable"}},
 		{"/lectures/12-31", false, http.StatusNotFound, []string{"Лекция с такой датой не найдена.", `href="/lectures/10-17"`}},
 	} {
