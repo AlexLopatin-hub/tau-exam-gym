@@ -31,6 +31,11 @@ func Run() {
 	}
 	demoBank = os.Getenv("QUESTION_BANK") == ""
 	log.Printf("loaded %d questions", len(bank))
+	if items, err := lectures(); err != nil {
+		log.Printf("load lectures: %v", err)
+	} else {
+		log.Printf("loaded %d lectures", len(items))
+	}
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

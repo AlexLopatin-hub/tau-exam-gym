@@ -15,3 +15,7 @@ jobs:
         with:
           go-version-file: go.mod
       - run: go tool templ generate -check
+      - name: Check generated lectures
+        run: |
+          go generate ./internal/exam
+          git diff --exit-code -- internal/exam/lecture_pages.json

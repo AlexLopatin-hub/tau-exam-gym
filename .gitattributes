@@ -1,3 +1,4 @@
 *.templ text eol=lf
 *_templ.go text eol=lf
+internal/exam/lecture_pages.json text eol=lf
 .githooks/* text eol=lf

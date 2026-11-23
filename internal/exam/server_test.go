@@ -77,18 +77,14 @@ func TestLectureRoutes(t *testing.T) {
 	}
 }
 
-func TestEmbeddedLecturesRender(t *testing.T) {
+func TestEmbeddedLecturesContainHTML(t *testing.T) {
 	items, err := lectures()
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, lecture := range items {
 		t.Run(lecture.ID, func(t *testing.T) {
-			body, err := lecture.render()
-			if err != nil {
-				t.Fatal(err)
-			}
-			if strings.TrimSpace(body) == "" {
+			if strings.TrimSpace(lecture.html) == "" {
 				t.Error("lecture rendered empty HTML")
 			}
 		})
