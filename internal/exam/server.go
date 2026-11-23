@@ -1,6 +1,7 @@
 package exam
 
 import (
+	"embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -14,6 +15,9 @@ import (
 
 	"github.com/a-h/templ"
 )
+
+//go:embed static/app.css static/app.js
+var assets embed.FS
 
 var bank []Question
 var attempts = NewAttemptStore()
@@ -44,6 +48,9 @@ func Run() {
 
 func routes() http.Handler {
 	mux := http.NewServeMux()
+	static := http.FileServerFS(assets)
+	mux.Handle("GET /static/app.css", static)
+	mux.Handle("GET /static/app.js", static)
 	mux.HandleFunc("GET /", home)
 	mux.HandleFunc("GET /questions", questions)
 	mux.HandleFunc("GET /lectures", showLecture)
