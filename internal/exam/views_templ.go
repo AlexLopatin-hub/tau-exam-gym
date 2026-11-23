@@ -22,6 +22,9 @@ type PageView struct {
 	TotalPages  int
 	Error       string
 	Demo        bool
+	Lectures    []Lecture
+	Lecture     *Lecture
+	LectureHTML string
 }
 
 type AttemptBlock struct {
@@ -63,7 +66,7 @@ func Page(view PageView) templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"ru\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Вопросы по ТАУ</title><link href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400..700&display=swap\" rel=\"stylesheet\"><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js\" integrity=\"sha384-2OatzQy1H+Zd/IIrjr1TcuDGqLXeHhbooAyJY1KdQMKnr4LZ22k31GBLdYKHmVjg\" crossorigin=\"anonymous\"></script><style>\n\t\t\t\t:root {\n\t\t\t\t\tcolor-scheme: light;\n\t\t\t\t\tfont-family: \"IBM Plex Sans\", system-ui, -apple-system, \"Segoe UI\", sans-serif;\n\t\t\t\t\tcolor: #292923;\n\t\t\t\t\tbackground: #f4f1e9;\n\t\t\t\t\tfont-synthesis: none;\n\t\t\t\t}\n\t\t\t\tbody { margin: 0; min-height: 100vh; padding-bottom: 6rem; }\n\t\t\t\ta { color: #92502f; }\n\t\t\t\tnav { display: flex; gap: .25rem; }\n\t\t\t\t.tabs { margin: 0 0 1.4rem; border-bottom: 1px solid #e4ddd2; padding-bottom: .5rem; }\n\t\t\t\t.tabs a { padding: .48rem .8rem; border-radius: 7px; color: #6e6a60; font-size: .92rem; font-weight: 600; text-decoration: none; transition: background-color .15s, color .15s; }\n\t\t\t\t.tabs a:hover { background: #eae5da; color: #292923; }\n\t\t\t\t.tabs a[aria-current=\"page\"] { background: #92502f; color: #fffdf8; }\n\t\t\t\tmain { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }\n\t\t\t\th1 { margin: 0 0 1.15rem; font-size: clamp(1.8rem, 3vw, 2.25rem); font-weight: 690; letter-spacing: -.035em; line-height: 1.15; }\n\t\t\t\th3 { margin: 0 0 .45rem; font-size: 1.08rem; font-weight: 620; line-height: 1.45; }\n\t\t\t\t.block { margin: 2rem 0; }\n\t\t\t\t.block > h2 { margin-bottom: .9rem; border-bottom: 1px solid #dfd8cc; padding-bottom: .55rem; font-size: 1.2rem; font-weight: 650; letter-spacing: -.015em; }\n\t\t\t\t.card { margin: .85rem 0; border: 1px solid #e5dfd4; border-radius: 11px; padding: 1.1rem 1.2rem; background: #fffdf8; box-shadow: 0 1px 2px #332b1b0a; scroll-margin-top: 1rem; }\n\t\t\t\t.start-card { margin-top: 1.4rem; }\n\t\t\t\t.exam-history { margin-top: 2.5rem; border-top: 1px solid #dfd8cc; }\n\t\t\t\t.exam-history ul { padding-left: 1.4rem; }\n\t\t\t\t.exam-history li { margin: .65rem 0; }\n\t\t\t\t.start-card p { margin: 0 0 1rem; color: #5f5b52; line-height: 1.55; }\n\t\t\t\tbutton { padding: .63rem .95rem; border: 0; border-radius: 7px; background: #92502f; color: #fffdf8; cursor: pointer; font: inherit; font-size: .94rem; font-weight: 650; transition: background-color .15s, box-shadow .15s; }\n\t\t\t\tbutton:hover { background: #783e24; }\n\t\t\t\tbutton:focus-visible, a:focus-visible, .answer-toggle:focus-visible { outline: 3px solid #c58a67; outline-offset: 3px; }\n\t\t\t\t.error { color: #9b3329; }\n\t\t\t\t.meta { margin: 0; color: #78746a; font-size: .84rem; }\n\t\t\t\t.answer { margin-top: 1rem; border-radius: 8px; padding: 1rem 1.1rem; line-height: 1.6; }\n\t\t\t\t.answer p { margin: .35rem 0 0; }\n\t\t\t\t.user-answer { margin-top: 1rem; display: block; }\n\t\t\t\t.user-answer textarea { display: block; margin-top: .4rem; width: 100%; box-sizing: border-box; resize: vertical; padding: .6rem; border: 1px solid #bcb4a6; border-radius: 6px; font: inherit; }\n\t\t\t\t.user-answer p { margin: .35rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }\n\t\t\t\t.revealed { border: 1px solid #DEC2A9; background: #FAEBDD; color: #503523; }\n\t\t\t\tdetails.catalog-answer { margin-top: 1rem; }\n\t\t\t\tdetails.catalog-answer[open] summary { margin-bottom: 1rem; }\n\t\t\t\tdetails.catalog-answer summary { display: inline-block; list-style: none; }\n\t\t\t\tdetails.catalog-answer summary::-webkit-details-marker { display: none; }\n\t\t\t\t.answer-toggle { padding: .43rem .68rem; border: 1px solid #e3dbce; border-radius: 6px; background: #f1ede4; color: #665f54; cursor: pointer; font-size: .87rem; font-weight: 570; }\n\t\t\t\t.answer-toggle:hover { border-color: #d2c6b5; background: #e9e3d8; color: #3c382f; }\n\t\t\t\tdetails[open] .catalog-show, details:not([open]) .catalog-hide { display: none; }\n\t\t\t\t.pagination { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: .35rem; width: 100%; max-width: 100%; overflow: hidden; white-space: nowrap; }\n\t\t\t\t.pagination a, .pagination .page-number { display: inline-flex; flex: 0 0 auto; min-width: 2.15rem; height: 2.15rem; box-sizing: border-box; align-items: center; justify-content: center; padding: .25rem .45rem; border: 1px solid #e3dbce; border-radius: 6px; color: #665f54; background: #fffdf8; font-size: .9rem; font-weight: 600; text-decoration: none; }\n\t\t\t\t.pagination a:hover { background: #eae5da; color: #292923; }\n\t\t\t\t.pagination .compact-hidden { display: none; }\n\t\t\t\t.pagination.expanded .compact-hidden { display: inline-flex; }\n\t\t\t\t.pagination .page-ellipsis { display: none; }\n\t\t\t\t.pagination:not(.expanded) .page-ellipsis[data-needed=\"true\"] { display: inline-flex; align-items: center; justify-content: center; min-width: 1.25rem; color: #78746a; }\n\t\t\t\t.pagination .page-number[aria-current=\"page\"] { border-color: #92502f; background: #92502f; color: #fffdf8; }\n\t\t\t\t.pagination .edge-icon { display: none; }\n\t\t\t\t.pagination.compact-icons .edge-label { display: none; }\n\t\t\t\t.pagination.compact-icons .edge-icon { display: inline; }\n\t\t\t\t.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }\n\t\t\t\t.empty-state { color: #78746a; }\n\t\t\t\t.finish-bar { position: fixed; z-index: 5; right: max(1rem, calc((100vw - 900px)/2)); bottom: calc(.75rem + env(safe-area-inset-bottom)); display: flex; width: max-content; max-width: calc(100vw - 2rem); box-sizing: border-box; border: 1px solid #e4ddd2; border-radius: 9px; padding: .3rem; background: #fffdf8eb; box-shadow: 0 3px 12px #332b1b17; }\n\t\t\t\t@media (max-width: 600px) {\n\t\t\t\t\tmain { margin-top: 1rem; }\n\t\t\t\t\t.tabs a { flex: 1; padding: .58rem .4rem; text-align: center; }\n\t\t\t\t\t.card { padding: 1rem; }\n\t\t\t\t\t.finish-bar { right: 1rem; bottom: calc(.5rem + env(safe-area-inset-bottom)); }\n\t\t\t\t}\n\t\t\t\t@media (max-width: 480px) {\n\t\t\t\t\t.pagination { gap: .12rem; }\n\t\t\t\t\t.pagination a, .pagination .page-number { min-width: 1.8rem; height: 2rem; padding: .2rem .25rem; font-size: .86rem; }\n\t\t\t\t}\n\t\t\t\t@media (max-width: 350px) {\n\t\t\t\t\t.pagination { gap: .08rem; }\n\t\t\t\t\t.pagination a, .pagination .page-number { min-width: 1.45rem; height: 1.75rem; padding: .15rem .16rem; font-size: .8rem; }\n\t\t\t\t\t.pagination:not(.expanded) .page-ellipsis[data-needed=\"true\"] { min-width: .55rem; }\n\t\t\t\t}\n\t\t\t</style></head><body>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"ru\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Вопросы по ТАУ</title><link href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400..700&display=swap\" rel=\"stylesheet\"><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js\" integrity=\"sha384-2OatzQy1H+Zd/IIrjr1TcuDGqLXeHhbooAyJY1KdQMKnr4LZ22k31GBLdYKHmVjg\" crossorigin=\"anonymous\"></script><style>\n\t\t\t\t:root {\n\t\t\t\t\tcolor-scheme: light;\n\t\t\t\t\tfont-family: \"IBM Plex Sans\", system-ui, -apple-system, \"Segoe UI\", sans-serif;\n\t\t\t\t\tcolor: #292923;\n\t\t\t\t\tbackground: #f4f1e9;\n\t\t\t\t\tfont-synthesis: none;\n\t\t\t\t}\n\t\t\t\tbody { margin: 0; min-height: 100vh; padding-bottom: 6rem; }\n\t\t\t\ta { color: #92502f; }\n\t\t\t\tnav { display: flex; gap: .25rem; }\n\t\t\t\t.tabs { margin: 0 0 1.4rem; border-bottom: 1px solid #e4ddd2; padding-bottom: .5rem; }\n\t\t\t\t.tabs a { padding: .48rem .8rem; border-radius: 7px; color: #6e6a60; font-size: .92rem; font-weight: 600; text-decoration: none; transition: background-color .15s, color .15s; }\n\t\t\t\t.tabs a:hover { background: #eae5da; color: #292923; }\n\t\t\t\t.tabs a[aria-current=\"page\"] { background: #92502f; color: #fffdf8; }\n\t\t\t\tmain { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }\n\t\t\t\th1 { margin: 0 0 1.15rem; font-size: clamp(1.8rem, 3vw, 2.25rem); font-weight: 690; letter-spacing: -.035em; line-height: 1.15; }\n\t\t\t\th3 { margin: 0 0 .45rem; font-size: 1.08rem; font-weight: 620; line-height: 1.45; }\n\t\t\t\t.block { margin: 2rem 0; }\n\t\t\t\t.block > h2 { margin-bottom: .9rem; border-bottom: 1px solid #dfd8cc; padding-bottom: .55rem; font-size: 1.2rem; font-weight: 650; letter-spacing: -.015em; }\n\t\t\t\t.card { margin: .85rem 0; border: 1px solid #e5dfd4; border-radius: 11px; padding: 1.1rem 1.2rem; background: #fffdf8; box-shadow: 0 1px 2px #332b1b0a; scroll-margin-top: 1rem; }\n\t\t\t\t.lecture-layout { display: grid; grid-template-columns: minmax(0, 1fr) 9rem; grid-template-areas: \"lecture dates\"; gap: 1rem; align-items: start; }\n\t\t\t\t.lecture-sidebar { grid-area: dates; margin-top: .85rem; }\n\t\t\t\t.lecture-picker { display: none; }\n\t\t\t\t.lecture-dates { flex-direction: column; gap: .4rem; }\n\t\t\t\t.lecture-dates a, .lecture-picker summary { padding: .4rem .7rem; border: 1px solid #e3dbce; border-radius: 6px; background: #fffdf8; text-decoration: none; }\n\t\t\t\t.lecture-dates a:hover { background: #eae5da; }\n\t\t\t\t.lecture-dates a[aria-current=\"page\"] { border-color: #92502f; background: #92502f; color: #fffdf8; }\n\t\t\t\t.lecture { grid-area: lecture; min-width: 0; line-height: 1.6; overflow-wrap: anywhere; }\n\t\t\t\t.lecture h2 { margin: 0 0 1rem; }\n\t\t\t\t.lecture blockquote { margin-inline: 0; padding-inline-start: 1rem; border-inline-start: 3px solid #dec2a9; }\n\t\t\t\t.lecture th, .lecture td { padding: .25rem .6rem; border: 1px solid #e3dbce; }\n\t\t\t\t.lecture table { border-collapse: collapse; }\n\t\t\t\t.lecture pre { overflow-x: auto; }\n\t\t\t\t.lecture img { max-width: 100%; }\n\t\t\t\t.lecture .katex-html { display: none; }\n\t\t\t\t.lecture .katex-display { display: block; margin-block: .75rem; overflow-x: auto; overflow-y: hidden; }\n\t\t\t\t.lecture .katex-display .katex-mathml { display: block; }\n\t\t\t\t.start-card { margin-top: 1.4rem; }\n\t\t\t\t.exam-history { margin-top: 2.5rem; border-top: 1px solid #dfd8cc; }\n\t\t\t\t.exam-history ul { padding-left: 1.4rem; }\n\t\t\t\t.exam-history li { margin: .65rem 0; }\n\t\t\t\t.start-card p { margin: 0 0 1rem; color: #5f5b52; line-height: 1.55; }\n\t\t\t\tbutton { padding: .63rem .95rem; border: 0; border-radius: 7px; background: #92502f; color: #fffdf8; cursor: pointer; font: inherit; font-size: .94rem; font-weight: 650; transition: background-color .15s, box-shadow .15s; }\n\t\t\t\tbutton:hover { background: #783e24; }\n\t\t\t\tbutton:focus-visible, a:focus-visible, .answer-toggle:focus-visible { outline: 3px solid #c58a67; outline-offset: 3px; }\n\t\t\t\t.error { color: #9b3329; }\n\t\t\t\t.meta { margin: 0; color: #78746a; font-size: .84rem; }\n\t\t\t\t.answer { margin-top: 1rem; border-radius: 8px; padding: 1rem 1.1rem; line-height: 1.6; }\n\t\t\t\t.answer p { margin: .35rem 0 0; }\n\t\t\t\t.user-answer { margin-top: 1rem; display: block; }\n\t\t\t\t.user-answer textarea { display: block; margin-top: .4rem; width: 100%; box-sizing: border-box; resize: vertical; padding: .6rem; border: 1px solid #bcb4a6; border-radius: 6px; font: inherit; }\n\t\t\t\t.user-answer p { margin: .35rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }\n\t\t\t\t.revealed { border: 1px solid #DEC2A9; background: #FAEBDD; color: #503523; }\n\t\t\t\tdetails.catalog-answer { margin-top: 1rem; }\n\t\t\t\tdetails.catalog-answer[open] summary { margin-bottom: 1rem; }\n\t\t\t\tdetails.catalog-answer summary { display: inline-block; list-style: none; }\n\t\t\t\tdetails.catalog-answer summary::-webkit-details-marker { display: none; }\n\t\t\t\t.answer-toggle { padding: .43rem .68rem; border: 1px solid #e3dbce; border-radius: 6px; background: #f1ede4; color: #665f54; cursor: pointer; font-size: .87rem; font-weight: 570; }\n\t\t\t\t.answer-toggle:hover { border-color: #d2c6b5; background: #e9e3d8; color: #3c382f; }\n\t\t\t\tdetails[open] .catalog-show, details:not([open]) .catalog-hide { display: none; }\n\t\t\t\t.pagination { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: .35rem; width: 100%; max-width: 100%; overflow: hidden; white-space: nowrap; }\n\t\t\t\t.pagination a, .pagination .page-number { display: inline-flex; flex: 0 0 auto; min-width: 2.15rem; height: 2.15rem; box-sizing: border-box; align-items: center; justify-content: center; padding: .25rem .45rem; border: 1px solid #e3dbce; border-radius: 6px; color: #665f54; background: #fffdf8; font-size: .9rem; font-weight: 600; text-decoration: none; }\n\t\t\t\t.pagination a:hover { background: #eae5da; color: #292923; }\n\t\t\t\t.pagination .compact-hidden { display: none; }\n\t\t\t\t.pagination.expanded .compact-hidden { display: inline-flex; }\n\t\t\t\t.pagination .page-ellipsis { display: none; }\n\t\t\t\t.pagination:not(.expanded) .page-ellipsis[data-needed=\"true\"] { display: inline-flex; align-items: center; justify-content: center; min-width: 1.25rem; color: #78746a; }\n\t\t\t\t.pagination .page-number[aria-current=\"page\"] { border-color: #92502f; background: #92502f; color: #fffdf8; }\n\t\t\t\t.pagination .edge-icon { display: none; }\n\t\t\t\t.pagination.compact-icons .edge-label { display: none; }\n\t\t\t\t.pagination.compact-icons .edge-icon { display: inline; }\n\t\t\t\t.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }\n\t\t\t\t.empty-state { color: #78746a; }\n\t\t\t\t.finish-bar { position: fixed; z-index: 5; right: max(1rem, calc((100vw - 900px)/2)); bottom: calc(.75rem + env(safe-area-inset-bottom)); display: flex; width: max-content; max-width: calc(100vw - 2rem); box-sizing: border-box; border: 1px solid #e4ddd2; border-radius: 9px; padding: .3rem; background: #fffdf8eb; box-shadow: 0 3px 12px #332b1b17; }\n\t\t\t\t@media (max-width: 600px) {\n\t\t\t\t\tmain { margin-top: 1rem; }\n\t\t\t\t\t.tabs a { flex: 1; padding: .58rem .4rem; text-align: center; }\n\t\t\t\t\t.card { padding: 1rem; }\n\t\t\t\t\t.lecture-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: \"dates\" \"lecture\"; gap: 0; }\n\t\t\t\t\t.lecture-sidebar { display: none; }\n\t\t\t\t\t.lecture-picker { display: block; grid-area: dates; }\n\t\t\t\t\t.lecture-picker summary { cursor: pointer; }\n\t\t\t\t\t.lecture-picker .lecture-dates { margin-top: .4rem; }\n\t\t\t\t\t.finish-bar { right: 1rem; bottom: calc(.5rem + env(safe-area-inset-bottom)); }\n\t\t\t\t}\n\t\t\t\t@media (max-width: 480px) {\n\t\t\t\t\t.pagination { gap: .12rem; }\n\t\t\t\t\t.pagination a, .pagination .page-number { min-width: 1.8rem; height: 2rem; padding: .2rem .25rem; font-size: .86rem; }\n\t\t\t\t}\n\t\t\t\t@media (max-width: 350px) {\n\t\t\t\t\t.pagination { gap: .08rem; }\n\t\t\t\t\t.pagination a, .pagination .page-number { min-width: 1.45rem; height: 1.75rem; padding: .15rem .16rem; font-size: .8rem; }\n\t\t\t\t\t.pagination:not(.expanded) .page-ellipsis[data-needed=\"true\"] { min-width: .55rem; }\n\t\t\t\t}\n\t\t\t</style></head><body>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -122,42 +125,52 @@ func Main(view PageView) templ.Component {
 			}
 		}
 		if view.Tab == "questions" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<a href=\"/questions\" hx-get=\"/questions\" hx-target=\"#content\" hx-swap=\"outerHTML\" hx-push-url=\"true\" aria-current=\"page\">Все вопросы</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<a href=\"/questions\" hx-get=\"/questions\" hx-target=\"#content\" hx-swap=\"outerHTML\" hx-push-url=\"true\" aria-current=\"page\">Все вопросы</a> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<a href=\"/questions\" hx-get=\"/questions\" hx-target=\"#content\" hx-swap=\"outerHTML\" hx-push-url=\"true\">Все вопросы</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<a href=\"/questions\" hx-get=\"/questions\" hx-target=\"#content\" hx-swap=\"outerHTML\" hx-push-url=\"true\">Все вопросы</a> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</nav><h1>Вопросы по ТАУ</h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<a href=\"/lectures\" hx-get=\"/lectures\" hx-target=\"#content\" hx-swap=\"outerHTML\" hx-push-url=\"true\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if view.Tab == "lectures" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " aria-current=\"page\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, ">Конспекты</a></nav><h1>Вопросы по ТАУ</h1>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if view.Error != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<p class=\"error\" role=\"alert\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p class=\"error\" role=\"alert\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(view.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 249, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 279, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if view.Attempt != nil {
 			if view.Attempt.Finished {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Экзамен завершён. Ответы открыты для сверки.</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<p>Экзамен завершён. Ответы открыты для сверки.</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -165,40 +178,40 @@ func Main(view PageView) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<p id=\"archive-status\" class=\"error\" role=\"status\"></p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<p id=\"archive-status\" class=\"error\" role=\"status\"></p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<p>В билете 30 вопросов из трёх тематических блоков. Свой ответ можно изменить до завершения экзамена. Для сверки откройте правильный ответ под вопросом или весь ключ в конце.</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<p>В билете 30 вопросов из трёх тематических блоков. Свой ответ можно изменить до завершения экзамена. Для сверки откройте правильный ответ под вопросом или весь ключ в конце.</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if !view.Attempt.Finished {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"finish-bar\"><form id=\"finish-exam\" method=\"post\" action=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"finish-bar\"><form id=\"finish-exam\" method=\"post\" action=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL("/exams/" + view.Attempt.ID + "/finish")).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 260, Col: 124}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 290, Col: 124}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"><button type=\"submit\">Завершить экзамен</button></form></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\"><button type=\"submit\">Завершить экзамен</button></form></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -207,41 +220,46 @@ func Main(view PageView) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if view.ArchivedID != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<h2>Пройденный экзамен</h2><p id=\"archived-date\"></p><div id=\"archived-exam\" data-id=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<h2>Пройденный экзамен</h2><p id=\"archived-date\"></p><div id=\"archived-exam\" data-id=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.NewAttributeExpression(view.ArchivedID).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 266, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 296, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\">Загрузка билета…</div><a href=\"/\">К списку экзаменов</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\">Загрузка билета…</div><a href=\"/\">К списку экзаменов</a>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if view.Tab == "lectures" {
+			templ_7745c5c3_Err = LectureNotes(view.Lectures, view.Lecture, view.LectureHTML).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if view.Tab == "questions" {
 			if view.Demo {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<p>Демонстрационный банк учебных вопросов.</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<p>Демонстрационный банк учебных вопросов.</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<p>В каталоге можно раскрывать и скрывать ответы.</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<p>В каталоге можно раскрывать и скрывать ответы.</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " <div id=\"question-results\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " <div id=\"question-results\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(view.Questions) == 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<p class=\"empty-state\">В банке пока нет вопросов.</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<p class=\"empty-state\">В банке пока нет вопросов.</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -252,12 +270,12 @@ func Main(view PageView) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if view.TotalPages > 1 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<nav class=\"pagination\" aria-label=\"Страницы каталога\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<nav class=\"pagination\" aria-label=\"Страницы каталога\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -269,16 +287,6 @@ func Main(view PageView) templ.Component {
 				}
 				for page := 1; page <= view.TotalPages; page++ {
 					if page == view.CurrentPage-1 && page > 2 {
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<span class=\"page-ellipsis\" data-needed=\"true\" aria-hidden=\"true\">…</span>")
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, " ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					if page == view.TotalPages && view.TotalPages > view.CurrentPage+2 {
 						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<span class=\"page-ellipsis\" data-needed=\"true\" aria-hidden=\"true\">…</span>")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
@@ -288,34 +296,44 @@ func Main(view PageView) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
+					if page == view.TotalPages && view.TotalPages > view.CurrentPage+2 {
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<span class=\"page-ellipsis\" data-needed=\"true\" aria-hidden=\"true\">…</span>")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, " ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 					if page == view.CurrentPage {
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<span class=\"page-number\" aria-current=\"page\" aria-label=\"")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<span class=\"page-number\" aria-current=\"page\" aria-label=\"")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
 						var templ_7745c5c3_Var6 string
 						templ_7745c5c3_Var6, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("Страница %d", page)).Resolve(ctx)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 295, Col: 106}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 327, Col: 106}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\">")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\">")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
 						var templ_7745c5c3_Var7 string
 						templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(page))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 295, Col: 127}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 327, Col: 127}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</span> ")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</span> ")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -332,50 +350,236 @@ func Main(view PageView) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<span class=\"visually-hidden\">Страница ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<span class=\"visually-hidden\">Страница ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(view.CurrentPage))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 303, Col: 82}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 335, Col: 82}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, " из ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, " из ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(view.TotalPages))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 303, Col: 119}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 335, Col: 119}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</span></nav>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</span></nav>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<section class=\"card start-card\"><p>Тренировочный билет: 30 вопросов, по 10 из каждого тематического блока.</p><form method=\"post\" action=\"/exams\"><button type=\"submit\">Начать экзамен</button></form></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<section class=\"card start-card\"><p>Тренировочный билет: 30 вопросов, по 10 из каждого тематического блока.</p><form method=\"post\" action=\"/exams\"><button type=\"submit\">Начать экзамен</button></form></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if view.Tab == "exam" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<section class=\"exam-history\"><h2>Пройденные экзамены</h2><p id=\"history-status\" class=\"empty-state\">В этом браузере пока нет пройденных экзаменов.</p><ul id=\"exam-history\"></ul></section>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<section class=\"exam-history\"><h2>Пройденные экзамены</h2><p id=\"history-status\" class=\"empty-state\">В этом браузере пока нет пройденных экзаменов.</p><ul id=\"exam-history\"></ul></section>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</main>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func LectureNotes(lectures []Lecture, selected *Lecture, body string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<div class=\"lecture-layout\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(lectures) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<div class=\"lecture-sidebar\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = LectureDates(lectures, selected).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</div><details class=\"lecture-picker\"><summary>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if selected != nil {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "Лекция ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(selected.Date)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 360, Col: 34}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "Выбрать лекцию")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</summary>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = LectureDates(lectures, selected).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</details> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if selected != nil {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<article class=\"card lecture\"><h2>Лекция ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var12 string
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(selected.Date)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 370, Col: 36}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</h2>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templ.Raw(body).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</article>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func LectureDates(lectures []Lecture, selected *Lecture) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<nav class=\"lecture-dates\" aria-label=\"Лекции по датам\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, lecture := range lectures {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var14 string
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL("/lectures/" + lecture.ID)).ResolveURL(ctx)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 380, Col: 49}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "\" hx-get=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var15 string
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templruntime.NewAttributeExpression("/lectures/" + lecture.ID).Resolve(ctx)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 381, Col: 38}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "\" hx-target=\"#content\" hx-swap=\"outerHTML\" hx-push-url=\"true\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if selected != nil && selected.ID == lecture.ID {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, " aria-current=\"page\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, ">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var16 string
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(lecture.Date)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 385, Col: 18}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</a>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "</nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -401,20 +605,20 @@ func QuestionBlocks(blocks []AttemptBlock) templ.Component {
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
 		for _, block := range blocks {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<section class=\"block\"><h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "<section class=\"block\"><h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(block.Topic)
+			var templ_7745c5c3_Var18 string
+			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(block.Topic)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 322, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 393, Col: 20}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -424,7 +628,7 @@ func QuestionBlocks(blocks []AttemptBlock) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -450,120 +654,120 @@ func QuestionCard(q QuestionCardData) templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<article class=\"card\" id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<article class=\"card\" id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templruntime.NewAttributeExpression(q.AnchorID).Resolve(ctx)
+		var templ_7745c5c3_Var20 string
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templruntime.NewAttributeExpression(q.AnchorID).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 331, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 402, Col: 38}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if q.Number > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "<h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d. %s", q.Number, q.Question.Text))
+			var templ_7745c5c3_Var21 string
+			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d. %s", q.Number, q.Question.Text))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 333, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 404, Col: 57}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "</h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "<h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(q.Question.Text)
+			var templ_7745c5c3_Var22 string
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(q.Question.Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 335, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 406, Col: 24}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</h3>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "</h3>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<p class=\"meta\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "<p class=\"meta\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 string
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(q.Question.Topic)
+		var templ_7745c5c3_Var23 string
+		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(q.Question.Topic)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 337, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 408, Col: 36}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, " · ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var17 string
-		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(q.Question.Difficulty)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 337, Col: 65}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, " · ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</p>")
+		var templ_7745c5c3_Var24 string
+		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(q.Question.Difficulty)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 408, Col: 65}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if q.Finished {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<div class=\"user-answer\"><strong>Ваш ответ</strong> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "<div class=\"user-answer\"><strong>Ваш ответ</strong> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if q.UserAnswer == "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<p>Ответ не указан.</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "<p>Ответ не указан.</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "<p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var18 string
-				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(q.UserAnswer)
+				var templ_7745c5c3_Var25 string
+				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(q.UserAnswer)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 344, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 415, Col: 22}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, "</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -573,51 +777,51 @@ func QuestionCard(q QuestionCardData) templ.Component {
 			}
 		} else {
 			if q.AttemptID != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<label class=\"user-answer\">Ваш ответ<span class=\"visually-hidden\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, "<label class=\"user-answer\">Ваш ответ<span class=\"visually-hidden\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var19 string
-				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(" на вопрос %d", q.Number))
+				var templ_7745c5c3_Var26 string
+				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(" на вопрос %d", q.Number))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 350, Col: 126}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 421, Col: 126}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</span> <textarea rows=\"3\" name=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var20 string
-				templ_7745c5c3_Var20, templ_7745c5c3_Err = templruntime.NewAttributeExpression(q.Question.ID).Resolve(ctx)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 351, Col: 44}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 80, "</span> <textarea rows=\"3\" name=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "\" form=\"finish-exam\" data-draft-key=\"")
+				var templ_7745c5c3_Var27 string
+				templ_7745c5c3_Var27, templ_7745c5c3_Err = templruntime.NewAttributeExpression(q.Question.ID).Resolve(ctx)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 422, Col: 44}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var27)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var21 string
-				templ_7745c5c3_Var21, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("tau-exam:active:%s:%d:draft", q.AttemptID, q.Number)).Resolve(ctx)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 351, Col: 148}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, "\" form=\"finish-exam\" data-draft-key=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "\"></textarea></label>")
+				var templ_7745c5c3_Var28 string
+				templ_7745c5c3_Var28, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("tau-exam:active:%s:%d:draft", q.AttemptID, q.Number)).Resolve(ctx)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 422, Col: 148}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 82, "\"></textarea></label>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, " <details class=\"catalog-answer\"><summary class=\"answer-toggle\"><span class=\"catalog-show\">Показать ответ</span><span class=\"catalog-hide\">Скрыть ответ</span></summary>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 83, " <details class=\"catalog-answer\"><summary class=\"answer-toggle\"><span class=\"catalog-show\">Показать ответ</span><span class=\"catalog-hide\">Скрыть ответ</span></summary>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -625,12 +829,12 @@ func QuestionCard(q QuestionCardData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</details>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 84, "</details>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 85, "</article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -655,20 +859,20 @@ func AnswerBlock(answer string) templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<div class=\"answer revealed\"><strong>Правильный ответ</strong><p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 86, "<div class=\"answer revealed\"><strong>Правильный ответ</strong><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var23 string
-		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(answer)
+		var templ_7745c5c3_Var30 string
+		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(answer)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 363, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 434, Col: 89}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 87, "</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -697,64 +901,64 @@ func PageNavLink(link PageLink) templ.Component {
 			templ_7745c5c3_ElementWriter := templ_7745c5c3_Buffer
 			templ_7745c5c3_Buffer := templ.GetBuffer()
 			var templ_7745c5c3_ElementScripts []templ.ComponentScript
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "<a class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 88, "<a class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var25 = []any{link.Class}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_ElementWriter, templ_7745c5c3_Var25...)
+			var templ_7745c5c3_Var32 = []any{link.Class}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_ElementWriter, templ_7745c5c3_Var32...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var26 string
-			templ_7745c5c3_Var26, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.CSSClasses(templ_7745c5c3_Var25).String()).Resolve(ctx)
+			var templ_7745c5c3_Var33 string
+			templ_7745c5c3_Var33, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.CSSClasses(templ_7745c5c3_Var32).String()).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 1, Col: 0}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var26)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var33)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "\" aria-label=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 89, "\" aria-label=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var27 string
-			templ_7745c5c3_Var27, templ_7745c5c3_Err = templruntime.NewAttributeExpression(link.AriaLabel).Resolve(ctx)
+			var templ_7745c5c3_Var34 string
+			templ_7745c5c3_Var34, templ_7745c5c3_Err = templruntime.NewAttributeExpression(link.AriaLabel).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 367, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 438, Col: 52}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var27)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "\" href=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var34)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var28 string
-			templ_7745c5c3_Var28, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(fmt.Sprintf("/questions?page=%d", link.Page))).ResolveURL(ctx)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 368, Col: 64}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 90, "\" href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "\" hx-get=\"")
+			var templ_7745c5c3_Var35 string
+			templ_7745c5c3_Var35, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(fmt.Sprintf("/questions?page=%d", link.Page))).ResolveURL(ctx)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 439, Col: 64}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var35)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var29 string
-			templ_7745c5c3_Var29, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("/questions?page=%d", link.Page)).Resolve(ctx)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 369, Col: 55}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 91, "\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "\" hx-target=\"#content\" hx-swap=\"outerHTML show:#question-results:top\" hx-push-url=\"true\"")
+			var templ_7745c5c3_Var36 string
+			templ_7745c5c3_Var36, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("/questions?page=%d", link.Page)).Resolve(ctx)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 440, Col: 55}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var36)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 92, "\" hx-target=\"#content\" hx-swap=\"outerHTML show:#question-results:top\" hx-push-url=\"true\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -768,53 +972,53 @@ func PageNavLink(link PageLink) templ.Component {
 			}
 			templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, ">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 93, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if link.Icon != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "<span class=\"edge-icon\" aria-hidden=\"true\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 94, "<span class=\"edge-icon\" aria-hidden=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var30 string
-			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(link.Icon)
+			var templ_7745c5c3_Var37 string
+			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(link.Icon)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 372, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 443, Col: 57}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "</span><span class=\"edge-label\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var31 string
-			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 372, Col: 103}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 95, "</span><span class=\"edge-label\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "</span>")
+			var templ_7745c5c3_Var38 string
+			templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 443, Col: 103}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 96, "</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var32 string
-			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
+			var templ_7745c5c3_Var39 string
+			templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 374, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/exam/views.templ`, Line: 445, Col: 15}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "</a>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 97, "</a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

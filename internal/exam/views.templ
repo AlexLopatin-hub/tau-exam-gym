@@ -13,6 +13,9 @@ type PageView struct {
 	TotalPages int
 	Error string
 	Demo bool
+	Lectures []Lecture
+	Lecture *Lecture
+	LectureHTML string
 }
 
 type AttemptBlock struct {
@@ -67,6 +70,23 @@ templ Page(view PageView) {
 				.block { margin: 2rem 0; }
 				.block > h2 { margin-bottom: .9rem; border-bottom: 1px solid #dfd8cc; padding-bottom: .55rem; font-size: 1.2rem; font-weight: 650; letter-spacing: -.015em; }
 				.card { margin: .85rem 0; border: 1px solid #e5dfd4; border-radius: 11px; padding: 1.1rem 1.2rem; background: #fffdf8; box-shadow: 0 1px 2px #332b1b0a; scroll-margin-top: 1rem; }
+				.lecture-layout { display: grid; grid-template-columns: minmax(0, 1fr) 9rem; grid-template-areas: "lecture dates"; gap: 1rem; align-items: start; }
+				.lecture-sidebar { grid-area: dates; margin-top: .85rem; }
+				.lecture-picker { display: none; }
+				.lecture-dates { flex-direction: column; gap: .4rem; }
+				.lecture-dates a, .lecture-picker summary { padding: .4rem .7rem; border: 1px solid #e3dbce; border-radius: 6px; background: #fffdf8; text-decoration: none; }
+				.lecture-dates a:hover { background: #eae5da; }
+				.lecture-dates a[aria-current="page"] { border-color: #92502f; background: #92502f; color: #fffdf8; }
+				.lecture { grid-area: lecture; min-width: 0; line-height: 1.6; overflow-wrap: anywhere; }
+				.lecture h2 { margin: 0 0 1rem; }
+				.lecture blockquote { margin-inline: 0; padding-inline-start: 1rem; border-inline-start: 3px solid #dec2a9; }
+				.lecture th, .lecture td { padding: .25rem .6rem; border: 1px solid #e3dbce; }
+				.lecture table { border-collapse: collapse; }
+				.lecture pre { overflow-x: auto; }
+				.lecture img { max-width: 100%; }
+				.lecture .katex-html { display: none; }
+				.lecture .katex-display { display: block; margin-block: .75rem; overflow-x: auto; overflow-y: hidden; }
+				.lecture .katex-display .katex-mathml { display: block; }
 				.start-card { margin-top: 1.4rem; }
 				.exam-history { margin-top: 2.5rem; border-top: 1px solid #dfd8cc; }
 				.exam-history ul { padding-left: 1.4rem; }
@@ -108,6 +128,11 @@ templ Page(view PageView) {
 					main { margin-top: 1rem; }
 					.tabs a { flex: 1; padding: .58rem .4rem; text-align: center; }
 					.card { padding: 1rem; }
+					.lecture-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "dates" "lecture"; gap: 0; }
+					.lecture-sidebar { display: none; }
+					.lecture-picker { display: block; grid-area: dates; }
+					.lecture-picker summary { cursor: pointer; }
+					.lecture-picker .lecture-dates { margin-top: .4rem; }
 					.finish-bar { right: 1rem; bottom: calc(.5rem + env(safe-area-inset-bottom)); }
 				}
 				@media (max-width: 480px) {
@@ -243,6 +268,11 @@ templ Main(view PageView) {
 			} else {
 				<a href="/questions" hx-get="/questions" hx-target="#content" hx-swap="outerHTML" hx-push-url="true">Все вопросы</a>
 			}
+			<a href="/lectures" hx-get="/lectures" hx-target="#content" hx-swap="outerHTML" hx-push-url="true"
+				if view.Tab == "lectures" {
+					aria-current="page"
+				}
+			>Конспекты</a>
 		</nav>
 		<h1>Вопросы по ТАУ</h1>
 		if view.Error != "" {
@@ -265,6 +295,8 @@ templ Main(view PageView) {
 			<p id="archived-date"></p>
 			<div id="archived-exam" data-id={ view.ArchivedID }>Загрузка билета…</div>
 			<a href="/">К списку экзаменов</a>
+		} else if view.Tab == "lectures" {
+			@LectureNotes(view.Lectures, view.Lecture, view.LectureHTML)
 		} else if view.Tab == "questions" {
 			if view.Demo {
 				<p>Демонстрационный банк учебных вопросов.</p>
@@ -314,6 +346,45 @@ templ Main(view PageView) {
 			}
 		}
 	</main>
+}
+
+templ LectureNotes(lectures []Lecture, selected *Lecture, body string) {
+	<div class="lecture-layout">
+		if len(lectures) > 0 {
+			<div class="lecture-sidebar">
+				@LectureDates(lectures, selected)
+			</div>
+			<details class="lecture-picker">
+				<summary>
+					if selected != nil {
+						Лекция { selected.Date }
+					} else {
+						Выбрать лекцию
+					}
+				</summary>
+				@LectureDates(lectures, selected)
+			</details>
+		}
+		if selected != nil {
+			<article class="card lecture">
+				<h2>Лекция { selected.Date }</h2>
+				@templ.Raw(body)
+			</article>
+		}
+	</div>
+}
+
+templ LectureDates(lectures []Lecture, selected *Lecture) {
+	<nav class="lecture-dates" aria-label="Лекции по датам">
+		for _, lecture := range lectures {
+			<a href={ templ.URL("/lectures/" + lecture.ID) }
+				hx-get={ "/lectures/" + lecture.ID } hx-target="#content" hx-swap="outerHTML" hx-push-url="true"
+				if selected != nil && selected.ID == lecture.ID {
+					aria-current="page"
+				}
+			>{ lecture.Date }</a>
+		}
+	</nav>
 }
 
 templ QuestionBlocks(blocks []AttemptBlock) {
