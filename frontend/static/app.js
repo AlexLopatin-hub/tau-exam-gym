@@ -43,6 +43,7 @@
 			});
 			if (!response.ok) throw new Error();
 			root.innerHTML = await response.text();
+			renderFormulas(root);
 		} catch {
 			root.textContent = "Не удалось открыть архивный билет. Обновите страницу, чтобы попробовать снова.";
 		}
@@ -70,6 +71,19 @@
 		if (nav.scrollWidth > nav.clientWidth + 1) {
 			nav.classList.remove("expanded");
 			nav.classList.toggle("compact-icons", nav.scrollWidth > nav.clientWidth + 1);
+		}
+	}
+	function renderFormulas(root = document) {
+		if (!window.renderMathInElement) return;
+		for (const source of root.querySelectorAll(".latex-source")) {
+			window.renderMathInElement(source, {
+				delimiters: [
+					{left: "$$", right: "$$", display: true},
+					{left: "$", right: "$", display: false}
+				],
+				ignoredClasses: ["katex", "katex-error"],
+				throwOnError: false
+			});
 		}
 	}
 	const diagramSources = new WeakSet();
@@ -101,6 +115,7 @@
 	function init() {
 		loadArchive();
 		fitPager();
+		renderFormulas();
 		renderDiagrams();
 		try {
 			for (const field of document.querySelectorAll("textarea[data-draft-key]")) {

@@ -10,6 +10,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/AlexLopatin-hub/tau-exam-gym/internal/model"
+	views "github.com/AlexLopatin-hub/tau-exam-gym/internal/view"
 )
 
 //go:generate go run ./cmd/lecturegen
@@ -17,21 +20,15 @@ import (
 //go:embed data/lecture_pages.json
 var lecturePages []byte
 
-type Lecture struct {
-	ID   string
-	Date string
-	html string
-}
-
 var lectures = sync.OnceValues(loadLectures)
 
-func loadLectures() ([]Lecture, error) {
+func loadLectures() ([]model.Lecture, error) {
 	var pages map[string]string
 	if err := json.Unmarshal(lecturePages, &pages); err != nil {
 		return nil, fmt.Errorf("read generated lectures: %w", err)
 	}
 
-	lectures := make([]Lecture, 0, len(pages))
+	lectures := make([]model.Lecture, 0, len(pages))
 	months := [...]string{"января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"}
 	// The fixed-width MM.DD names sort chronologically.
 	for _, name := range slices.Sorted(maps.Keys(pages)) {
@@ -39,10 +36,10 @@ func loadLectures() ([]Lecture, error) {
 		if err != nil {
 			return nil, fmt.Errorf("lecture %s: %w", name, err)
 		}
-		lectures = append(lectures, Lecture{
+		lectures = append(lectures, model.Lecture{
 			ID:   date.Format("01-02"),
 			Date: fmt.Sprintf("%d %s", date.Day(), months[date.Month()-1]),
-			html: pages[name],
+			HTML: pages[name],
 		})
 	}
 	return lectures, nil
@@ -50,7 +47,7 @@ func loadLectures() ([]Lecture, error) {
 
 func showLecture(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Vary", "HX-Request, HX-History-Restore-Request")
-	view := PageView{Tab: "lectures"}
+	view := views.PageView{Tab: "lectures"}
 	var err error
 	view.Lectures, err = lectures()
 	if err != nil {
@@ -71,7 +68,6 @@ func showLecture(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			view.Lecture = &view.Lectures[i]
-			view.LectureHTML = view.Lecture.html
 			render(w, r, view, http.StatusOK)
 			return
 		}

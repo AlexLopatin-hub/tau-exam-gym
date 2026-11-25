@@ -1,0 +1,56 @@
+package views
+
+import (
+	"fmt"
+
+	"github.com/AlexLopatin-hub/tau-exam-gym/internal/model"
+)
+
+templ examTab(view PageView) {
+	if view.Attempt != nil {
+		if view.Attempt.Finished {
+			<p>Экзамен завершён. Ответы открыты для сверки.</p>
+			@templ.JSONScript("completed-attempt", view.Attempt)
+			<p id="archive-status" class="error" role="status"></p>
+		} else {
+			<p>В билете { fmt.Sprint(len(view.Attempt.Questions)) } вопросов. Свой ответ можно изменить до завершения экзамена. Для сверки откройте правильный ответ под вопросом или весь ключ в конце.</p>
+		}
+		if !view.Attempt.Finished {
+			<div class="finish-bar"><form id="finish-exam" method="post" action={ templ.URL("/exams/" + view.Attempt.ID + "/finish") }><button type="submit">Завершить экзамен</button></form></div>
+		}
+		@AttemptQuestions(view.Attempt)
+	} else if view.ArchivedID != "" {
+		<h2>Пройденный экзамен</h2>
+		<p id="archived-date"></p>
+		<div id="archived-exam" data-id={ view.ArchivedID }>Загрузка билета…</div>
+		<a href="/">К списку экзаменов</a>
+	} else {
+		<aside class="card exam-announcement" aria-labelledby="exam-announcement-title">
+			<h2 id="exam-announcement-title">Важно</h2>
+			<p>Вопросы на ресурсе — те, что Крымов будет задавать после лекций. Касательно вопросов на экзамене информации пока нет.</p>
+		</aside>
+		<section class="card start-card"><p>В билете { fmt.Sprint(model.QuestionsPerAttempt) } случайных вопросов: 7 лёгких, 7 средних и 6 сложных.</p><form method="post" action="/exams"><button type="submit">Начать экзамен</button></form></section>
+		if view.Tab == "exam" {
+			<section class="exam-history">
+				<h2>Пройденные экзамены</h2>
+				<p id="history-status" class="empty-state">В этом браузере пока нет пройденных экзаменов.</p>
+				<ul id="exam-history"></ul>
+			</section>
+		}
+	}
+}
+
+templ AttemptQuestions(attempt *model.Attempt) {
+	<div class="attempt-questions">
+		for i, question := range attempt.Questions {
+			@QuestionCard(QuestionCardData{
+				AnchorID:   fmt.Sprintf("question-%d", i+1),
+				Number:     i + 1,
+				Question:   question,
+				AttemptID:  attempt.ID,
+				Finished:   attempt.Finished,
+				UserAnswer: attempt.UserAnswers[question.ID],
+			})
+		}
+	</div>
+}

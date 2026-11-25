@@ -1,0 +1,46 @@
+package views
+
+import "github.com/AlexLopatin-hub/tau-exam-gym/internal/model"
+
+templ lecturesTab(lectures []model.Lecture, selected *model.Lecture) {
+	<div class="lecture-layout">
+		if len(lectures) > 0 {
+			<div class="lecture-sidebar">
+				@LectureDates(lectures, selected)
+			</div>
+			<details class="lecture-picker">
+				<summary>
+					if selected != nil {
+						Лекция { selected.Date }
+					} else {
+						Выбрать лекцию
+					}
+				</summary>
+				@LectureDates(lectures, selected)
+			</details>
+		}
+		if selected != nil {
+			<article class="card lecture">
+				<h2>Лекция { selected.Date }</h2>
+				@templ.Raw(selected.HTML)
+			</article>
+		}
+	</div>
+}
+
+templ LectureDates(lectures []model.Lecture, selected *model.Lecture) {
+	<nav class="lecture-dates" aria-label="Лекции по датам">
+		for _, lecture := range lectures {
+			<a
+				href={ templ.URL("/lectures/" + lecture.ID) }
+				hx-get={ "/lectures/" + lecture.ID }
+				hx-target="#content"
+				hx-swap="outerHTML"
+				hx-push-url="true"
+				if selected != nil && selected.ID == lecture.ID {
+					aria-current="page"
+				}
+			>{ lecture.Date }</a>
+		}
+	</nav>
+}
