@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"html"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,7 +13,11 @@ import (
 
 	"github.com/FurqanSoftware/goldmark-katex"
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer"
+	"github.com/yuin/goldmark/util"
 )
 
 const output = "data/lecture_pages.json"
@@ -35,7 +40,15 @@ func generate() error {
 		return err
 	}
 
-	markdown := goldmark.New(goldmark.WithExtensions(extension.GFM, &katex.Extender{ThrowOnError: true}))
+	// Parse math before Markdown can interpret its punctuation.
+	markdown := goldmark.New(
+		goldmark.WithExtensions(extension.GFM),
+		goldmark.WithParserOptions(
+			parser.WithBlockParsers(util.Prioritized(&katex.BlockParser{}, 50)),
+			parser.WithInlineParsers(util.Prioritized(&katex.Parser{}, 0)),
+		),
+		goldmark.WithRendererOptions(renderer.WithNodeRenderers(util.Prioritized(latexRenderer{}, 0))),
+	)
 	pages := make(map[string]string, len(files))
 	for _, filename := range files {
 		name := strings.TrimSuffix(filepath.Base(filename), ".md")
@@ -79,4 +92,31 @@ func generate() error {
 		return closeErr
 	}
 	return os.Rename(tmp.Name(), output)
+}
+
+type latexRenderer struct{}
+
+func (latexRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
+	reg.Register(katex.KindInline, renderLatex)
+	reg.Register(katex.KindBlock, renderLatex)
+}
+
+func renderLatex(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+	if !entering {
+		return ast.WalkContinue, nil
+	}
+	var equation []byte
+	tag, delimiter := "span", "$"
+	switch node := n.(type) {
+	case *katex.Inline:
+		equation = node.Equation
+		if node.Display {
+			delimiter = "$$"
+		}
+	case *katex.Block:
+		equation = node.Equation(source)
+		tag, delimiter = "div", "$$"
+	}
+	_, err := fmt.Fprintf(w, "<%s class=\"latex-source\">%s%s%s</%s>", tag, delimiter, html.EscapeString(string(equation)), delimiter, tag)
+	return ast.WalkContinue, err
 }

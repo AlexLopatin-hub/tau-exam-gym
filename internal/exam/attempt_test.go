@@ -4,6 +4,8 @@ import (
 	"slices"
 	"testing"
 	"time"
+
+	"github.com/AlexLopatin-hub/tau-exam-gym/internal/model"
 )
 
 func TestDefaultBankAndStableAttempt(t *testing.T) {
@@ -66,11 +68,11 @@ func TestCreateRejectsBankMissingDifficultyQuota(t *testing.T) {
 
 func TestFullStoreReclaimsOnlyExpiredAttempts(t *testing.T) {
 	store := NewAttemptStore()
-	bank := catalogTestBank(questionsPerAttempt)
-	for i := easyPerAttempt; i < easyPerAttempt+mediumPerAttempt; i++ {
+	bank := catalogTestBank(model.QuestionsPerAttempt)
+	for i := model.EasyPerAttempt; i < model.EasyPerAttempt+model.MediumPerAttempt; i++ {
 		bank[i].Difficulty = "средний"
 	}
-	for i := easyPerAttempt + mediumPerAttempt; i < len(bank); i++ {
+	for i := model.EasyPerAttempt + model.MediumPerAttempt; i < len(bank); i++ {
 		bank[i].Difficulty = "сложный"
 	}
 	var id string

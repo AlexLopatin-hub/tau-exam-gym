@@ -9,43 +9,30 @@ import (
 	"net/url"
 	"sync"
 	"time"
+
+	"github.com/AlexLopatin-hub/tau-exam-gym/internal/model"
 )
 
 var ErrInsufficientQuestions = errors.New("question bank has too few questions for a difficulty quota")
 var ErrStoreFull = errors.New("attempt store is full")
 
-const (
-	easyPerAttempt            = 7
-	mediumPerAttempt          = 7
-	hardPerAttempt            = 6
-	questionsPerAttempt       = easyPerAttempt + mediumPerAttempt + hardPerAttempt
-	legacyQuestionsPerAttempt = 30
-)
+const legacyQuestionsPerAttempt = 30
 const maxAttempts = 2_000
 const attemptLifetime = 24 * time.Hour
 
-type Attempt struct {
-	ID          string
-	Questions   []Question
-	UserAnswers map[string]string
-	Finished    bool
-	FinishedAt  time.Time
-	Created     time.Time
-}
-
 type AttemptStore struct {
 	mu       sync.RWMutex
-	attempts map[string]*Attempt
+	attempts map[string]*model.Attempt
 }
 
-func NewAttemptStore() *AttemptStore { return &AttemptStore{attempts: make(map[string]*Attempt)} }
+func NewAttemptStore() *AttemptStore { return &AttemptStore{attempts: make(map[string]*model.Attempt)} }
 
-func (s *AttemptStore) Create(bank []Question) (*Attempt, error) {
-	if len(bank) < questionsPerAttempt {
+func (s *AttemptStore) Create(bank []model.Question) (*model.Attempt, error) {
+	if len(bank) < model.QuestionsPerAttempt {
 		return nil, ErrInsufficientQuestions
 	}
-	quotas := [...]int{easyPerAttempt, mediumPerAttempt, hardPerAttempt}
-	var groups [len(quotas)][]Question
+	quotas := [...]int{model.EasyPerAttempt, model.MediumPerAttempt, model.HardPerAttempt}
+	var groups [len(quotas)][]model.Question
 	for _, index := range randv2.Perm(len(bank)) {
 		question := bank[index]
 		rank := difficultyRank(question.Difficulty)
@@ -53,7 +40,7 @@ func (s *AttemptStore) Create(bank []Question) (*Attempt, error) {
 			groups[rank] = append(groups[rank], question)
 		}
 	}
-	selected := make([]Question, 0, questionsPerAttempt)
+	selected := make([]model.Question, 0, model.QuestionsPerAttempt)
 	for rank, questions := range groups {
 		if len(questions) < quotas[rank] {
 			return nil, ErrInsufficientQuestions
@@ -69,7 +56,7 @@ func (s *AttemptStore) Create(bank []Question) (*Attempt, error) {
 	now := time.Now()
 	if len(s.attempts) >= maxAttempts {
 		for id, attempt := range s.attempts {
-			if attempt.expired(now) {
+			if attemptExpired(attempt, now) {
 				delete(s.attempts, id)
 			}
 		}
@@ -77,30 +64,30 @@ func (s *AttemptStore) Create(bank []Question) (*Attempt, error) {
 			return nil, ErrStoreFull
 		}
 	}
-	a := &Attempt{ID: hex.EncodeToString(idBytes), Questions: selected, Created: now}
+	a := &model.Attempt{ID: hex.EncodeToString(idBytes), Questions: selected, Created: now}
 	s.attempts[a.ID] = a
 	return copyAttempt(a), nil
 }
 
-func (a *Attempt) expired(now time.Time) bool {
+func attemptExpired(a *model.Attempt, now time.Time) bool {
 	return now.Sub(a.Created) >= attemptLifetime
 }
 
-func (s *AttemptStore) Get(id string) (*Attempt, bool) {
+func (s *AttemptStore) Get(id string) (*model.Attempt, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	a, ok := s.attempts[id]
-	if !ok || a.expired(time.Now()) {
+	if !ok || attemptExpired(a, time.Now()) {
 		return nil, false
 	}
 	return copyAttempt(a), true
 }
 
-func (s *AttemptStore) Finish(id string, answers url.Values) (*Attempt, bool) {
+func (s *AttemptStore) Finish(id string, answers url.Values) (*model.Attempt, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	a, ok := s.attempts[id]
-	if !ok || a.expired(time.Now()) {
+	if !ok || attemptExpired(a, time.Now()) {
 		return nil, false
 	}
 	if !a.Finished {
@@ -116,9 +103,9 @@ func (s *AttemptStore) Finish(id string, answers url.Values) (*Attempt, bool) {
 	return copyAttempt(a), true
 }
 
-func copyAttempt(a *Attempt) *Attempt {
+func copyAttempt(a *model.Attempt) *model.Attempt {
 	copy := *a
-	copy.Questions = append([]Question(nil), a.Questions...)
+	copy.Questions = append([]model.Question(nil), a.Questions...)
 	copy.UserAnswers = maps.Clone(a.UserAnswers)
 	return &copy
 }

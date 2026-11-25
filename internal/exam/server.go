@@ -1,7 +1,6 @@
 package exam
 
 import (
-	"embed"
 	"encoding/json"
 	"errors"
 	"io"
@@ -13,12 +12,13 @@ import (
 	"time"
 
 	"github.com/a-h/templ"
+
+	"github.com/AlexLopatin-hub/tau-exam-gym/frontend"
+	"github.com/AlexLopatin-hub/tau-exam-gym/internal/model"
+	"github.com/AlexLopatin-hub/tau-exam-gym/internal/view"
 )
 
-//go:embed static/app.css static/app.js
-var assets embed.FS
-
-var bank []Question
+var bank []model.Question
 var attempts = NewAttemptStore()
 
 func Run() {
@@ -50,7 +50,7 @@ func Run() {
 
 func routes() http.Handler {
 	mux := http.NewServeMux()
-	static := http.FileServerFS(assets)
+	static := http.FileServerFS(frontend.Assets)
 	mux.Handle("GET /static/app.css", static)
 	mux.Handle("GET /static/app.js", static)
 	mux.HandleFunc("GET /", home)
@@ -72,13 +72,13 @@ func wantsFragment(r *http.Request) bool {
 	return strings.EqualFold(r.Header.Get("HX-Request"), "true")
 }
 
-func render(w http.ResponseWriter, r *http.Request, view PageView, status int) {
+func render(w http.ResponseWriter, r *http.Request, view views.PageView, status int) {
 	if view.Attempt != nil || view.ArchivedID != "" {
 		w.Header().Set("Cache-Control", "no-store")
 	}
-	component := templ.Component(Page(view))
+	component := views.Page(view)
 	if wantsFragment(r) && !strings.EqualFold(r.Header.Get("HX-History-Restore-Request"), "true") {
-		component = Main(view)
+		component = views.Main(view)
 	}
 	renderComponent(w, r, component, status)
 }
@@ -97,7 +97,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	render(w, r, PageView{Title: "Экзамен", Tab: "exam", ArchivedID: r.URL.Query().Get("attempt")}, http.StatusOK)
+	render(w, r, views.PageView{Title: "Экзамен", Tab: "exam", ArchivedID: r.URL.Query().Get("attempt")}, http.StatusOK)
 }
 
 func questions(w http.ResponseWriter, r *http.Request) {
@@ -124,29 +124,22 @@ func questions(w http.ResponseWriter, r *http.Request) {
 	}
 	start := (page - 1) * 10
 	end := min(start+10, len(bank))
-	render(w, r, PageView{Title: "Все вопросы", Tab: "questions", Questions: bank[start:end], CurrentPage: page, TotalPages: totalPages}, http.StatusOK)
+	render(w, r, views.PageView{Title: "Все вопросы", Tab: "questions", Questions: bank[start:end], CurrentPage: page, TotalPages: totalPages}, http.StatusOK)
 }
 
 func invalidCatalogPage(w http.ResponseWriter, r *http.Request) {
-	render(w, r, PageView{Title: "Не найдено", Tab: "questions", Error: "Страница каталога не найдена."}, http.StatusNotFound)
-}
-
-func pageLinkClass(page, currentPage, totalPages int) string {
-	if page != 1 && page != totalPages && (page < currentPage-1 || page > currentPage+1) {
-		return "page-number compact-hidden"
-	}
-	return "page-number"
+	render(w, r, views.PageView{Title: "Не найдено", Tab: "questions", Error: "Страница каталога не найдена."}, http.StatusNotFound)
 }
 
 func createAttempt(w http.ResponseWriter, r *http.Request) {
 	a, err := attempts.Create(bank)
 	if err != nil {
 		if errors.Is(err, ErrStoreFull) {
-			render(w, r, PageView{Tab: "exam", Error: "Сейчас все места для попыток заняты. Попробуйте начать экзамен позже."}, http.StatusServiceUnavailable)
+			render(w, r, views.PageView{Tab: "exam", Error: "Сейчас все места для попыток заняты. Попробуйте начать экзамен позже."}, http.StatusServiceUnavailable)
 			return
 		}
 		if err == ErrInsufficientQuestions {
-			render(w, r, PageView{Title: "Экзамен", Tab: "exam", Error: "Для экзамена нужно как минимум 7 лёгких, 7 средних и 6 сложных вопросов."}, http.StatusServiceUnavailable)
+			render(w, r, views.PageView{Title: "Экзамен", Tab: "exam", Error: "Для экзамена нужно как минимум 7 лёгких, 7 средних и 6 сложных вопросов."}, http.StatusServiceUnavailable)
 			return
 		}
 		http.Error(w, "Не удалось создать экзамен", http.StatusInternalServerError)
@@ -158,14 +151,14 @@ func createAttempt(w http.ResponseWriter, r *http.Request) {
 func showAttempt(w http.ResponseWriter, r *http.Request) {
 	a, ok := attempts.Get(r.PathValue("id"))
 	if !ok {
-		render(w, r, PageView{Title: "Не найдено", Error: "Попытка не найдена."}, http.StatusNotFound)
+		render(w, r, views.PageView{Title: "Не найдено", Error: "Попытка не найдена."}, http.StatusNotFound)
 		return
 	}
 	title := "Экзамен"
 	if a.Finished {
 		title = "Результат экзамена"
 	}
-	render(w, r, PageView{Title: title, Tab: "exam", Attempt: a}, http.StatusOK)
+	render(w, r, views.PageView{Title: title, Tab: "exam", Attempt: a}, http.StatusOK)
 }
 
 const maxAnswerFormBytes = 256 << 10
@@ -183,7 +176,7 @@ func finishAttempt(w http.ResponseWriter, r *http.Request) {
 	}
 	_, ok := attempts.Finish(r.PathValue("id"), r.PostForm)
 	if !ok {
-		render(w, r, PageView{Title: "Не найдено", Error: "Попытка не найдена."}, http.StatusNotFound)
+		render(w, r, views.PageView{Title: "Не найдено", Error: "Попытка не найдена."}, http.StatusNotFound)
 		return
 	}
 	http.Redirect(w, r, "/exams/"+r.PathValue("id"), http.StatusSeeOther)
@@ -201,9 +194,9 @@ func renderArchive(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Не удалось прочитать архивный билет.", http.StatusBadRequest)
 		return
 	}
-	var snapshot Attempt
+	var snapshot model.Attempt
 	if json.Unmarshal(body, &snapshot) != nil || !snapshot.Finished || snapshot.FinishedAt.IsZero() ||
-		(len(snapshot.Questions) != questionsPerAttempt && len(snapshot.Questions) != legacyQuestionsPerAttempt) {
+		(len(snapshot.Questions) != model.QuestionsPerAttempt && len(snapshot.Questions) != legacyQuestionsPerAttempt) {
 		http.Error(w, "Некорректный архивный билет.", http.StatusBadRequest)
 		return
 	}
@@ -213,9 +206,5 @@ func renderArchive(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	renderComponent(w, r, AttemptQuestions(&snapshot), http.StatusOK)
-}
-
-func catalogCard(question Question) QuestionCardData {
-	return QuestionCardData{AnchorID: "question-" + question.ID, Question: question}
+	renderComponent(w, r, views.AttemptQuestions(&snapshot), http.StatusOK)
 }

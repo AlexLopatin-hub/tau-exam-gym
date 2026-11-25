@@ -79,14 +79,14 @@ h3,
     margin-bottom: .5rem;
 }
 
-.question-text:has(math) {
+.question-text:has(math, .katex) {
     overflow-x: auto;
     overflow-y: hidden;
     padding-block-end: .375rem;
     margin-bottom: .125rem;
 }
 
-.answer p:has(math) {
+.answer p:has(math, .katex) {
     overflow-x: auto;
     overflow-y: hidden;
     /* Leave room for MathML fractions and other descenders below the line box. */
@@ -228,19 +228,35 @@ h3,
     max-width: 100%;
 }
 
-.lecture .katex-html {
-    display: none;
-}
-
-.lecture .katex-display {
+.katex-display {
     display: block;
     margin-block: .75rem;
     overflow-x: auto;
     overflow-y: hidden;
 }
 
-.lecture .katex-display .katex-mathml {
-    display: block;
+/* Use the KaTeX font stack for the accessible MathML too. */
+.katex .katex-mathml math {
+    font-family: inherit;
+}
+
+.question-text .katex {
+    font-weight: normal;
+}
+
+.exam-announcement {
+    border-inline-start: 4px solid #92502f;
+    background: #f9ece0;
+}
+
+.exam-announcement h2 {
+    margin: 0 0 .35rem;
+    font-size: 1rem;
+}
+
+.exam-announcement p {
+    margin: 0;
+    line-height: 1.55;
 }
 
 .start-card {

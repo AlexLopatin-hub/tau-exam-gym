@@ -1,0 +1,64 @@
+package views
+
+import "fmt"
+
+type PageLink struct {
+	Page      int
+	Label     string
+	AriaLabel string
+	Class     string
+	Icon      string
+}
+
+templ questionsTab(view PageView) {
+	<div id="question-results">
+		if len(view.Questions) == 0 {
+			<p class="empty-state">В банке пока нет вопросов.</p>
+		}
+		for _, q := range view.Questions {
+			@QuestionCard(catalogCard(q))
+		}
+	</div>
+	if view.TotalPages > 1 {
+		<nav class="pagination" aria-label="Страницы каталога">
+			if view.CurrentPage > 1 {
+				@PageNavLink(PageLink{Page: view.CurrentPage - 1, Label: "Назад", AriaLabel: "Назад", Class: "edge-link", Icon: "‹"})
+			}
+			for page := 1; page <= view.TotalPages; page++ {
+				if page == view.CurrentPage-1 && page > 2 {
+					<span class="page-ellipsis" data-needed="true" aria-hidden="true">…</span>
+				}
+				if page == view.TotalPages && view.TotalPages > view.CurrentPage+2 {
+					<span class="page-ellipsis" data-needed="true" aria-hidden="true">…</span>
+				}
+				if page == view.CurrentPage {
+					<span class="page-number" aria-current="page" aria-label={ fmt.Sprintf("Страница %d", page) }>{ fmt.Sprint(page) }</span>
+				} else {
+					@PageNavLink(PageLink{Page: page, Label: fmt.Sprint(page), AriaLabel: fmt.Sprintf("Перейти на страницу %d", page), Class: pageLinkClass(page, view.CurrentPage, view.TotalPages)})
+				}
+			}
+			if view.CurrentPage < view.TotalPages {
+				@PageNavLink(PageLink{Page: view.CurrentPage + 1, Label: "Далее", AriaLabel: "Далее", Class: "edge-link", Icon: "›"})
+			}
+			<span class="visually-hidden">Страница { fmt.Sprint(view.CurrentPage) } из { fmt.Sprint(view.TotalPages) }</span>
+		</nav>
+	}
+}
+
+templ PageNavLink(link PageLink) {
+	<a
+		class={ link.Class }
+		aria-label={ link.AriaLabel }
+		href={ templ.URL(fmt.Sprintf("/questions?page=%d", link.Page)) }
+		hx-get={ fmt.Sprintf("/questions?page=%d", link.Page) }
+		hx-target="#content"
+		hx-swap="outerHTML show:#question-results:top"
+		hx-push-url="true"
+	>
+		if link.Icon != "" {
+			<span class="edge-icon" aria-hidden="true">{ link.Icon }</span><span class="edge-label">{ link.Label }</span>
+		} else {
+			{ link.Label }
+		}
+	</a>
+}

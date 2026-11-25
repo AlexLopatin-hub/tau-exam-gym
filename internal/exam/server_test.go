@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/a-h/templ"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -13,10 +12,14 @@ import (
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/AlexLopatin-hub/tau-exam-gym/internal/model"
+	"github.com/AlexLopatin-hub/tau-exam-gym/internal/view"
+	"github.com/a-h/templ"
 )
 
 func TestPageUsesSingleExactProductHeading(t *testing.T) {
-	body := renderHTML(t, Page(PageView{Title: "Экзамен", Tab: "exam"}))
+	body := renderHTML(t, views.Page(views.PageView{Title: "Экзамен", Tab: "exam"}))
 	if !strings.Contains(body, "<title>Вопросы по ТАУ</title>") {
 		t.Fatal("document title is missing")
 	}
@@ -25,6 +28,10 @@ func TestPageUsesSingleExactProductHeading(t *testing.T) {
 	}
 	if strings.Count(body, "Вопросы по ТАУ") != 2 {
 		t.Fatal("product name should appear only in title and h1")
+	}
+	if !strings.Contains(body, "/dist/katex.min.css") || !strings.Contains(body, "/dist/katex.min.js") ||
+		!strings.Contains(body, "/dist/contrib/auto-render.min.js") {
+		t.Fatal("page is missing the client-side KaTeX assets")
 	}
 }
 
@@ -43,9 +50,9 @@ func TestLectureRoutes(t *testing.T) {
 		want     []string
 	}{
 		{"/lectures", false, http.StatusOK, []string{`<html lang="ru">`, "<h2>Лекция " + latest.Date + "</h2>", `href="/lectures/10-17"`, `hx-get="/lectures/10-17"`, ">17 октября</a>", ">5 сентября</a>", `class="lecture-sidebar"`, `<details class="lecture-picker">`}},
-		{"/lectures/09-26", true, http.StatusOK, []string{`<code class="language-mermaid">`, "flowchart TB", `&lt;b&gt;ВХОД-ВЫХОД&lt;/b&gt;&lt;br/&gt;`, "<math", scrollableTable, "</table></div>"}},
+		{"/lectures/09-26", true, http.StatusOK, []string{`<code class="language-mermaid">`, "flowchart TB", `&lt;b&gt;ВХОД-ВЫХОД&lt;/b&gt;&lt;br/&gt;`, `<div class="latex-source">$$\dot{x}=Ax+Bu$$</div>`, scrollableTable, "</table></div>"}},
 		{"/lectures/10-24", true, http.StatusOK, []string{scrollableTable, "</table></div>", "Непрерывный случай", "Дискретный случай"}},
-		{"/lectures/10-10", true, http.StatusOK, []string{`<main id="content"`, "Лекция 10 октября", "<math", "<mtable"}},
+		{"/lectures/10-10", true, http.StatusOK, []string{`<main id="content"`, "Лекция 10 октября", "<strong>Вопросы к экзамену:</strong>", `$$\begin{equation*}`, `+\infty, &amp;\text{$t=0$}`}},
 		{"/lectures/12-31", false, http.StatusNotFound, []string{"Лекция с такой датой не найдена.", `href="/lectures/10-17"`}},
 	} {
 		t.Run(tc.path, func(t *testing.T) {
@@ -86,8 +93,11 @@ func TestEmbeddedLecturesContainHTML(t *testing.T) {
 	}
 	for _, lecture := range items {
 		t.Run(lecture.ID, func(t *testing.T) {
-			if strings.TrimSpace(lecture.html) == "" {
+			if strings.TrimSpace(lecture.HTML) == "" {
 				t.Error("lecture rendered empty HTML")
+			}
+			if strings.Contains(lecture.HTML, "<math") {
+				t.Error("lecture must send LaTeX for client-side rendering")
 			}
 		})
 	}
@@ -107,8 +117,8 @@ func TestExamRoutesRejectCrossOriginChanges(t *testing.T) {
 }
 
 func TestAttemptPagesDisableAutomaticCaching(t *testing.T) {
-	for _, view := range []PageView{
-		{Attempt: &Attempt{}}, {Attempt: &Attempt{Finished: true}}, {ArchivedID: "example"},
+	for _, view := range []views.PageView{
+		{Attempt: &model.Attempt{}}, {Attempt: &model.Attempt{Finished: true}}, {ArchivedID: "example"},
 	} {
 		for _, fragment := range []string{"false", "true"} {
 			req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -128,7 +138,7 @@ func TestCatalogUsesCommonLocalDisclosureCard(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	body := renderHTML(t, Page(PageView{Tab: "questions", Questions: bank[:1]}))
+	body := renderHTML(t, views.Page(views.PageView{Tab: "questions", Questions: bank[:1]}))
 	if strings.Contains(body, "<textarea") {
 		t.Fatal("catalog contains an exam answer field")
 	}
@@ -157,11 +167,11 @@ func TestImportedQuestionContent(t *testing.T) {
 	page := httptest.NewRecorder()
 	handler.ServeHTTP(page, httptest.NewRequest(http.MethodGet, "/questions?page=2", nil))
 	if body := page.Body.String(); page.Code != http.StatusOK ||
-		!strings.Contains(body, `<math display="block">`) || !strings.Contains(body, "<mfrac>") ||
-		!strings.Contains(body, heavisideMath) || strings.Contains(body, "<img") {
-		t.Fatal("the imported catalog should display equations and the Heaviside definition")
+		!strings.Contains(body, `class="latex-source">`) || !strings.Contains(body, `\frac{`) ||
+		!strings.Contains(body, `$$H(t)=\begin{cases}0, &amp; t&lt;0`) || strings.Contains(body, "<math") {
+		t.Fatal("the imported catalog should send LaTeX for client-side rendering")
 	}
-	if got := renderQuestionContent(`<math><mi>x</mi><mo>&gt;</mo><mn>0</mn></math><img src="other.png" onerror="bad()"><mi onclick="bad()">y</mi>`, "mathml"); !strings.Contains(got, "<math><mi>x</mi><mo>&gt;</mo><mn>0</mn></math>") || strings.Contains(got, "<img") || strings.Contains(got, "<mi onclick") {
+	if got := renderHTML(t, views.AnswerBlock(model.Question{Answer: `<math><mi>x</mi><mo>&gt;</mo><mn>0</mn></math><img src="other.png" onerror="bad()"><mi onclick="bad()">y</mi>`, Format: "mathml"})); !strings.Contains(got, "<math><mi>x</mi><mo>&gt;</mo><mn>0</mn></math>") || strings.Contains(got, "<img") || strings.Contains(got, "<mi onclick") {
 		t.Fatalf("unsafe or invalid formula output: %s", got)
 	}
 }
@@ -176,18 +186,18 @@ func TestCatalogQuestionFormulas(t *testing.T) {
 	response := requestQuestions(t, "/questions?page=6", false, false)
 	body := response.Body.String()
 	for _, markup := range []string{
-		`</h2><p class="question-givens"><math>`,
-		`<msup><mi>S</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup>`,
-		`<msub><mi>x</mi><mn>0</mn></msub>`,
-		`</math>, <math>`,
-		`при <math><mi>t</mi><mo>≥</mo><mn>0</mn></math>`,
+		`</h2><p class="question-givens latex-source">$`,
+		`S^{-1}`,
+		`x_{0}`,
+		`$, $`,
+		`при $t\ge0$`,
 	} {
 		if !strings.Contains(body, markup) {
 			t.Fatalf("catalog question is missing formula markup %q", markup)
 		}
 	}
 	fractions := requestQuestions(t, "/questions?page=5", false, false).Body.String()
-	if !strings.Contains(fractions, `</h2><p class="question-givens"><math display="block">`) {
+	if !strings.Contains(fractions, `</h2><p class="question-givens latex-source">$$`) {
 		t.Fatal("a displayed fraction should follow the question title in the givens")
 	}
 }
@@ -198,11 +208,6 @@ func TestArchiveRendersLegacyQuestionsWithoutTopicLabels(t *testing.T) {
 	for i := range questions {
 		questions[i] = question
 	}
-	heaviside, err := json.Marshal(Question{ID: "tau-19", Text: "Функция Хевисайда", Answer: legacyHeavisideImage, Difficulty: "лёгкий", Format: "mathml"})
-	if err != nil {
-		t.Fatal(err)
-	}
-	questions[len(questions)-1] = heaviside
 	payload, err := json.Marshal(map[string]any{
 		"Finished": true, "FinishedAt": "2026-01-01T12:00:00Z", "Questions": questions,
 		"UserAnswers": map[string]string{"a01": "Сохранённый ответ"},
@@ -214,8 +219,8 @@ func TestArchiveRendersLegacyQuestionsWithoutTopicLabels(t *testing.T) {
 	routes().ServeHTTP(archive, httptest.NewRequest(http.MethodPost, "/archive/render", bytes.NewReader(payload)))
 	body := archive.Body.String()
 	if archive.Code != http.StatusOK || strings.Contains(body, "Основы ТАУ") ||
-		strings.Count(body, "Первый вопрос") != 29 || !strings.Contains(body, "Сохранённый ответ") ||
-		!strings.Contains(body, heavisideMath) || strings.Contains(body, "<img") {
+		strings.Count(body, "Первый вопрос") != len(questions) || !strings.Contains(body, "Сохранённый ответ") ||
+		!strings.Contains(body, "<p>Правильный ответ</p>") {
 		t.Fatal("legacy archive should retain its questions and answers")
 	}
 }
@@ -231,7 +236,7 @@ func TestActiveAttemptAnswersArePreloadedAndStoredLocally(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	active := renderHTML(t, Page(PageView{Attempt: a}))
+	active := renderHTML(t, views.Page(views.PageView{Attempt: a}))
 	assertAttemptDetails(t, active, a)
 	for i := range a.Questions {
 		key := fmt.Sprintf(`data-draft-key="tau-exam:active:%s:%d:draft"`, a.ID, i+1)
@@ -247,7 +252,7 @@ func TestActiveAttemptAnswersArePreloadedAndStoredLocally(t *testing.T) {
 	if !ok {
 		t.Fatal("finish failed")
 	}
-	body := renderHTML(t, Page(PageView{Attempt: finished}))
+	body := renderHTML(t, views.Page(views.PageView{Attempt: finished}))
 	assertFinishedAttemptAnswers(t, body, finished)
 }
 
@@ -295,7 +300,7 @@ func TestFinishSubmitsAndFreezesAnswers(t *testing.T) {
 		}
 		result := show()
 		data := regexp.MustCompile(`(?s)<script id="completed-attempt" type="application/json">(.*?)</script>`).FindStringSubmatch(result)
-		var snapshot Attempt
+		var snapshot model.Attempt
 		if len(data) != 2 || json.Unmarshal([]byte(data[1]), &snapshot) != nil ||
 			snapshot.ID != a.ID || snapshot.FinishedAt.IsZero() || !slices.Equal(snapshot.Questions, a.Questions) ||
 			snapshot.UserAnswers[a.Questions[0].ID] != "Строка 1\n<пример>" {
@@ -312,7 +317,7 @@ func TestFinishSubmitsAndFreezesAnswers(t *testing.T) {
 		}
 		archive := httptest.NewRecorder()
 		routes().ServeHTTP(archive, httptest.NewRequest(http.MethodPost, "/archive/render", bytes.NewReader(payload)))
-		if archive.Code != http.StatusOK || archive.Body.String() != renderHTML(t, AttemptQuestions(&snapshot)) ||
+		if archive.Code != http.StatusOK || archive.Body.String() != renderHTML(t, views.AttemptQuestions(&snapshot)) ||
 			archive.Header().Get("Cache-Control") != "no-store" {
 			t.Fatal("archived snapshot should render the original result as an uncached fragment")
 		}
@@ -322,14 +327,14 @@ func TestFinishSubmitsAndFreezesAnswers(t *testing.T) {
 	}
 }
 
-func assertAttemptDetails(t *testing.T, body string, attempt *Attempt) {
+func assertAttemptDetails(t *testing.T, body string, attempt *model.Attempt) {
 	t.Helper()
 	tags := regexp.MustCompile(`<details[^>]*>`).FindAllString(body, -1)
 	if len(tags) != len(attempt.Questions) {
 		t.Fatalf("got %d attempt details, want %d", len(tags), len(attempt.Questions))
 	}
 	first := attempt.Questions[0]
-	if !strings.Contains(body, renderQuestionContent(first.Answer, first.Format)) {
+	if !strings.Contains(body, renderHTML(t, views.AnswerBlock(first))) {
 		t.Fatal("answer should be present in the preloaded markup")
 	}
 	for _, tag := range tags {
@@ -339,7 +344,7 @@ func assertAttemptDetails(t *testing.T, body string, attempt *Attempt) {
 	}
 }
 
-func assertFinishedAttemptAnswers(t *testing.T, body string, attempt *Attempt) {
+func assertFinishedAttemptAnswers(t *testing.T, body string, attempt *model.Attempt) {
 	t.Helper()
 	if got := strings.Count(body, `<div class="answer revealed">`); got != len(attempt.Questions) {
 		t.Fatalf("got %d static answers, want %d", got, len(attempt.Questions))
@@ -348,7 +353,7 @@ func assertFinishedAttemptAnswers(t *testing.T, body string, attempt *Attempt) {
 		t.Fatal("finished answer must not be collapsible")
 	}
 	for _, question := range attempt.Questions {
-		if !strings.Contains(body, renderQuestionContent(question.Answer, question.Format)) {
+		if !strings.Contains(body, renderHTML(t, views.AnswerBlock(question))) {
 			t.Fatalf("finished answer %q is missing", question.ID)
 		}
 	}
@@ -558,17 +563,17 @@ func requestAsset(t *testing.T, path string, contentTypes ...string) string {
 	return recorder.Body.String()
 }
 
-func withQuestionBank(t *testing.T, questions []Question) {
+func withQuestionBank(t *testing.T, questions []model.Question) {
 	t.Helper()
 	old := bank
 	bank = questions
 	t.Cleanup(func() { bank = old })
 }
 
-func catalogTestBank(count int) []Question {
-	questions := make([]Question, count)
+func catalogTestBank(count int) []model.Question {
+	questions := make([]model.Question, count)
 	for i := range count {
-		questions[i] = Question{ID: fmt.Sprintf("q%02d", i+1), Text: fmt.Sprintf("Question %02d", i+1), Answer: fmt.Sprintf("Answer %02d", i+1), Difficulty: "лёгкий"}
+		questions[i] = model.Question{ID: fmt.Sprintf("q%02d", i+1), Text: fmt.Sprintf("Question %02d", i+1), Answer: fmt.Sprintf("Answer %02d", i+1), Difficulty: "лёгкий"}
 	}
 	return questions
 }
