@@ -17,6 +17,29 @@ type Question struct {
 	Format     string `json:"format,omitempty"`
 }
 
+// Difficulty — раздел каталога вопросов по уровню сложности.
+type Difficulty struct {
+	Slug  string
+	Label string
+	Value string
+}
+
+// Difficulties перечисляет разделы каталога в порядке отображения.
+var Difficulties = []Difficulty{
+	{Slug: "easy", Label: "Лёгкие", Value: "лёгкий"},
+	{Slug: "medium", Label: "Средние", Value: "средний"},
+	{Slug: "hard", Label: "Сложные", Value: "сложный"},
+}
+
+func DifficultyBySlug(slug string) (Difficulty, bool) {
+	for _, difficulty := range Difficulties {
+		if difficulty.Slug == slug {
+			return difficulty, true
+		}
+	}
+	return Difficulty{}, false
+}
+
 type Attempt struct {
 	ID          string
 	Questions   []Question

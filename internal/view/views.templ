@@ -8,16 +8,15 @@ import (
 )
 
 type PageView struct {
-	Title       string
-	Tab         string
-	Questions   []model.Question
-	Attempt     *model.Attempt
-	ArchivedID  string
-	CurrentPage int
-	TotalPages  int
-	Error       string
-	Lectures    []model.Lecture
-	Lecture     *model.Lecture
+	Title      string
+	Tab        string
+	Questions  []model.Question
+	Attempt    *model.Attempt
+	ArchivedID string
+	Difficulty string
+	Error      string
+	Lectures   []model.Lecture
+	Lecture    *model.Lecture
 }
 
 type QuestionCardData struct {

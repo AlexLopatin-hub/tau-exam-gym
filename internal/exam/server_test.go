@@ -165,7 +165,7 @@ func TestImportedQuestionContent(t *testing.T) {
 	withQuestionBank(t, questions)
 	handler := routes()
 	page := httptest.NewRecorder()
-	handler.ServeHTTP(page, httptest.NewRequest(http.MethodGet, "/questions?page=2", nil))
+	handler.ServeHTTP(page, httptest.NewRequest(http.MethodGet, "/questions", nil))
 	if body := page.Body.String(); page.Code != http.StatusOK ||
 		!strings.Contains(body, `class="latex-source">`) || !strings.Contains(body, `\frac{`) ||
 		!strings.Contains(body, `$$H(t)=\begin{cases}0, &amp; t&lt;0`) || strings.Contains(body, "<math") {
@@ -183,7 +183,7 @@ func TestCatalogQuestionFormulas(t *testing.T) {
 		t.Fatal(err)
 	}
 	withQuestionBank(t, questions)
-	response := requestQuestions(t, "/questions?page=6", false, false)
+	response := requestQuestions(t, "/questions?difficulty=hard", false, false)
 	body := response.Body.String()
 	for _, markup := range []string{
 		`</h2><p class="question-givens latex-source">$`,
@@ -196,7 +196,7 @@ func TestCatalogQuestionFormulas(t *testing.T) {
 			t.Fatalf("catalog question is missing formula markup %q", markup)
 		}
 	}
-	fractions := requestQuestions(t, "/questions?page=5", false, false).Body.String()
+	fractions := requestQuestions(t, "/questions?difficulty=hard", false, false).Body.String()
 	if !strings.Contains(fractions, `</h2><p class="question-givens latex-source">$$`) {
 		t.Fatal("a displayed fraction should follow the question title in the givens")
 	}
@@ -368,180 +368,107 @@ func renderHTML(t *testing.T, component templ.Component) string {
 	return out.String()
 }
 
-func TestQuestionCatalogPagesTenInSourceOrder(t *testing.T) {
-	withQuestionBank(t, catalogTestBank(21))
-	first := requestQuestions(t, "/questions", false, false)
-	if first.Code != http.StatusOK {
-		t.Fatalf("default page status: %d", first.Code)
+func TestQuestionCatalogShowsOneDifficultySectionAtATime(t *testing.T) {
+	withQuestionBank(t, mixedCatalogTestBank())
+
+	easy := requestQuestions(t, "/questions", false, false)
+	if easy.Code != http.StatusOK {
+		t.Fatalf("default section status: %d", easy.Code)
 	}
-	assertQuestionIDs(t, first.Body.String(), 1, 10)
-	if !strings.Contains(first.Body.String(), `class="pagination"`) {
-		t.Fatal("multi-page bank is missing navigation")
+	assertQuestionIDList(t, easy.Body.String(), "q01", "q02", "q04")
+	if !strings.Contains(easy.Body.String(), `aria-current="page">Лёгкие</a>`) {
+		t.Fatal("default section should be marked as current")
 	}
-	if strings.Index(first.Body.String(), `class="pagination"`) < strings.LastIndex(first.Body.String(), `id="question-q10"`) {
-		t.Fatal("paginator should follow the questions list")
+	if strings.Contains(easy.Body.String(), `class="pagination"`) {
+		t.Fatal("catalog should not paginate")
 	}
 
-	second := requestQuestions(t, "/questions?page=2", true, false)
-	if second.Code != http.StatusOK {
-		t.Fatalf("page 2 status: %d", second.Code)
+	medium := requestQuestions(t, "/questions?difficulty=medium", true, false)
+	if medium.Code != http.StatusOK {
+		t.Fatalf("medium section status: %d", medium.Code)
 	}
-	if strings.Contains(second.Body.String(), "<html") {
+	if strings.Contains(medium.Body.String(), "<html") {
 		t.Fatal("HTMX request should return the main fragment")
 	}
-	assertQuestionIDs(t, second.Body.String(), 11, 20)
-	for _, expected := range []string{`href="/questions?page=1"`, `hx-get="/questions?page=1"`, `hx-push-url="true"`, `Страница 2 из 3`, `hx-swap="outerHTML show:#question-results:top"`} {
-		if !strings.Contains(second.Body.String(), expected) {
-			t.Fatalf("page 2 is missing %q", expected)
+	assertQuestionIDList(t, medium.Body.String(), "q03", "q05")
+	if !strings.Contains(medium.Body.String(), `<h2 class="question-text">1. `) || !strings.Contains(medium.Body.String(), `<h2 class="question-text">2. `) {
+		t.Fatal("section questions should be numbered from one")
+	}
+	for _, expected := range []string{
+		`href="/questions?difficulty=medium"`,
+		`hx-get="/questions?difficulty=medium"`,
+		`hx-push-url="true"`,
+		`aria-current="page">Средние</a>`,
+	} {
+		if !strings.Contains(medium.Body.String(), expected) {
+			t.Fatalf("medium section is missing %q", expected)
 		}
 	}
-	if !strings.Contains(second.Body.String(), `class="edge-link" aria-label="Назад" href="/questions?page=1"`) || !strings.Contains(second.Body.String(), `class="edge-link" aria-label="Далее" href="/questions?page=3"`) {
-		t.Fatal("intermediate page should render both edge links")
-	}
-	if strings.Index(second.Body.String(), `id="question-results"`) > strings.Index(second.Body.String(), `class="pagination"`) {
-		t.Fatal("paginator should follow the questions list")
-	}
 
-	last := requestQuestions(t, "/questions?page=3", true, false)
-	if last.Code != http.StatusOK {
-		t.Fatalf("page 3 status: %d", last.Code)
+	hard := requestQuestions(t, "/questions?difficulty=hard", false, false)
+	if hard.Code != http.StatusOK {
+		t.Fatalf("hard section status: %d", hard.Code)
 	}
-	assertQuestionIDs(t, last.Body.String(), 21, 21)
-	if !strings.Contains(last.Body.String(), `href="/questions?page=2"`) || strings.Contains(last.Body.String(), `href="/questions?page=4"`) {
-		t.Fatal("last page navigation has a dead link")
+	assertQuestionIDList(t, hard.Body.String(), "q06")
+	if !strings.Contains(hard.Body.String(), `aria-current="page">Сложные</a>`) {
+		t.Fatal("hard section should be marked as current")
 	}
 }
 
-func TestQuestionCatalogCanJumpFromFirstToFourthAndBack(t *testing.T) {
-	withQuestionBank(t, catalogTestBank(40))
-	first := requestQuestions(t, "/questions", true, false)
-	if first.Code != http.StatusOK {
-		t.Fatalf("page 1 status: %d", first.Code)
-	}
-	if !strings.Contains(first.Body.String(), `<a class="page-number" aria-label="Перейти на страницу 4" href="/questions?page=4"`) {
-		t.Fatal("page 1 has no direct link to page 4")
-	}
-	if !strings.Contains(first.Body.String(), `<span class="page-number" aria-current="page" aria-label="Страница 1">1</span>`) {
-		t.Fatal("current page should be a non-link with aria-current")
-	}
-	if strings.Contains(first.Body.String(), `href="/questions?page=1"`) {
-		t.Fatal("current page should not be a link")
-	}
-	js := requestAsset(t, "/static/app.js", "text/javascript", "application/javascript")
-	if !strings.Contains(js, "window.addEventListener(\"resize\"") || !strings.Contains(js, "document.fonts.ready") || !strings.Contains(js, "htmx:afterSwap") || !strings.Contains(js, "htmx:historyRestore") {
-		t.Fatal("pagination does not reevaluate after resize, font load, or history replacement")
-	}
-	css := requestAsset(t, "/static/app.css", "text/css")
-	if !strings.Contains(css, "flex-wrap: nowrap") || !strings.Contains(css, ".compact-hidden") || !strings.Contains(css, "overflow: hidden") {
-		t.Fatal("pagination is missing its one-line compact fallback")
-	}
-	if !strings.Contains(first.Body.String(), `class="page-ellipsis" data-needed="true"`) {
-		t.Fatal("compact pagination must show an ellipsis when pages are skipped")
-	}
-	if strings.Contains(first.Body.String(), `aria-label="Назад"`) || !strings.Contains(first.Body.String(), `aria-label="Далее" href="/questions?page=2"`) {
-		t.Fatal("first page should omit Назад and retain Далее")
-	}
-	if strings.Contains(first.Body.String(), `href="/questions?page=1"`) {
-		t.Fatal("first page should not include a dead link to itself")
-	}
-	if !strings.Contains(first.Body.String(), `class="edge-link" aria-label="Далее" href="/questions?page=2"`) {
-		t.Fatal("next edge link is missing")
-	}
-
-	fourth := requestQuestions(t, "/questions?page=4", true, false)
-	if fourth.Code != http.StatusOK {
-		t.Fatalf("page 4 status: %d", fourth.Code)
-	}
-	assertQuestionIDs(t, fourth.Body.String(), 31, 40)
-	if !strings.Contains(fourth.Body.String(), `href="/questions?page=1"`) || !strings.Contains(fourth.Body.String(), `href="/questions?page=3"`) {
-		t.Fatal("page 4 does not link back to earlier pages")
-	}
-	if strings.Contains(fourth.Body.String(), `href="/questions?page=4"`) {
-		t.Fatal("current page should not link to itself")
-	}
-	if strings.Contains(fourth.Body.String(), `aria-label="Далее"`) {
-		t.Fatal("last page should omit Далее")
-	}
-}
-
-func TestCompactPagerKeepsFirstLastCurrentNeighborsAndBothEllipses(t *testing.T) {
-	withQuestionBank(t, catalogTestBank(300))
-	recorder := requestQuestions(t, "/questions?page=15", true, false)
-	body := recorder.Body.String()
-	for _, page := range []string{"1", "14", "16", "30"} {
-		if !strings.Contains(body, `href="/questions?page=`+page+`"`) {
-			t.Errorf("compact pager is missing page %s", page)
-		}
-	}
-	if !strings.Contains(body, `<span class="page-number" aria-current="page" aria-label="Страница 15">15</span>`) {
-		t.Fatal("current page is missing")
-	}
-	if strings.Contains(body, `href="/questions?page=15"`) {
-		t.Fatal("current page should not be a link")
-	}
-	if strings.Count(body, `class="page-ellipsis" data-needed="true"`) != 2 {
-		t.Fatal("compact pager must show ellipses on both skipped ranges")
-	}
-	if !strings.Contains(body, `href="/questions?page=14"`) || !strings.Contains(body, `href="/questions?page=16"`) {
-		t.Fatal("previous and next numeric links are missing")
-	}
-	css := requestAsset(t, "/static/app.css", "text/css")
-	js := requestAsset(t, "/static/app.js", "text/javascript", "application/javascript")
-	if !strings.Contains(css, `@media (max-width: 480px)`) || !strings.Contains(css, `.pagination.compact-icons .edge-icon`) || !strings.Contains(js, `nav.scrollWidth > nav.clientWidth`) {
-		t.Fatal("narrow-screen edge controls do not adapt to measured width")
-	}
-}
-
-func TestQuestionCatalogRejectsInvalidPage(t *testing.T) {
-	withQuestionBank(t, catalogTestBank(20))
-	for _, value := range []string{"abc", "0", "-1", "3", ""} {
-		recorder := requestQuestions(t, "/questions?page="+value, false, false)
+func TestQuestionCatalogRejectsUnknownDifficulty(t *testing.T) {
+	withQuestionBank(t, mixedCatalogTestBank())
+	for _, value := range []string{"abc", "Easy", "1", "лёгкий"} {
+		recorder := requestQuestions(t, "/questions?difficulty="+url.QueryEscape(value), false, false)
 		if recorder.Code != http.StatusNotFound {
-			t.Errorf("page %q: got status %d", value, recorder.Code)
+			t.Errorf("difficulty %q: got status %d", value, recorder.Code)
 		}
-		if !strings.Contains(recorder.Body.String(), "Страница каталога не найдена.") {
-			t.Errorf("page %q: missing error message", value)
+		if !strings.Contains(recorder.Body.String(), "Раздел вопросов не найден.") {
+			t.Errorf("difficulty %q: missing error message", value)
 		}
 	}
+
+	empty := requestQuestions(t, "/questions?difficulty=", false, false)
+	if empty.Code != http.StatusOK {
+		t.Fatalf("empty difficulty should fall back to the first section: %d", empty.Code)
+	}
+	assertQuestionIDList(t, empty.Body.String(), "q01", "q02", "q04")
 }
 
-func TestQuestionCatalogOneOrZeroPagesHasNoNavigation(t *testing.T) {
-	withQuestionBank(t, catalogTestBank(10))
-	one := requestQuestions(t, "/questions", false, false)
-	if one.Code != http.StatusOK {
-		t.Fatalf("one page status: %d", one.Code)
-	}
-	if strings.Contains(one.Body.String(), `class="pagination"`) || strings.Contains(one.Body.String(), "Страница 1 из") {
-		t.Fatal("single page should not show pagination")
-	}
-	assertQuestionIDs(t, one.Body.String(), 1, 10)
-
+func TestQuestionCatalogEmptySection(t *testing.T) {
 	withQuestionBank(t, nil)
 	empty := requestQuestions(t, "/questions", false, false)
 	if empty.Code != http.StatusOK {
 		t.Fatalf("empty bank status: %d", empty.Code)
 	}
-	if !strings.Contains(empty.Body.String(), "В банке пока нет вопросов.") {
-		t.Fatal("empty first page should be clear")
-	}
-	if strings.Contains(empty.Body.String(), `class="pagination"`) {
-		t.Fatal("empty first page should not show pagination")
+	if !strings.Contains(empty.Body.String(), "В этом разделе пока нет вопросов.") {
+		t.Fatal("empty section should be clear")
 	}
 	if ids := questionIDs(empty.Body.String()); len(ids) != 0 {
-		t.Fatalf("empty page contains questions: %v", ids)
+		t.Fatalf("empty section contains questions: %v", ids)
+	}
+	for _, label := range []string{"Лёгкие", "Средние", "Сложные"} {
+		if !strings.Contains(empty.Body.String(), ">"+label+"</a>") {
+			t.Fatalf("empty section is missing the %q tab", label)
+		}
+	}
+
+	withQuestionBank(t, catalogTestBank(3))
+	hard := requestQuestions(t, "/questions?difficulty=hard", false, false)
+	if hard.Code != http.StatusOK || !strings.Contains(hard.Body.String(), "В этом разделе пока нет вопросов.") {
+		t.Fatal("section without questions of that difficulty should be clear")
 	}
 }
 
 func TestQuestionCatalogHistoryRestoreReturnsFullPage(t *testing.T) {
-	withQuestionBank(t, catalogTestBank(15))
-	recorder := requestQuestions(t, "/questions?page=2", true, true)
+	withQuestionBank(t, mixedCatalogTestBank())
+	recorder := requestQuestions(t, "/questions?difficulty=hard", true, true)
 	if recorder.Code != http.StatusOK || !strings.Contains(recorder.Body.String(), "<html") {
 		t.Fatal("HTMX history restore should return a full document")
 	}
 	if !strings.Contains(recorder.Body.String(), `href="/static/app.css"`) || !strings.Contains(recorder.Body.String(), `src="/static/app.js"`) {
 		t.Fatal("full document must link to the application stylesheet and script")
 	}
-	assertQuestionIDs(t, recorder.Body.String(), 11, 15)
+	assertQuestionIDList(t, recorder.Body.String(), "q06")
 	_, content, marked := strings.Cut(recorder.Body.String(), `<main id="content" hx-history-elt>`)
 	main, _, closed := strings.Cut(content, "</main>")
 	if !marked || !closed || strings.Contains(main, "<script") {
@@ -570,10 +497,25 @@ func withQuestionBank(t *testing.T, questions []model.Question) {
 	t.Cleanup(func() { bank = old })
 }
 
+func mixedCatalogTestBank() []model.Question {
+	return []model.Question{
+		catalogQuestion("q01", "лёгкий"),
+		catalogQuestion("q02", "лёгкий"),
+		catalogQuestion("q03", "средний"),
+		catalogQuestion("q04", "лёгкий"),
+		catalogQuestion("q05", "средний"),
+		catalogQuestion("q06", "сложный"),
+	}
+}
+
+func catalogQuestion(id, difficulty string) model.Question {
+	return model.Question{ID: id, Text: "Question " + id, Answer: "Answer " + id, Difficulty: difficulty}
+}
+
 func catalogTestBank(count int) []model.Question {
 	questions := make([]model.Question, count)
 	for i := range count {
-		questions[i] = model.Question{ID: fmt.Sprintf("q%02d", i+1), Text: fmt.Sprintf("Question %02d", i+1), Answer: fmt.Sprintf("Answer %02d", i+1), Difficulty: "лёгкий"}
+		questions[i] = catalogQuestion(fmt.Sprintf("q%02d", i+1), "лёгкий")
 	}
 	return questions
 }
@@ -601,15 +543,9 @@ func questionIDs(body string) []string {
 	return ids
 }
 
-func assertQuestionIDs(t *testing.T, body string, first, last int) {
+func assertQuestionIDList(t *testing.T, body string, want ...string) {
 	t.Helper()
-	ids := questionIDs(body)
-	if len(ids) != last-first+1 {
-		t.Fatalf("got %d cards, want %d: %v", len(ids), last-first+1, ids)
-	}
-	for i, id := range ids {
-		if want := fmt.Sprintf("q%02d", first+i); id != want {
-			t.Fatalf("position %d: got %s, want %s", i, id, want)
-		}
+	if got := questionIDs(body); !slices.Equal(got, want) {
+		t.Fatalf("got cards %v, want %v", got, want)
 	}
 }
