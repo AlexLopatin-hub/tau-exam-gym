@@ -63,16 +63,6 @@
 		const archived = document.getElementById("archived-exam");
 		if (archived) showArchived(archived);
 	}
-	function fitPager() {
-		const nav = document.querySelector(".pagination");
-		if (!nav) return;
-		nav.classList.remove("compact-icons");
-		nav.classList.add("expanded");
-		if (nav.scrollWidth > nav.clientWidth + 1) {
-			nav.classList.remove("expanded");
-			nav.classList.toggle("compact-icons", nav.scrollWidth > nav.clientWidth + 1);
-		}
-	}
 	function renderFormulas(root = document) {
 		if (!window.renderMathInElement) return;
 		for (const source of root.querySelectorAll(".latex-source")) {
@@ -114,7 +104,6 @@
 	}
 	function init() {
 		loadArchive();
-		fitPager();
 		renderFormulas();
 		renderDiagrams();
 		try {
@@ -133,7 +122,4 @@
 	document.body.addEventListener("htmx:afterSwap", init);
 	document.body.addEventListener("htmx:historyRestore", init);
 	window.addEventListener("pageshow", event => { if (event.persisted) init(); });
-	window.addEventListener("resize", fitPager);
-	document.fonts.ready.then(fitPager);
-	document.fonts.addEventListener("loadingdone", fitPager);
 })();

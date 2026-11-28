@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -101,34 +100,22 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func questions(w http.ResponseWriter, r *http.Request) {
-	page := 1
-	if values, ok := r.URL.Query()["page"]; ok {
-		if len(values) != 1 {
-			invalidCatalogPage(w, r)
-			return
-		}
-		parsed, err := strconv.Atoi(values[0])
-		if err != nil || parsed < 1 {
-			invalidCatalogPage(w, r)
-			return
-		}
-		page = parsed
+	slug := r.URL.Query().Get("difficulty")
+	if slug == "" {
+		slug = model.Difficulties[0].Slug
 	}
-	totalPages := (len(bank) + 9) / 10
-	if totalPages == 0 {
-		totalPages = 1
-	}
-	if page > totalPages {
-		invalidCatalogPage(w, r)
+	difficulty, ok := model.DifficultyBySlug(slug)
+	if !ok {
+		render(w, r, views.PageView{Title: "Не найдено", Tab: "questions", Error: "Раздел вопросов не найден."}, http.StatusNotFound)
 		return
 	}
-	start := (page - 1) * 10
-	end := min(start+10, len(bank))
-	render(w, r, views.PageView{Title: "Все вопросы", Tab: "questions", Questions: bank[start:end], CurrentPage: page, TotalPages: totalPages}, http.StatusOK)
-}
-
-func invalidCatalogPage(w http.ResponseWriter, r *http.Request) {
-	render(w, r, views.PageView{Title: "Не найдено", Tab: "questions", Error: "Страница каталога не найдена."}, http.StatusNotFound)
+	selected := make([]model.Question, 0, len(bank))
+	for _, question := range bank {
+		if question.Difficulty == difficulty.Value {
+			selected = append(selected, question)
+		}
+	}
+	render(w, r, views.PageView{Title: "Все вопросы", Tab: "questions", Questions: selected, Difficulty: slug}, http.StatusOK)
 }
 
 func createAttempt(w http.ResponseWriter, r *http.Request) {

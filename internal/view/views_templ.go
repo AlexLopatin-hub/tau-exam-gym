@@ -17,16 +17,15 @@ import (
 )
 
 type PageView struct {
-	Title       string
-	Tab         string
-	Questions   []model.Question
-	Attempt     *model.Attempt
-	ArchivedID  string
-	CurrentPage int
-	TotalPages  int
-	Error       string
-	Lectures    []model.Lecture
-	Lecture     *model.Lecture
+	Title      string
+	Tab        string
+	Questions  []model.Question
+	Attempt    *model.Attempt
+	ArchivedID string
+	Difficulty string
+	Error      string
+	Lectures   []model.Lecture
+	Lecture    *model.Lecture
 }
 
 type QuestionCardData struct {
@@ -140,7 +139,7 @@ func Main(view PageView) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(view.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 95, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 94, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -204,7 +203,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.NewAttributeExpression(q.AnchorID).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 115, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 114, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -258,7 +257,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d. ", q.Number))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 118, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 117, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -330,7 +329,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(q.Question.Difficulty)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 125, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 124, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -358,7 +357,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(q.UserAnswer)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 132, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 131, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -386,7 +385,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(" на вопрос %d", q.Number))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 139, Col: 100}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 138, Col: 100}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -399,7 +398,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templruntime.NewAttributeExpression(q.Question.ID).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 140, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 139, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 				if templ_7745c5c3_Err != nil {
@@ -412,7 +411,7 @@ func QuestionCard(q QuestionCardData) templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("tau-exam:active:%s:%d:draft", q.AttemptID, q.Number)).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 140, Col: 148}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/view/views.templ`, Line: 139, Col: 148}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 				if templ_7745c5c3_Err != nil {
